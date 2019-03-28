@@ -1,9 +1,10 @@
-# React Boilerplate
+# Spectrum (scRNA)
 
-This project acts a boilerplate for the React layer of visualizations.
+This project contains the web-based **single-cell RNA (scRNA)** visualization dashboard for Spectrum.
 
-[React layer](https://github.com/shahcompbio/viz-react-boilerplate)
-[GraphQL layer](https://github.com/shahcompbio/viz-graphql-boilerplate)
+- [Database](https://github.com/shahcompbio/spectrum-scrna-db)
+- [GraphQL](https://github.com/shahcompbio/spectrum-scrna-graphql)
+- [**React**](https://github.com/shahcompbio/spectrum-scrna-react)
 
 ## Features
 
@@ -56,6 +57,6 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 This project can be built for production and packaged with Docker. To do this:
 
 ```
-docker build . -t react-boilerplate
-docker run -d -p 80:80 --link graphql:graphql react-boilerplate
+docker build . -t spectrum-scrna-react
+docker run -d -p 80:80 --link graphql:graphql spectrum-scrna-react
 ```
