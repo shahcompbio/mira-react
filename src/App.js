@@ -1,14 +1,16 @@
 import React from "react";
 import SampleSelect from "./SampleSelect";
 import { withRouter } from "react-router";
-import { BrowserRouter } from "react-router-dom";
+import ReDimPlot from "./ReDimPlot";
 
-const App = () => (
-  <BrowserRouter>
+const App = ({ location }) => {
+  const sampleID = location.pathname.substr(1);
+  return (
     <div className="App">
       <SampleSelect />
+      <ReDimPlot sampleID={sampleID} />
     </div>
-  </BrowserRouter>
-);
+  );
+};
 
-export default App;
+export default withRouter(App);
