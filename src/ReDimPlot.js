@@ -9,7 +9,7 @@ const QUERY = gql`
   query($sampleID: String!) {
     cells(sampleID: $sampleID) {
       id
-      x
+      x ##88c0ba
       y
       cluster
       celltype
@@ -41,8 +41,8 @@ const getFrameProps = cells => ({
 
   pointStyle: d => ({
     r: 3,
-    fill: "#9fd0cb",
-    stroke: "white"
+    fill: "#bee3df",
+    stroke: "#9fd0cb"
   }),
   axes: [
     { orient: "left", label: "y" },
