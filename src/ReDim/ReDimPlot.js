@@ -9,7 +9,7 @@ const QUERY = gql`
   query($sampleID: String!) {
     cells(sampleID: $sampleID) {
       id
-      x ##88c0ba
+      x
       y
       cluster
       celltype
@@ -47,7 +47,18 @@ const getFrameProps = cells => ({
   axes: [
     { orient: "left", label: "y" },
     { orient: "bottom", label: { name: "x", locationDistance: 55 } }
-  ]
+  ],
+  legend: {
+    legendGroups: [
+      {
+        styleFn: d => ({ fill: d.color, stroke: "black" }),
+        items: [
+          { label: "Test", color: "red" },
+          { label: "Test 2", color: "blue" }
+        ]
+      }
+    ]
+  }
 });
 
 export default ReDimPlot;
