@@ -2,13 +2,13 @@ import React from "react";
 
 import XYFrame from "semiotic/lib/XYFrame";
 
-const Scatterplot = ({ data, colorScale }) => {
-  const frameProps = getFrameProps(data, colorScale);
+const Scatterplot = ({ data, colorScale, highlighted }) => {
+  const frameProps = getFrameProps(data, colorScale, highlighted);
 
   return <XYFrame {...frameProps} />;
 };
 
-const getFrameProps = (data, colorScale) => ({
+const getFrameProps = (data, colorScale, highlighted) => ({
   points: data,
 
   size: [700, 500],
@@ -16,11 +16,17 @@ const getFrameProps = (data, colorScale) => ({
 
   xAccessor: "x",
   yAccessor: "y",
-
+  canvasPoints: true,
   pointStyle: d => ({
-    r: 3,
-    fill: colorScale(d.cluster),
-    stroke: colorScale(d.cluster),
+    r: 4,
+    fill:
+      !highlighted || highlighted === d.cluster
+        ? colorScale(d.cluster)
+        : "#808080",
+    stroke:
+      !highlighted || highlighted === d.cluster
+        ? colorScale(d.cluster)
+        : "#808080",
     fillOpacity: 0.8
   }),
   axes: [

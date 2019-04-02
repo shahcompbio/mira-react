@@ -2,9 +2,9 @@ import React from "react";
 
 import OrdinalFrame from "semiotic/lib/OrdinalFrame";
 
-const Donut = ({ data, colorScale }) => {
+const Donut = ({ data, colorScale, hoverBehavior }) => {
   const frameProps = getFrameProps(data, colorScale);
-  return <OrdinalFrame {...frameProps} />;
+  return <OrdinalFrame {...frameProps} customHoverBehavior={hoverBehavior} />;
 };
 
 const getFrameProps = (data, colorScale) => {
@@ -18,9 +18,9 @@ const getFrameProps = (data, colorScale) => {
     projection: "radial",
     dynamicColumnWidth: "count",
 
-    oAccessor: "id",
+    oAccessor: "cluster",
 
-    style: d => ({ fill: colorScale(d.id), stroke: "white" }),
+    style: d => ({ fill: colorScale(d.cluster), stroke: "white" }),
 
     title: "Clusters",
 
@@ -29,7 +29,7 @@ const getFrameProps = (data, colorScale) => {
     tooltipContent: ({ pieces }) => {
       return (
         <div className="tooltip-content">
-          <p>ID: {pieces[0].id}</p>
+          <p>ID: {pieces[0].cluster}</p>
           <p>Count: {pieces[0].count}</p>
         </div>
       );
