@@ -20,8 +20,6 @@ const SampleSelect = ({ history, data }) => {
     return null;
   }
 
-  console.log(data.samples);
-
   const handleChange = (e, { value }) => history.push("/" + value);
 
   const options = data.samples.map(sample => ({

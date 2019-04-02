@@ -3,7 +3,12 @@ import React from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 
-import XYFrame from "semiotic/lib/XYFrame";
+import Scatterplot from "./Scatterplot";
+import Donut from "./Donut";
+
+import FacetController from "semiotic/lib/FacetController";
+
+import { getColorScale } from "./colors";
 
 const QUERY = gql`
   query($sampleID: String!) {
@@ -13,6 +18,11 @@ const QUERY = gql`
       y
       cluster
       celltype
+    }
+
+    clusters(sampleID: $sampleID) {
+      id
+      count
     }
   }
 `;
@@ -24,41 +34,17 @@ const ReDimPlot = ({ sampleID }) =>
         if (loading) return null;
         if (error) return null;
 
-        const frameProps = getFrameProps(data.cells);
-        return <XYFrame {...frameProps} />;
+        const colorScale = getColorScale(
+          data.clusters.map(cluster => cluster.id)
+        );
+        return (
+          <FacetController>
+            <Scatterplot data={data.cells} colorScale={colorScale} />
+            <Donut data={data.clusters} colorScale={colorScale} />
+          </FacetController>
+        );
       }}
     </Query>
   );
-
-const getFrameProps = cells => ({
-  points: cells,
-
-  size: [700, 500],
-  margin: { left: 60, bottom: 90, right: 10, top: 40 },
-
-  xAccessor: "x",
-  yAccessor: "y",
-
-  pointStyle: d => ({
-    r: 3,
-    fill: "#bee3df",
-    stroke: "#9fd0cb"
-  }),
-  axes: [
-    { orient: "left", label: "y" },
-    { orient: "bottom", label: { name: "x", locationDistance: 55 } }
-  ],
-  legend: {
-    legendGroups: [
-      {
-        styleFn: d => ({ fill: d.color, stroke: "black" }),
-        items: [
-          { label: "Test", color: "red" },
-          { label: "Test 2", color: "blue" }
-        ]
-      }
-    ]
-  }
-});
 
 export default ReDimPlot;
