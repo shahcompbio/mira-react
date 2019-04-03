@@ -11,17 +11,16 @@ import FacetController from "semiotic/lib/FacetController";
 import { getColorScale } from "./colors";
 
 const QUERY = gql`
-  query($sampleID: String!) {
-    cells(sampleID: $sampleID) {
+  query($sampleID: String!, $label: String!) {
+    cells(sampleID: $sampleID, label: $label) {
       id
       x
       y
-      cluster
-      celltype
+      label
     }
 
-    clusters(sampleID: $sampleID) {
-      cluster
+    colorLabelValues(sampleID: $sampleID, label: $label) {
+      id
       count
     }
   }
@@ -50,15 +49,15 @@ class ReDimPlot extends Component {
 
   render() {
     const { sampleID } = this.props;
-    console.log(this.state);
+    //console.log(this.state);
     return !sampleID ? null : (
-      <Query query={QUERY} variables={{ sampleID }}>
+      <Query query={QUERY} variables={{ sampleID, label: "cell_type" }}>
         {({ loading, error, data }) => {
           if (loading) return null;
           if (error) return null;
 
           const colorScale = getColorScale(
-            data.clusters.map(cluster => cluster.cluster)
+            data.colorLabelValues.map(labelValue => labelValue.id)
           );
           return (
             <FacetController>
@@ -68,7 +67,7 @@ class ReDimPlot extends Component {
                 highlighted={this.state.highlighted}
               />
               <Donut
-                data={data.clusters}
+                data={data.colorLabelValues}
                 colorScale={colorScale}
                 hoverBehavior={this.hoverBehavior}
               />

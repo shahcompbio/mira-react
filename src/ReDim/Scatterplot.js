@@ -19,15 +19,10 @@ const getFrameProps = (data, colorScale, highlighted) => ({
   canvasPoints: true,
   pointStyle: d => ({
     r: 4,
-    fill:
-      !highlighted || highlighted === d.cluster
-        ? colorScale(d.cluster)
-        : "#808080",
+    fill: colorScale(d.label),
     stroke:
-      !highlighted || highlighted === d.cluster
-        ? colorScale(d.cluster)
-        : "#808080",
-    fillOpacity: 0.8
+      !highlighted || highlighted === d.label ? colorScale(d.label) : "#c7c7c7",
+    fillOpacity: !highlighted || highlighted === d.label ? 0.8 : 0.01
   }),
   axes: [
     { orient: "left", label: "y" },
@@ -38,7 +33,7 @@ const getFrameProps = (data, colorScale, highlighted) => ({
   tooltipContent: d => {
     return (
       <div className="tooltip-content">
-        <p>Cluster: {d.cluster}</p>
+        <p>Cluster: {d.label}</p>
       </div>
     );
   }
