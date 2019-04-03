@@ -28,9 +28,6 @@ const getFrameProps = (data, colorScale) => {
     style: d => ({ fill: colorScale(d.id), stroke: "white" }),
 
     title: "Clusters",
-    oLabel: true,
-
-    // oLabel: true,
     hoverAnnotation: true,
     tooltipContent: ({ pieces }) => {
       return (
