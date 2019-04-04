@@ -65,6 +65,7 @@ class Content extends Component {
                 data={data.cells}
                 colorScale={colorScale}
                 highlighted={this.state.highlighted}
+                labelTitle={label.title}
               />
               <Donut
                 title={label.title}

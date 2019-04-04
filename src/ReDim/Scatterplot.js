@@ -2,13 +2,13 @@ import React from "react";
 
 import XYFrame from "semiotic/lib/XYFrame";
 
-const Scatterplot = ({ data, colorScale, highlighted }) => {
-  const frameProps = getFrameProps(data, colorScale, highlighted);
+const Scatterplot = ({ data, colorScale, highlighted, labelTitle }) => {
+  const frameProps = getFrameProps(data, colorScale, highlighted, labelTitle);
 
   return <XYFrame {...frameProps} />;
 };
 
-const getFrameProps = (data, colorScale, highlighted) => ({
+const getFrameProps = (data, colorScale, highlighted, labelTitle) => ({
   points: data,
 
   size: [700, 500],
@@ -33,7 +33,9 @@ const getFrameProps = (data, colorScale, highlighted) => ({
   tooltipContent: d => {
     return (
       <div className="tooltip-content">
-        <p>Cluster: {d.label}</p>
+        <p>
+          {labelTitle}: {d.label}
+        </p>
       </div>
     );
   }
