@@ -4,12 +4,12 @@ import OrdinalFrame from "semiotic/lib/OrdinalFrame";
 
 import { scalePow } from "d3-scale";
 
-const Donut = ({ data, colorScale, hoverBehavior }) => {
-  const frameProps = getFrameProps(data, colorScale);
+const Donut = ({ data, colorScale, hoverBehavior, title }) => {
+  const frameProps = getFrameProps(data, colorScale, title);
   return <OrdinalFrame {...frameProps} customHoverBehavior={hoverBehavior} />;
 };
 
-const getFrameProps = (data, colorScale) => {
+const getFrameProps = (data, colorScale, title) => {
   return {
     data: data,
 
@@ -27,7 +27,7 @@ const getFrameProps = (data, colorScale) => {
     axes: [{ orient: "left", label: "Count" }],
     style: d => ({ fill: colorScale(d.name), stroke: "white" }),
 
-    title: "Clusters",
+    title: title,
     hoverAnnotation: true,
     tooltipContent: ({ pieces }) => {
       return (
