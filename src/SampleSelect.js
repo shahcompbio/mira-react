@@ -11,7 +11,7 @@ const QUERY = gql`
     samples
   }
 `;
-const SampleSelect = ({ history, data }) => {
+const SampleSelect = ({ sampleID, history, data }) => {
   if (data && data.loading) {
     return null;
   }
@@ -35,6 +35,7 @@ const SampleSelect = ({ history, data }) => {
       selection
       fluid
       options={options}
+      defaultValue={sampleID}
     />
   );
 };

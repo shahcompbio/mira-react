@@ -7,7 +7,7 @@ const App = ({ location }) => {
   const sampleID = location.pathname.substr(1);
   return (
     <div className="App">
-      <SampleSelect />
+      <SampleSelect sampleID={sampleID} />
       <ReDimPlot sampleID={sampleID} />
     </div>
   );
