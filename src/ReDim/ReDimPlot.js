@@ -13,14 +13,14 @@ import { getColorScale } from "./colors";
 const QUERY = gql`
   query($sampleID: String!, $label: String!) {
     cells(sampleID: $sampleID, label: $label) {
-      id
+      name
       x
       y
       label
     }
 
     colorLabelValues(sampleID: $sampleID, label: $label) {
-      id
+      name
       count
     }
   }
@@ -57,7 +57,7 @@ class ReDimPlot extends Component {
           if (error) return null;
 
           const colorScale = getColorScale(
-            data.colorLabelValues.map(labelValue => labelValue.id)
+            data.colorLabelValues.map(labelValue => labelValue.name)
           );
           return (
             <FacetController>

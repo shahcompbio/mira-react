@@ -23,16 +23,16 @@ const getFrameProps = (data, colorScale) => {
     type: "bar",
     rAccessor: "count",
     rScaleType: scalePow().exponent(0.7),
-    oAccessor: "id",
+    oAccessor: "name",
     axes: [{ orient: "left", label: "Count" }],
-    style: d => ({ fill: colorScale(d.id), stroke: "white" }),
+    style: d => ({ fill: colorScale(d.name), stroke: "white" }),
 
     title: "Clusters",
     hoverAnnotation: true,
     tooltipContent: ({ pieces }) => {
       return (
         <div className="tooltip-content">
-          <p>ID: {pieces[0].id}</p>
+          <p>ID: {pieces[0].name}</p>
           <p>Count: {pieces[0].count}</p>
         </div>
       );
