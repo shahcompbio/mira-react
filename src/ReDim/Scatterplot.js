@@ -25,8 +25,8 @@ const getFrameProps = (data, colorScale, highlighted, labelTitle) => ({
     fillOpacity: !highlighted || highlighted === d.label ? 0.8 : 0.01
   }),
   axes: [
-    { orient: "left", label: "y" },
-    { orient: "bottom", label: { name: "x", locationDistance: 55 } }
+    { orient: "left", label: " " },
+    { orient: "bottom", label: { name: " ", locationDistance: 55 } }
   ],
   hoverAnnotation: true,
 
