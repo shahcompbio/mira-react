@@ -60,25 +60,35 @@ class Content extends Component {
             data.colorLabelValues.map(labelValue => labelValue.name)
           );
           return (
-            <FacetController>
-              <Scatterplot
-                data={data.cells}
-                colorScale={colorScale}
-                highlighted={this.state.highlighted}
-                labelTitle={label.title}
-              />
-              <Donut
-                title={label.title}
-                data={data.colorLabelValues}
-                colorScale={colorScale}
-                hoverBehavior={this.hoverBehavior}
-              />
-            </FacetController>
+            <div style={DivStyles}>
+              <FacetController>
+                <Scatterplot
+                  data={data.cells}
+                  colorScale={colorScale}
+                  highlighted={this.state.highlighted}
+                  labelTitle={label.title}
+                />
+                <Donut
+                  title={label.title}
+                  data={data.colorLabelValues}
+                  colorScale={colorScale}
+                  hoverBehavior={this.hoverBehavior}
+                />
+              </FacetController>
+            </div>
           );
         }}
       </Query>
     );
   }
 }
+
+const DivStyles = {
+  width: "100%",
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "flex-start",
+  justifyContent: "space-between"
+};
 
 export default Content;

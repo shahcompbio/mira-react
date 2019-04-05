@@ -20,13 +20,15 @@ class LabelSelect extends Component {
     }));
 
     return (
-      <Dropdown
-        onChange={handleChange}
-        placeholder="Color By..."
-        selection
-        options={options}
-        defaultValue={options[0].value}
-      />
+      <span>
+        Color by &nbsp;
+        <Dropdown
+          onChange={handleChange}
+          selection
+          options={options}
+          defaultValue={options[0].value}
+        />
+      </span>
     );
   }
 }

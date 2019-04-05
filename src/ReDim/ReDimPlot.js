@@ -38,7 +38,7 @@ class ReDimPlot extends Component {
           if (error) return null;
 
           return (
-            <div>
+            <div style={DivStyles}>
               <LabelSelect
                 data={data.colorLabels}
                 onSelect={this.onLabelSelect}
@@ -51,5 +51,13 @@ class ReDimPlot extends Component {
     );
   }
 }
+
+const DivStyles = {
+  margin: "25px",
+
+  width: "70%",
+  display: "flex",
+  flexDirection: "column"
+};
 
 export default ReDimPlot;
