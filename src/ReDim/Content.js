@@ -3,8 +3,8 @@ import React, { Component } from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 
-import Scatterplot from "./Scatterplot";
-import Donut from "./Donut";
+import ReDimPlot from "./ReDimPlot";
+import AbundancePlot from "./AbundancePlot";
 
 import FacetController from "semiotic/lib/FacetController";
 
@@ -62,13 +62,13 @@ class Content extends Component {
           return (
             <div style={DivStyles}>
               <FacetController>
-                <Scatterplot
+                <ReDimPlot
                   data={data.cells}
                   colorScale={colorScale}
                   highlighted={this.state.highlighted}
                   labelTitle={label.title}
                 />
-                <Donut
+                <AbundancePlot
                   title={label.title}
                   data={data.colorLabelValues}
                   colorScale={colorScale}

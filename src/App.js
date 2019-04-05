@@ -1,14 +1,14 @@
 import React from "react";
 import SampleSelect from "./SampleSelect";
 import { withRouter } from "react-router";
-import ReDimPlot from "./ReDim/ReDimPlot";
+import ReDim from "./ReDim/ReDim";
 
 const App = ({ location }) => {
   const sampleID = location.pathname.substr(1);
   return (
     <div className="App" style={AppStyles}>
       <SampleSelect sampleID={sampleID} />
-      <ReDimPlot sampleID={sampleID} />
+      <ReDim sampleID={sampleID} />
     </div>
   );
 };

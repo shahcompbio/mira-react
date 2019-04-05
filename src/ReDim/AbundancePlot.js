@@ -4,7 +4,7 @@ import OrdinalFrame from "semiotic/lib/OrdinalFrame";
 
 import { scalePow } from "d3-scale";
 
-const Donut = ({ data, colorScale, hoverBehavior, title }) => {
+const AbundancePlot = ({ data, colorScale, hoverBehavior, title }) => {
   const frameProps = getFrameProps(data, colorScale, title);
   return <OrdinalFrame {...frameProps} customHoverBehavior={hoverBehavior} />;
 };
@@ -16,18 +16,14 @@ const getFrameProps = (data, colorScale, title) => {
     size: [300, 300],
     margin: 70,
 
-    // type: { type: "bar", innerRadius: 50 },
-    // projection: "radial",
-    // dynamicColumnWidth: "count",
-
     type: "bar",
     rAccessor: "count",
     rScaleType: scalePow().exponent(0.7),
     oAccessor: "name",
-    axes: [{ orient: "left", label: "Count" }],
+    axes: [{ orient: "left", label: " " }],
     style: d => ({ fill: colorScale(d.name), stroke: "white" }),
 
-    title: title,
+    title: `${title} Abundances`,
     hoverAnnotation: true,
     tooltipContent: ({ pieces }) => {
       return (
@@ -40,4 +36,4 @@ const getFrameProps = (data, colorScale, title) => {
   };
 };
 
-export default Donut;
+export default AbundancePlot;

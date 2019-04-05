@@ -1,63 +1,44 @@
-import React, { Component } from "react";
+import React from "react";
 
-import { Query } from "react-apollo";
-import gql from "graphql-tag";
+import XYFrame from "semiotic/lib/XYFrame";
 
-import LabelSelect from "./LabelSelect";
-import Content from "./Content";
+const ReDimPlot = ({ data, colorScale, highlighted, labelTitle }) => {
+  const frameProps = getFrameProps(data, colorScale, highlighted, labelTitle);
 
-const QUERY = gql`
-  query($sampleID: String!) {
-    colorLabels(sampleID: $sampleID) {
-      id
-      title
-    }
-  }
-`;
+  return <XYFrame {...frameProps} />;
+};
 
-class ReDimPlot extends Component {
-  constructor(props) {
-    super(props);
+const getFrameProps = (data, colorScale, highlighted, labelTitle) => ({
+  points: data,
 
-    this.state = {
-      label: null
-    };
-  }
+  size: [700, 500],
+  margin: { left: 60, bottom: 90, right: 10, top: 40 },
 
-  onLabelSelect = label => {
-    this.setState(() => ({ label }));
-  };
+  xAccessor: "x",
+  yAccessor: "y",
+  canvasPoints: true,
+  pointStyle: d => ({
+    r: 4,
+    fill: colorScale(d.label),
+    stroke:
+      !highlighted || highlighted === d.label ? colorScale(d.label) : "#c7c7c7",
+    fillOpacity: !highlighted || highlighted === d.label ? 0.8 : 0.01
+  }),
+  axes: [
+    { orient: "left", label: " " },
+    { orient: "bottom", label: { name: " ", locationDistance: 55 } }
+  ],
+  hoverAnnotation: true,
 
-  render() {
-    const { sampleID } = this.props;
-
-    return !sampleID ? null : (
-      <Query query={QUERY} variables={{ sampleID }}>
-        {({ loading, error, data }) => {
-          if (loading) return null;
-          if (error) return null;
-
-          return (
-            <div style={DivStyles}>
-              <LabelSelect
-                data={data.colorLabels}
-                onSelect={this.onLabelSelect}
-              />
-              <Content sampleID={sampleID} label={this.state.label} />
-            </div>
-          );
-        }}
-      </Query>
+  tooltipContent: d => {
+    return (
+      <div className="tooltip-content">
+        <p>
+          {labelTitle}: {d.label}
+        </p>
+      </div>
     );
   }
-}
-
-const DivStyles = {
-  margin: "25px",
-
-  width: "70%",
-  display: "flex",
-  flexDirection: "column"
-};
+});
 
 export default ReDimPlot;
