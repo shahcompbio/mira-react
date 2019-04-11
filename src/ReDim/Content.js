@@ -64,7 +64,8 @@ class Content extends Component {
           if (error) return null;
 
           const colorScale = getColorScale(
-            data.colorLabelValues.map(labelValue => labelValue.name)
+            data.colorLabelValues.map(labelValue => labelValue.name),
+            label.type
           );
           return (
             <div style={DivStyles}>
@@ -76,7 +77,7 @@ class Content extends Component {
                   labelTitle={label.title}
                 />
                 <AbundancePlot
-                  title={label.title}
+                  label={label}
                   data={data.colorLabelValues}
                   colorScale={colorScale}
                   hoverBehavior={this.hoverBehavior}
