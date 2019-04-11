@@ -11,6 +11,7 @@ const QUERY = gql`
     colorLabels(sampleID: $sampleID) {
       id
       title
+      type
     }
   }
 `;

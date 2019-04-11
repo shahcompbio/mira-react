@@ -12,10 +12,8 @@ class LabelSelect extends Component {
     const { data, onSelect } = this.props;
 
     const handleChange = item => {
-      onSelect({
-        id: item.value,
-        title: item.label
-      });
+      const result = data.filter(datum => datum.id === item.value)[0];
+      onSelect(result);
     };
     const options = data.map(label => ({
       value: label.id,
