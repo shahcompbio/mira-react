@@ -4,9 +4,7 @@ import { scalePoint, scaleSequential } from "d3-scale";
 import { interpolateRainbow, interpolateYlGnBu } from "d3-scale-chromatic";
 
 export const getColorScale = (data, type) => {
-  const ordinalScale = scalePoint()
-    .domain(data)
-    .range([0, 0.8]);
+  const ordinalScale = getOrdinalScale(data);
 
   const toColorScale = scaleSequential(
     type === "categorical" ? interpolateRainbow : interpolateYlGnBu
@@ -16,9 +14,7 @@ export const getColorScale = (data, type) => {
 };
 
 export const getColorGradient = data => {
-  const ordinalScale = scalePoint()
-    .domain(data)
-    .range([0, 0.8]);
+  const ordinalScale = getOrdinalScale(data);
 
   const toColorScale = scaleSequential(interpolateYlGnBu).domain([0, 1]);
 
@@ -39,3 +35,8 @@ export const getColorGradient = data => {
 
   return linearGradients;
 };
+
+const getOrdinalScale = data =>
+  scalePoint()
+    .domain(data)
+    .range([0, 0.9]);

@@ -8,16 +8,16 @@ import { curveCardinal } from "d3-shape";
 import { getColorGradient } from "./colors";
 
 const AbundancePlot = ({ data, colorScale, hoverBehavior, label }) => {
-  const frameProps = getFrameProps(data, colorScale, label);
+  const frameProps = getFrameProps(data, colorScale, label, hoverBehavior);
 
   return label.type === "categorical" ? (
-    <OrdinalFrame {...frameProps} customHoverBehavior={hoverBehavior} />
+    <OrdinalFrame {...frameProps} />
   ) : (
-    <XYFrame {...frameProps} customHoverBehavior={hoverBehavior} />
+    <XYFrame {...frameProps} />
   );
 };
 
-const getFrameProps = (data, colorScale, label) => {
+const getFrameProps = (data, colorScale, label, hoverBehavior) => {
   const defaultFrameProps = {
     size: [300, 300],
     margin: 70,
@@ -38,13 +38,18 @@ const getFrameProps = (data, colorScale, label) => {
 
   const additionalFrameProps =
     label.type === "categorical"
-      ? getFramePropsBar(data, colorScale, tooltipContent)
-      : getFramePropsLine(data, colorScale, tooltipContent);
+      ? getFramePropsBar(data, colorScale, tooltipContent, hoverBehavior)
+      : getFramePropsLine(data, colorScale, tooltipContent, hoverBehavior);
 
   return { ...defaultFrameProps, ...additionalFrameProps };
 };
 
-const getFramePropsLine = (data, colorScale, tooltipContent) => ({
+const getFramePropsLine = (
+  data,
+  colorScale,
+  tooltipContent,
+  hoverBehavior
+) => ({
   lines: [{ coordinates: data }],
 
   xAccessor: "name",
@@ -68,11 +73,12 @@ const getFramePropsLine = (data, colorScale, tooltipContent) => ({
   ],
   showLinePoints: "top",
 
-  additionalDefs: getColorGradient(data.map(labelValue => labelValue.name)),
-  tooltipContent
+  additionalDefs: getColorGradient(data.map(d => d.name)),
+  tooltipContent,
+  customHoverBehavior: hoverBehavior
 });
 
-const getFramePropsBar = (data, colorScale, tooltipContent) => ({
+const getFramePropsBar = (data, colorScale, tooltipContent, hoverBehavior) => ({
   data: data,
 
   type: "bar",
@@ -82,7 +88,8 @@ const getFramePropsBar = (data, colorScale, tooltipContent) => ({
   axes: [{ orient: "left", label: "# Cells" }],
   style: d => ({ fill: colorScale(d.name), stroke: "white" }),
 
-  tooltipContent: ({ pieces }) => tooltipContent(pieces[0])
+  tooltipContent: ({ pieces }) => tooltipContent(pieces[0]),
+  customHoverBehavior: d => hoverBehavior(d ? d.pieces[0].data : d)
 });
 
 export default AbundancePlot;

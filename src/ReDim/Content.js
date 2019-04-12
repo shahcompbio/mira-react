@@ -42,7 +42,7 @@ class Content extends Component {
   hoverBehavior = d => {
     if (d) {
       this.setState({
-        highlighted: d.hasOwnProperty("pieces") ? d.pieces[0].data.name : d.name
+        highlighted: d.name
       });
     } else {
       this.setState({
