@@ -23,7 +23,6 @@ export const getColorGradient = data => {
   const toColorScale = scaleSequential(interpolateYlGnBu).domain([0, 1]);
 
   const gradientStops = data.map(datum => {
-    console.log(datum);
     return (
       <stop
         offset={`${ordinalScale(datum) * 100}%`}
@@ -32,13 +31,11 @@ export const getColorGradient = data => {
     );
   });
 
-  console.log(gradientStops);
   const linearGradients = [
     <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
       {gradientStops}
     </linearGradient>
   ];
 
-  console.log(linearGradients);
   return linearGradients;
 };

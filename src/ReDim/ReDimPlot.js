@@ -4,7 +4,6 @@ import XYFrame from "semiotic/lib/XYFrame";
 
 const ReDimPlot = ({ data, colorScale, highlighted, labelTitle }) => {
   const frameProps = getFrameProps(data, colorScale, highlighted, labelTitle);
-
   return <XYFrame {...frameProps} />;
 };
 
@@ -21,8 +20,10 @@ const getFrameProps = (data, colorScale, highlighted, labelTitle) => ({
     r: 4,
     fill: colorScale(d.label),
     stroke:
-      !highlighted || highlighted === d.label ? colorScale(d.label) : "#c7c7c7",
-    fillOpacity: !highlighted || highlighted === d.label ? 0.8 : 0.01
+      highlighted === null || highlighted === d.label
+        ? colorScale(d.label)
+        : "#c7c7c7",
+    fillOpacity: highlighted === null || highlighted === d.label ? 0.8 : 0.01
   }),
   axes: [
     { orient: "left", label: " " },

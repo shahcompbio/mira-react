@@ -42,7 +42,7 @@ class Content extends Component {
   hoverBehavior = d => {
     if (d) {
       this.setState({
-        highlighted: d.column.name
+        highlighted: d.hasOwnProperty("pieces") ? d.pieces[0].data.name : d.name
       });
     } else {
       this.setState({
@@ -67,6 +67,7 @@ class Content extends Component {
             data.colorLabelValues.map(labelValue => labelValue.name),
             label.type
           );
+
           return (
             <div style={DivStyles}>
               <FacetController>

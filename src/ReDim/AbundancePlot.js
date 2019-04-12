@@ -13,7 +13,7 @@ const AbundancePlot = ({ data, colorScale, hoverBehavior, label }) => {
     return <OrdinalFrame {...frameProps} customHoverBehavior={hoverBehavior} />;
   } else {
     const frameProps = getFramePropsLine(data, colorScale);
-    return <XYFrame {...frameProps} />;
+    return <XYFrame {...frameProps} customHoverBehavior={hoverBehavior} />;
   }
 };
 
