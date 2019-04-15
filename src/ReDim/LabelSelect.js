@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import Select from "react-select";
-import { List } from "react-virtualized";
+import { FixedSizeList as List } from "react-window";
 
 class LabelSelect extends Component {
   componentDidMount() {
@@ -36,23 +36,24 @@ class LabelSelect extends Component {
   }
 }
 
-const MenuList = props => {
-  const rowRenderer = ({ key, index, isScrolling, isVisible, style }) => (
-    <div key={key}>{props.children[index]}</div>
-  );
+class MenuList extends Component {
+  render() {
+    const height = 35;
+    const { options, children, maxHeight, getValue } = this.props;
+    const [value] = getValue();
+    const initialOffset = options.indexOf(value) * height;
 
-  return (
-    <List
-      rowHeight={20}
-      height={500}
-      width={300}
-      rowCount={props.options.length}
-      rowRenderer={rowRenderer}
-      style={{
-        width: "100%",
-        zIndex: 11
-      }}
-    />
-  );
-};
+    return (
+      <List
+        height={maxHeight}
+        itemCount={children.length}
+        itemSize={height}
+        initialScrollOffset={initialOffset}
+      >
+        {({ index, style }) => <div style={style}>{children[index]}</div>}
+      </List>
+    );
+  }
+}
+
 export default LabelSelect;
