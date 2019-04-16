@@ -15,10 +15,23 @@ class LabelSelect extends Component {
       const result = data.filter(datum => datum.id === item.value)[0];
       onSelect(result);
     };
+
     const options = data.map(label => ({
       value: label.id,
       label: label.title
     }));
+
+    const [cellType, clusterType, ...geneTypes] = options;
+
+    const categoryGroup = [
+      { value: "categories", label: "Cell Properties", type: "header" },
+      cellType,
+      clusterType
+    ];
+    const geneGroup = [
+      { value: "genes", label: "Genes", type: "header" },
+      ...geneTypes
+    ];
 
     return (
       <div style={{ width: "300px" }}>
@@ -27,8 +40,9 @@ class LabelSelect extends Component {
           <Select
             defaultValue={options[0]}
             onChange={handleChange}
-            options={options}
+            options={[...categoryGroup, ...geneGroup]}
             components={{ MenuList }}
+            isOptionDisabled={option => option.hasOwnProperty("type")}
           />
         </span>
       </div>
@@ -55,5 +69,9 @@ class MenuList extends Component {
     );
   }
 }
+
+const HeaderOption = ({ children, style }) => (
+  <div style={style}>{children}</div>
+);
 
 export default LabelSelect;
