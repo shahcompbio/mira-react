@@ -5,44 +5,39 @@ import { FixedSizeList as List } from "react-window";
 
 class LabelSelect extends Component {
   componentDidMount() {
-    this.props.onSelect(this.props.data[0]);
+    this.props.onSelect(this.props.data[0]["labels"][0]);
   }
 
   render() {
     const { data, onSelect } = this.props;
 
+    const allOptions = data.reduce(
+      (options, group) => [...options, ...group.labels],
+      []
+    );
+
     const handleChange = item => {
-      const result = data.filter(datum => datum.id === item.value)[0];
+      const result = allOptions.filter(datum => datum.id === item.value)[0];
       onSelect(result);
     };
 
-    const options = data.map(label => ({
-      value: label.id,
-      label: label.title
+    const groupOptions = data.map(group => ({
+      label: group.title,
+      options: group.labels.map(label => ({
+        value: label.id,
+        label: label.title
+      }))
     }));
-
-    const [cellType, clusterType, ...geneTypes] = options;
-
-    const categoryGroup = [
-      { value: "categories", label: "Cell Properties", type: "header" },
-      cellType,
-      clusterType
-    ];
-    const geneGroup = [
-      { value: "genes", label: "Genes", type: "header" },
-      ...geneTypes
-    ];
 
     return (
       <div style={{ width: "300px" }}>
         <span>
           Color By
           <Select
-            defaultValue={options[0]}
+            defaultValue={groupOptions[0]["options"][0]}
             onChange={handleChange}
-            options={[...categoryGroup, ...geneGroup]}
-            components={{ MenuList }}
-            isOptionDisabled={option => option.hasOwnProperty("type")}
+            options={groupOptions}
+            components={{ MenuList, Group }}
           />
         </span>
       </div>
@@ -50,28 +45,22 @@ class LabelSelect extends Component {
   }
 }
 
-class MenuList extends Component {
-  render() {
-    const height = 35;
-    const { options, children, maxHeight, getValue } = this.props;
-    const [value] = getValue();
-    const initialOffset = options.indexOf(value) * height;
-
-    return (
-      <List
-        height={maxHeight}
-        itemCount={children.length}
-        itemSize={height}
-        initialScrollOffset={initialOffset}
-      >
-        {({ index, style }) => <div style={style}>{children[index]}</div>}
-      </List>
-    );
-  }
-}
-
-const HeaderOption = ({ children, style }) => (
-  <div style={style}>{children}</div>
+const Group = ({ label }) => (
+  <div style={{ background: "#e0e0e0", padding: "8px" }}>{label}</div>
 );
+
+const MenuList = ({ children, maxHeight }) => {
+  const height = 35;
+
+  const options = children.reduce(
+    (options, child) => [...options, child, ...child.props.children],
+    []
+  );
+  return (
+    <List height={maxHeight} itemCount={options.length} itemSize={height}>
+      {({ index, style }) => <div style={style}>{options[index]}</div>}
+    </List>
+  );
+};
 
 export default LabelSelect;
