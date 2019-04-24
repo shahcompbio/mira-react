@@ -1,28 +1,40 @@
 import React from "react";
 
-import { scalePoint, scaleSequential } from "d3-scale";
+import { scaleLinear, scalePoint, scaleSequential } from "d3-scale";
 import { interpolateRainbow, interpolateYlGnBu } from "d3-scale-chromatic";
 
 export const getColorScale = (data, type) => {
-  const ordinalScale = getOrdinalScale(data);
+  if (type === "categorical") {
+    const ordinalScale = getOrdinalScale(data);
+    const toColorScale = scaleSequential(interpolateRainbow).domain([0, 1]);
+    return datum => toColorScale(ordinalScale(datum));
+  } else {
+    const lastItem = data[data.length - 1];
+    const linearScale = scaleLinear()
+      .domain([data[0], lastItem])
+      .range([0, 1]);
+    const toColorScale = scaleSequential(interpolateYlGnBu).domain([0, 1]);
+    return datum => toColorScale(1 - linearScale(datum));
+  }
 
-  const toColorScale = scaleSequential(
-    type === "categorical" ? interpolateRainbow : interpolateYlGnBu
-  ).domain([0, 1]);
-
-  return datum => toColorScale(ordinalScale(datum));
+  // return datum => toColorScale(ordinalScale(datum));
 };
 
 export const getColorGradient = data => {
-  const ordinalScale = getOrdinalScale(data);
-
+  const lastItem = data[data.length - 1];
+  const linearScale = scaleLinear()
+    .domain([data[0], lastItem])
+    .range([0, 1]);
   const toColorScale = scaleSequential(interpolateYlGnBu).domain([0, 1]);
 
   const gradientStops = data.map(datum => {
     return (
       <stop
-        offset={`${ordinalScale(datum) * 100}%`}
-        style={{ stopColor: toColorScale(ordinalScale(datum)), stopOpacity: 1 }}
+        offset={`${linearScale(datum) * 100}%`}
+        style={{
+          stopColor: toColorScale(1 - linearScale(datum)),
+          stopOpacity: 1
+        }}
       />
     );
   });

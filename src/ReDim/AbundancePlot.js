@@ -57,7 +57,7 @@ const getFramePropsLine = (
   yScaleType: scalePow().exponent(0.5),
   lineType: { type: "line", interpolator: curveCardinal, y1: () => 0 },
   pointStyle: d => {
-    return { fill: colorScale(d.name), stroke: "#c0c0c0", r: 4 };
+    return { fill: colorScale(d.name), r: 1 };
   },
   lineStyle: (d, i) => ({
     stroke: "#c0c0c0",
