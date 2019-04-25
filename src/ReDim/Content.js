@@ -74,7 +74,9 @@ class Content extends Component {
           if (error) return null;
 
           const colorScale = getColorScale(
-            data.colorLabelValues.map(labelValue => labelValue.name),
+            data.colorLabelValues.map(labelValue =>
+              label.type === "categorical" ? labelValue.name : labelValue.max
+            ),
             label.type
           );
 

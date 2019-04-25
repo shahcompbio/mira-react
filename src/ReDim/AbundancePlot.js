@@ -52,12 +52,12 @@ const getFramePropsLine = (
 ) => ({
   lines: [{ coordinates: data }],
 
-  xAccessor: "name",
+  xAccessor: "min",
   yAccessor: "count",
   yScaleType: scalePow().exponent(0.5),
   lineType: { type: "line", interpolator: curveCardinal, y1: () => 0 },
   pointStyle: d => {
-    return { fill: colorScale(d.name), r: 1 };
+    return { fill: colorScale(d.min), r: 1 };
   },
   lineStyle: (d, i) => ({
     stroke: "#c0c0c0",
@@ -74,7 +74,7 @@ const getFramePropsLine = (
   ],
   showLinePoints: "top",
 
-  additionalDefs: getColorGradient(data.map(d => d.name)),
+  additionalDefs: getColorGradient(data.map(d => d.min)),
   tooltipContent,
   customHoverBehavior: hoverBehavior
 });
