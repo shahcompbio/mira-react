@@ -26,6 +26,10 @@ const QUERY = gql`
     ) {
       name
       count
+      ... on Gene {
+        min
+        max
+      }
     }
   }
 `;
@@ -40,10 +44,17 @@ class Content extends Component {
   }
 
   hoverBehavior = d => {
+    console.log(d);
     if (d) {
-      this.setState({
-        highlighted: d.name
-      });
+      if (d["__typename"] === "Categorical") {
+        this.setState({
+          highlighted: cell => d.name === cell.label
+        });
+      } else {
+        this.setState({
+          highlighted: cell => d.min <= cell.label && cell.label <= d.max
+        });
+      }
     } else {
       this.setState({
         highlighted: null
