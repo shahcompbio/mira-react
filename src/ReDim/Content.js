@@ -44,7 +44,6 @@ class Content extends Component {
   }
 
   hoverBehavior = d => {
-    console.log(d);
     if (d) {
       if (d["__typename"] === "Categorical") {
         this.setState({
