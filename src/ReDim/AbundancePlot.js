@@ -69,7 +69,7 @@ const getFramePropsLine = (
     { orient: "left", label: "# Cells" },
     {
       orient: "bottom",
-      label: { name: "Expression Level", locationDistance: 55 }
+      label: { name: "Log Count", locationDistance: 55 }
     }
   ],
   showLinePoints: "top",
