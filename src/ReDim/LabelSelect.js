@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import Select from "react-select";
+import Select, { createFilter } from "react-select";
 import { FixedSizeList as List } from "react-window";
 
 class LabelSelect extends Component {
@@ -38,6 +38,7 @@ class LabelSelect extends Component {
             onChange={handleChange}
             options={groupOptions}
             components={{ MenuList, Group }}
+            filterOption={createFilter({ ignoreAccents: false })}
           />
         </span>
       </div>
