@@ -51,7 +51,7 @@ class Content extends Component {
         });
       } else {
         this.setState({
-          highlighted: cell => d.min <= cell.label && cell.label <= d.max
+          highlighted: cell => d.min <= cell.label && cell.label < d.max
         });
       }
     } else {
