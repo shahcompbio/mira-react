@@ -52,10 +52,12 @@ const Group = ({ label }) => (
 const MenuList = ({ children, maxHeight }) => {
   const height = 35;
 
-  const options = children.reduce(
-    (options, child) => [...options, child, ...child.props.children],
-    []
-  );
+  const options = Array.isArray(children)
+    ? children.reduce(
+        (options, child) => [...options, child, ...child.props.children],
+        []
+      )
+    : [];
   return (
     <List height={maxHeight} itemCount={options.length} itemSize={height}>
       {({ index, style }) => <div style={style}>{options[index]}</div>}
