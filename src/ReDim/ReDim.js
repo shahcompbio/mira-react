@@ -7,8 +7,8 @@ import LabelSelect from "./LabelSelect";
 import Content from "./Content";
 
 const QUERY = gql`
-  query($sampleID: String!) {
-    colorLabels(sampleID: $sampleID) {
+  query($patientID: String!, $sampleID: String!) {
+    colorLabels(patientID: $patientID, sampleID: $sampleID) {
       id
       title
       labels {
@@ -34,10 +34,10 @@ class ReDim extends Component {
   };
 
   render() {
-    const { sampleID } = this.props;
+    const { patientID, sampleID } = this.props;
 
     return !sampleID ? null : (
-      <Query query={QUERY} variables={{ sampleID }}>
+      <Query query={QUERY} variables={{ patientID, sampleID }}>
         {({ loading, error, data }) => {
           if (loading) return null;
           if (error) return null;
@@ -48,7 +48,11 @@ class ReDim extends Component {
                 data={data.colorLabels}
                 onSelect={this.onLabelSelect}
               />
-              <Content sampleID={sampleID} label={this.state.label} />
+              <Content
+                patientID={patientID}
+                sampleID={sampleID}
+                label={this.state.label}
+              />
             </div>
           );
         }}

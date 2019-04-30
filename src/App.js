@@ -1,14 +1,15 @@
 import React from "react";
-import SampleSelect from "./SampleSelect";
+import DataSelect from "./Select/DataSelect";
 import { withRouter } from "react-router";
 import ReDim from "./ReDim/ReDim";
 
 const App = ({ location }) => {
-  const sampleID = location.pathname.substr(1);
+  const [patientID, sampleID] = location.pathname.substr(1).split("/");
+  console.log(patientID, sampleID);
   return (
     <div className="App" style={AppStyles}>
-      <SampleSelect sampleID={sampleID} />
-      <ReDim sampleID={sampleID} />
+      <DataSelect patientID={patientID} sampleID={sampleID} />
+      <ReDim patientID={patientID} sampleID={sampleID} />
     </div>
   );
 };

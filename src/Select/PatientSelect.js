@@ -8,10 +8,10 @@ import { withRouter } from "react-router";
 
 const QUERY = gql`
   query {
-    samples
+    patients
   }
 `;
-const SampleSelect = ({ sampleID, history, data }) => {
+const PatientSelect = ({ patientID, history, data }) => {
   if (data && data.loading) {
     return null;
   }
@@ -22,22 +22,22 @@ const SampleSelect = ({ sampleID, history, data }) => {
 
   const handleChange = (e, { value }) => history.push("/" + value);
 
-  const options = data.samples.map(sample => ({
-    key: sample,
-    text: sample,
-    value: sample
+  const options = data.patients.map(patient => ({
+    key: patient,
+    text: patient,
+    value: patient
   }));
 
   return (
     <Dropdown
       onChange={handleChange}
-      placeholder="Samples"
+      placeholder="Patients"
       selection
       fluid
       options={options}
-      defaultValue={sampleID}
+      defaultValue={patientID}
     />
   );
 };
 
-export default graphql(QUERY)(withRouter(SampleSelect));
+export default graphql(QUERY)(withRouter(PatientSelect));

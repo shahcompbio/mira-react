@@ -11,8 +11,18 @@ import FacetController from "semiotic/lib/FacetController";
 import { getColorScale } from "./colors";
 
 const QUERY = gql`
-  query($sampleID: String!, $label: String!, $labelType: String!) {
-    cells(sampleID: $sampleID, label: $label, labelType: $labelType) {
+  query(
+    $patientID: String!
+    $sampleID: String!
+    $label: String!
+    $labelType: String!
+  ) {
+    cells(
+      patientID: $patientID
+      sampleID: $sampleID
+      label: $label
+      labelType: $labelType
+    ) {
       name
       x
       y
@@ -20,6 +30,7 @@ const QUERY = gql`
     }
 
     colorLabelValues(
+      patientID: $patientID
       sampleID: $sampleID
       label: $label
       labelType: $labelType
@@ -62,12 +73,17 @@ class Content extends Component {
   };
 
   render() {
-    const { sampleID, label } = this.props;
+    const { patientID, sampleID, label } = this.props;
 
     return !sampleID || !label ? null : (
       <Query
         query={QUERY}
-        variables={{ sampleID, label: label.id, labelType: label.type }}
+        variables={{
+          patientID,
+          sampleID,
+          label: label.id,
+          labelType: label.type
+        }}
       >
         {({ loading, error, data }) => {
           if (loading) return null;
