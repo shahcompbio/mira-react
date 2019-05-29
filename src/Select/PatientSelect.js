@@ -1,17 +1,17 @@
 import React from "react";
-import { Dropdown } from "semantic-ui-react";
+import {Dropdown, Container, Header} from "semantic-ui-react";
 
-import { graphql } from "react-apollo";
+import {graphql} from "react-apollo";
 import gql from "graphql-tag";
 
-import { withRouter } from "react-router";
+import {withRouter} from "react-router";
 
 const QUERY = gql`
   query {
     patients
   }
 `;
-const PatientSelect = ({ patientID, history, data }) => {
+const PatientSelect = ({patientID, history, data, style}) => {
   if (data && data.loading) {
     return null;
   }
@@ -20,7 +20,7 @@ const PatientSelect = ({ patientID, history, data }) => {
     return null;
   }
 
-  const handleChange = (e, { value }) => history.push("/" + value);
+  const handleChange = (e, {value}) => history.push("/" + value);
 
   const options = data.patients.map(patient => ({
     key: patient,
@@ -29,14 +29,22 @@ const PatientSelect = ({ patientID, history, data }) => {
   }));
 
   return (
-    <Dropdown
-      onChange={handleChange}
-      placeholder="Patients"
-      selection
-      fluid
-      options={options}
-      defaultValue={patientID}
-    />
+    <Container style={{"margin-right": "150px !important"}}>
+      {patientID ? (
+        <Header as="h4">Patient ID:</Header>
+      ) : (
+        <Header as="h4">Select a patient:</Header>
+      )}
+      <Dropdown
+        onChange={handleChange}
+        selection
+        floating
+        scrolling
+        options={options}
+        defaultValue={patientID}
+        style={style}
+      />
+    </Container>
   );
 };
 

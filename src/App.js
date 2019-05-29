@@ -1,11 +1,11 @@
 import React from "react";
 import DataSelect from "./Select/DataSelect";
-import { withRouter } from "react-router";
+import {withRouter} from "react-router";
 import ReDim from "./ReDim/ReDim";
 
-const App = ({ location }) => {
+const App = ({location}) => {
   const [patientID, sampleID] = location.pathname.substr(1).split("/");
-  console.log(patientID, sampleID);
+
   return (
     <div className="App" style={AppStyles}>
       <DataSelect patientID={patientID} sampleID={sampleID} />

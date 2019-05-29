@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-
-import { Query } from "react-apollo";
+import React, {Component} from "react";
+import {Container} from "semantic-ui-react";
+import {Query} from "react-apollo";
 import gql from "graphql-tag";
 
 import ReDimPlot from "./ReDimPlot";
@@ -8,7 +8,7 @@ import AbundancePlot from "./AbundancePlot";
 
 import FacetController from "semiotic/lib/FacetController";
 
-import { getColorScale } from "./colors";
+import {getColorScale} from "./colors";
 
 const QUERY = gql`
   query(
@@ -73,7 +73,7 @@ class Content extends Component {
   };
 
   render() {
-    const { patientID, sampleID, label } = this.props;
+    const {patientID, sampleID, label} = this.props;
 
     return !sampleID || !label ? null : (
       <Query
@@ -85,7 +85,7 @@ class Content extends Component {
           labelType: label.type
         }}
       >
-        {({ loading, error, data }) => {
+        {({loading, error, data}) => {
           if (loading) return null;
           if (error) return null;
 
@@ -105,12 +105,14 @@ class Content extends Component {
                   highlighted={this.state.highlighted}
                   labelTitle={label.title}
                 />
-                <AbundancePlot
-                  label={label}
-                  data={data.colorLabelValues}
-                  colorScale={colorScale}
-                  hoverBehavior={this.hoverBehavior}
-                />
+                <div style={ContainerStyles}>
+                  <AbundancePlot
+                    label={label}
+                    data={data.colorLabelValues}
+                    colorScale={colorScale}
+                    hoverBehavior={this.hoverBehavior}
+                  />
+                </div>
               </FacetController>
             </div>
           );
@@ -119,9 +121,14 @@ class Content extends Component {
     );
   }
 }
-
+const ContainerStyles = {
+  marginTop: "120px",
+  paddingLeft: "15px",
+  zIndex: 150
+};
 const DivStyles = {
-  width: "100%",
+  width: "80%",
+  marginLeft: "25px",
   display: "flex",
   flexDirection: "row",
   alignItems: "flex-start",

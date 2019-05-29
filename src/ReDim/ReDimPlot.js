@@ -2,7 +2,7 @@ import React from "react";
 
 import XYFrame from "semiotic/lib/XYFrame";
 
-const ReDimPlot = ({ data, colorScale, highlighted, labelTitle }) => {
+const ReDimPlot = ({data, colorScale, highlighted, labelTitle}) => {
   const frameProps = getFrameProps(data, colorScale, highlighted, labelTitle);
   return <XYFrame {...frameProps} />;
 };
@@ -10,8 +10,8 @@ const ReDimPlot = ({ data, colorScale, highlighted, labelTitle }) => {
 const getFrameProps = (data, colorScale, highlighted, labelTitle) => ({
   points: data,
 
-  size: [700, 500],
-  margin: { left: 60, bottom: 90, right: 10, top: 40 },
+  size: [1000, 700],
+  margin: {left: 60, bottom: 90, right: 10, top: 40},
 
   xAccessor: "x",
   yAccessor: "y",
@@ -24,8 +24,8 @@ const getFrameProps = (data, colorScale, highlighted, labelTitle) => ({
     fillOpacity: highlighted === null || highlighted(d) ? 0.8 : 0.01
   }),
   axes: [
-    { orient: "left", label: " " },
-    { orient: "bottom", label: { name: " ", locationDistance: 55 } }
+    {orient: "left", label: " "},
+    {orient: "bottom", label: {name: " ", locationDistance: 55}}
   ],
   hoverAnnotation: true,
 

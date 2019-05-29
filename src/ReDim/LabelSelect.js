@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-
-import Select, { createFilter } from "react-select";
-import { FixedSizeList as List } from "react-window";
+import React, {Component} from "react";
+import {Container, Header} from "semantic-ui-react";
+import Select, {createFilter} from "react-select";
+import {FixedSizeList as List} from "react-window";
 
 class LabelSelect extends Component {
   componentDidMount() {
@@ -9,7 +9,7 @@ class LabelSelect extends Component {
   }
 
   render() {
-    const { data, onSelect } = this.props;
+    const {data, onSelect} = this.props;
 
     const allOptions = data.reduce(
       (options, group) => [...options, ...group.labels],
@@ -17,8 +17,12 @@ class LabelSelect extends Component {
     );
 
     const handleChange = item => {
-      const result = allOptions.filter(datum => datum.id === item.value)[0];
-      onSelect(result);
+      if (item) {
+        const result = allOptions.filter(datum => datum.id === item.value)[0];
+        onSelect(result);
+      } else {
+        onSelect(null);
+      }
     };
 
     const groupOptions = data.map(group => ({
@@ -28,29 +32,67 @@ class LabelSelect extends Component {
         label: label.title
       }))
     }));
+    const customSelectStyles = {
+      option: (styles, state) => ({
+        ...styles,
+        color: state.isSelected ? "#000" : styles.color,
+        backgroundColor: state.isSelected ? "rgb(243, 246, 251)" : styles.color,
+        borderBottom: "1px solid rgba(0, 0, 0, 0.125)",
+        "&:hover": {
+          color: "#000",
+          backgroundColor: "#d2e0f7"
+        }
+      }),
+      control: (styles, state) => ({
+        ...styles,
+        boxShadow: state.isFocused ? "0 0 0 0.2rem #f3f6fb" : 0,
+        borderColor: state.isFocused ? "#c0dbe2" : "#CED4DA",
+        "&:hover": {
+          borderColor: state.isFocused ? "#c0dbe2" : "#CED4DA"
+        }
+      })
+    };
 
     return (
-      <div style={{ width: "300px" }}>
-        <span>
-          Color By
+      <Container style={{zIndex: "150"}}>
+        <Header as="h4">Color By:</Header>
+        <div style={{"z-index": "150", position: "relative"}}>
           <Select
+            styles={customSelectStyles}
             defaultValue={groupOptions[0]["options"][0]}
             onChange={handleChange}
             options={groupOptions}
-            components={{ MenuList, Group }}
-            filterOption={createFilter({ ignoreAccents: false })}
+            components={{MenuList, Group}}
+            isSearchable
+            filterOption={createFilter({ignoreAccents: false})}
           />
-        </span>
-      </div>
+        </div>
+      </Container>
     );
   }
 }
 
-const Group = ({ label }) => (
-  <div style={{ background: "#e0e0e0", padding: "8px" }}>{label}</div>
+const groupBadgeStyles = {
+  backgroundColor: "#bfbfbf",
+  borderRadius: "2em",
+  color: "#172B4D",
+  display: "inline-block",
+  float: "right",
+  fontSize: 12,
+  fontWeight: "normal",
+  lineHeight: "1",
+  minWidth: 1,
+  padding: "0.16666666666667em 0.5em",
+  textAlign: "center"
+};
+const Group = ({label, options}) => (
+  <div style={{background: "#efefef", padding: "8px", fontWeight: "bold"}}>
+    <span>{label}</span>
+    <span style={groupBadgeStyles}>{options.length}</span>
+  </div>
 );
 
-const MenuList = ({ children, maxHeight }) => {
+const MenuList = ({children, maxHeight}) => {
   const height = 35;
 
   const options = Array.isArray(children)
@@ -61,7 +103,7 @@ const MenuList = ({ children, maxHeight }) => {
     : [];
   return (
     <List height={maxHeight} itemCount={options.length} itemSize={height}>
-      {({ index, style }) => <div style={style}>{options[index]}</div>}
+      {({index, style}) => <div style={style}>{options[index]}</div>}
     </List>
   );
 };

@@ -1,13 +1,13 @@
 import React from "react";
 
-import { OrdinalFrame, XYFrame } from "semiotic";
+import {OrdinalFrame, XYFrame} from "semiotic";
 
-import { scalePow } from "d3-scale";
-import { curveCardinal } from "d3-shape";
+import {scalePow} from "d3-scale";
+import {curveCardinal} from "d3-shape";
 
-import { getColorGradient } from "./colors";
+import {getColorGradient} from "./colors";
 
-const AbundancePlot = ({ data, colorScale, hoverBehavior, label }) => {
+const AbundancePlot = ({data, colorScale, hoverBehavior, label}) => {
   const frameProps = getFrameProps(data, colorScale, label, hoverBehavior);
 
   return label.type === "categorical" ? (
@@ -19,7 +19,7 @@ const AbundancePlot = ({ data, colorScale, hoverBehavior, label }) => {
 
 const getFrameProps = (data, colorScale, label, hoverBehavior) => {
   const defaultFrameProps = {
-    size: [300, 300],
+    size: [420, 520],
     margin: 70,
 
     hoverAnnotation: true,
@@ -41,7 +41,7 @@ const getFrameProps = (data, colorScale, label, hoverBehavior) => {
       ? getFramePropsBar(data, colorScale, tooltipContent, hoverBehavior)
       : getFramePropsLine(data, colorScale, tooltipContent, hoverBehavior);
 
-  return { ...defaultFrameProps, ...additionalFrameProps };
+  return {...defaultFrameProps, ...additionalFrameProps};
 };
 
 const getFramePropsLine = (
@@ -50,14 +50,14 @@ const getFramePropsLine = (
   tooltipContent,
   hoverBehavior
 ) => ({
-  lines: [{ coordinates: data }],
+  lines: [{coordinates: data}],
 
   xAccessor: "min",
   yAccessor: "count",
   yScaleType: scalePow().exponent(0.5),
-  lineType: { type: "line", interpolator: curveCardinal, y1: () => 0 },
+  lineType: {type: "line", interpolator: curveCardinal, y1: () => 0},
   pointStyle: d => {
-    return { fill: colorScale(d.min), r: 1 };
+    return {fill: colorScale(d.min), r: 1};
   },
   lineStyle: (d, i) => ({
     stroke: "#c0c0c0",
@@ -66,10 +66,10 @@ const getFramePropsLine = (
     fillOpacity: 0.8
   }),
   axes: [
-    { orient: "left", label: "# Cells" },
+    {orient: "left", label: "# Cells"},
     {
       orient: "bottom",
-      label: { name: "Log Count", locationDistance: 55 }
+      label: {name: "Log Count", locationDistance: 55}
     }
   ],
   showLinePoints: "top",
@@ -86,10 +86,10 @@ const getFramePropsBar = (data, colorScale, tooltipContent, hoverBehavior) => ({
   rAccessor: "count",
   rScaleType: scalePow().exponent(0.7),
   oAccessor: "name",
-  axes: [{ orient: "left", label: "# Cells" }],
-  style: d => ({ fill: colorScale(d.name), stroke: "white" }),
+  axes: [{orient: "left", label: "# Cells"}],
+  style: d => ({fill: colorScale(d.name), stroke: "white"}),
 
-  tooltipContent: ({ pieces }) => tooltipContent(pieces[0]),
+  tooltipContent: ({pieces}) => tooltipContent(pieces[0]),
   customHoverBehavior: d => hoverBehavior(d ? d.pieces[0].data : d)
 });
 

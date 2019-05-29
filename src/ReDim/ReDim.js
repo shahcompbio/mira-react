@@ -1,6 +1,6 @@
-import React, { Component } from "react";
-
-import { Query } from "react-apollo";
+import React, {Component} from "react";
+import {Segment, Divider} from "semantic-ui-react";
+import {Query} from "react-apollo";
 import gql from "graphql-tag";
 
 import LabelSelect from "./LabelSelect";
@@ -30,29 +30,37 @@ class ReDim extends Component {
   }
 
   onLabelSelect = label => {
-    this.setState(() => ({ label }));
+    this.setState(() => ({label}));
   };
 
   render() {
-    const { patientID, sampleID } = this.props;
+    const {patientID, sampleID} = this.props;
 
     return !sampleID ? null : (
-      <Query query={QUERY} variables={{ patientID, sampleID }}>
-        {({ loading, error, data }) => {
+      <Query query={QUERY} variables={{patientID, sampleID}}>
+        {({loading, error, data}) => {
           if (loading) return null;
           if (error) return null;
 
           return (
             <div style={DivStyles}>
-              <LabelSelect
-                data={data.colorLabels}
-                onSelect={this.onLabelSelect}
-              />
-              <Content
-                patientID={patientID}
-                sampleID={sampleID}
-                label={this.state.label}
-              />
+              <Segment vertical style={{width: "78%"}}>
+                <Content
+                  patientID={patientID}
+                  sampleID={sampleID}
+                  label={this.state.label}
+                />
+              </Segment>{" "}
+              <Segment
+                vertical
+                style={{width: "25%", marginTop: "50px", marginLeft: "40px"}}
+              >
+                <LabelSelect
+                  data={data.colorLabels}
+                  onSelect={this.onLabelSelect}
+                />
+                <Divider style={{margin: "25px"}} />
+              </Segment>
             </div>
           );
         }}
@@ -62,11 +70,11 @@ class ReDim extends Component {
 }
 
 const DivStyles = {
-  margin: "25px",
-
-  width: "70%",
+  width: "70vw",
   display: "flex",
-  flexDirection: "column"
+  flexDirection: "row",
+
+  backgroundColor: ""
 };
 
 export default ReDim;
