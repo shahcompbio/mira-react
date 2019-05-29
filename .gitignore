@@ -27,3 +27,4 @@ yarn-error.log*
 /semantic/dist/
 /semantic/src/themes/*
 !/semantic/src/themes/lumen
+!/semantic/src/themes/default
