@@ -44,7 +44,7 @@ class ReDim extends Component {
 
           return (
             <div style={DivStyles}>
-              <Segment vertical style={{width: "78%"}}>
+              <Segment vertical>
                 <Content
                   patientID={patientID}
                   sampleID={sampleID}
@@ -53,7 +53,7 @@ class ReDim extends Component {
               </Segment>{" "}
               <Segment
                 vertical
-                style={{width: "25%", marginTop: "50px", marginLeft: "40px"}}
+                style={{width: "25%", marginTop: "50px", marginLeft: "-20vw"}}
               >
                 <LabelSelect
                   data={data.colorLabels}
@@ -70,7 +70,7 @@ class ReDim extends Component {
 }
 
 const DivStyles = {
-  width: "70vw",
+  width: "70%",
   display: "flex",
   flexDirection: "row",
 

@@ -122,7 +122,7 @@ class Content extends Component {
   }
 }
 const ContainerStyles = {
-  marginTop: "120px",
+  marginTop: "140px",
   paddingLeft: "15px",
   zIndex: 150
 };
