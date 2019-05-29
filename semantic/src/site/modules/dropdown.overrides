@@ -1,0 +1,9 @@
+/*******************************
+        User Overrides
+*******************************/
+.ui.dropdown .menu .selected.item, .ui.dropdown.selected {
+background:#F3F6FB;
+}
+.ui.dropdown .menu>.item:hover {
+background:#d2e0f7;
+}

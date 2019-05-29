@@ -1,0 +1,6 @@
+/*******************************
+         Site Overrides
+*******************************/
+.ui.dropdown .menu .active.item{
+font-weight: 500 !important;
+}
