@@ -2,15 +2,36 @@ import React from "react";
 
 import XYFrame from "semiotic/lib/XYFrame";
 
-const ReDimPlot = ({data, colorScale, highlighted, labelTitle}) => {
-  const frameProps = getFrameProps(data, colorScale, highlighted, labelTitle);
+const ReDimPlot = ({
+  data,
+  colorScale,
+  highlighted,
+  labelTitle,
+  height,
+  width
+}) => {
+  const frameProps = getFrameProps(
+    data,
+    colorScale,
+    highlighted,
+    labelTitle,
+    height,
+    width
+  );
   return <XYFrame {...frameProps} />;
 };
 
-const getFrameProps = (data, colorScale, highlighted, labelTitle) => ({
+const getFrameProps = (
+  data,
+  colorScale,
+  highlighted,
+  labelTitle,
+  height,
+  width
+) => ({
   points: data,
 
-  size: [1000, 700],
+  size: [width, height],
   margin: {left: 60, bottom: 90, right: 10, top: 40},
 
   xAccessor: "x",

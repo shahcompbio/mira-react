@@ -7,8 +7,22 @@ import {curveCardinal} from "d3-shape";
 
 import {getColorGradient} from "./colors";
 
-const AbundancePlot = ({data, colorScale, hoverBehavior, label}) => {
-  const frameProps = getFrameProps(data, colorScale, label, hoverBehavior);
+const AbundancePlot = ({
+  data,
+  colorScale,
+  hoverBehavior,
+  label,
+  height,
+  width
+}) => {
+  const frameProps = getFrameProps(
+    data,
+    colorScale,
+    label,
+    hoverBehavior,
+    height,
+    width
+  );
 
   return label.type === "categorical" ? (
     <OrdinalFrame {...frameProps} />
@@ -17,9 +31,16 @@ const AbundancePlot = ({data, colorScale, hoverBehavior, label}) => {
   );
 };
 
-const getFrameProps = (data, colorScale, label, hoverBehavior) => {
+const getFrameProps = (
+  data,
+  colorScale,
+  label,
+  hoverBehavior,
+  height,
+  width
+) => {
   const defaultFrameProps = {
-    size: [420, 520],
+    size: [width, height],
     margin: 70,
 
     hoverAnnotation: true,

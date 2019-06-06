@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import {Container} from "semantic-ui-react";
 import {Query} from "react-apollo";
 import gql from "graphql-tag";
 
@@ -9,6 +8,10 @@ import AbundancePlot from "./AbundancePlot";
 import FacetController from "semiotic/lib/FacetController";
 
 import {getColorScale} from "./colors";
+
+const reDimPlotWidthScale = 0.5;
+const abundancesPlotWidthScale = 0.2;
+const abundancesPlotHeightScale = 0.6;
 
 const QUERY = gql`
   query(
@@ -73,7 +76,7 @@ class Content extends Component {
   };
 
   render() {
-    const {patientID, sampleID, label} = this.props;
+    const {patientID, sampleID, label, screenHeight, screenWidth} = this.props;
 
     return !sampleID || !label ? null : (
       <Query
@@ -100,6 +103,8 @@ class Content extends Component {
             <div style={DivStyles}>
               <FacetController>
                 <ReDimPlot
+                  height={screenHeight}
+                  width={screenWidth * reDimPlotWidthScale}
                   data={data.cells}
                   colorScale={colorScale}
                   highlighted={this.state.highlighted}
@@ -107,6 +112,8 @@ class Content extends Component {
                 />
                 <div style={ContainerStyles}>
                   <AbundancePlot
+                    height={screenHeight * abundancesPlotHeightScale}
+                    width={screenWidth * abundancesPlotWidthScale}
                     label={label}
                     data={data.colorLabelValues}
                     colorScale={colorScale}
