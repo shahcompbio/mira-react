@@ -1,5 +1,0 @@
-.modal {
-  .close {
-    color: #000;
-  }
-}

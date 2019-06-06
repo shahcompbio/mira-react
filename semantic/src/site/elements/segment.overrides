@@ -1,6 +1,0 @@
-/*******************************
-         Site Overrides
-*******************************/
-.ui.segment {
-    border-width: 1px 1px 4px 1px;
-}
