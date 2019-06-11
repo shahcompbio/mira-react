@@ -1,29 +1,14 @@
 import React from "react";
 
-import {Query} from "react-apollo";
-import gql from "graphql-tag";
-import {makeStyles} from "@material-ui/styles";
+import { makeStyles } from "@material-ui/styles";
 
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 
-import LabelSelect from "./LabelSelect";
+import LabelSelectQuery from "./LabelSelectQuery";
 import PatientSelect from "./PatientSelect";
 import SampleSelectQuery from "./SampleSelect";
 
-const QUERY = gql`
-  query($patientID: String!, $sampleID: String!) {
-    colorLabels(patientID: $patientID, sampleID: $sampleID) {
-      id
-      title
-      labels {
-        id
-        title
-        type
-      }
-    }
-  }
-`;
 const useStyles = makeStyles({
   root: {
     display: "inline-block",
@@ -33,13 +18,13 @@ const useStyles = makeStyles({
     marginLeft: "25px"
   }
 });
+
 const SelectionStyles = {
   width: 225,
   padding: "15px"
 };
-const InputLabelStyle = {padding: "15px"};
-const DataSelect = ({patientID, sampleID, updateLabel}) => {
-  console.log(InputLabelStyle);
+const InputLabelStyle = { padding: "15px" };
+const DataSelect = ({ patientID, sampleID, updateLabel }) => {
   const classes = useStyles();
   return (
     <Grid
@@ -48,7 +33,6 @@ const DataSelect = ({patientID, sampleID, updateLabel}) => {
       justify="flex-start"
       alignItems="flex-start"
     >
-      {" "}
       <Paper className={classes.root}>
         <Grid item>
           <PatientSelect
@@ -56,7 +40,7 @@ const DataSelect = ({patientID, sampleID, updateLabel}) => {
             style={SelectionStyles}
             labelStyle={InputLabelStyle}
           />
-        </Grid>{" "}
+        </Grid>
         <Grid item>
           <SampleSelectQuery
             patientID={patientID}
@@ -66,23 +50,12 @@ const DataSelect = ({patientID, sampleID, updateLabel}) => {
           />
         </Grid>
         {!sampleID ? null : (
-          <Query query={QUERY} variables={{patientID, sampleID}}>
-            {({loading, error, data}) => {
-              if (loading) return null;
-              if (error) return null;
-              return (
-                <Grid item>
-                  <LabelSelect
-                    patientID={patientID}
-                    sampleID={sampleID}
-                    data={data.colorLabels}
-                    onSelect={label => updateLabel(label)}
-                  />
-                </Grid>
-              );
-            }}
-          </Query>
-        )}{" "}
+          <LabelSelectQuery
+            updateLabel={updateLabel}
+            patientID={patientID}
+            sampleID={sampleID}
+          />
+        )}
       </Paper>
     </Grid>
   );

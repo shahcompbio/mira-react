@@ -1,7 +1,7 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 
-import Select, {createFilter} from "react-select";
-import {FixedSizeList as List} from "react-window";
+import Select, { createFilter } from "react-select";
+import { FixedSizeList as List } from "react-window";
 
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
@@ -12,7 +12,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import TextField from "@material-ui/core/TextField";
 import ArrowDropDown from "@material-ui/icons/ArrowDropDown";
 
-import {withStyles} from "@material-ui/styles";
+import { withStyles } from "@material-ui/styles";
 
 const groupBadgeStyles = {
   backgroundColor: "#CCCCCC",
@@ -34,7 +34,7 @@ const styles = {
     flexGrow: 1,
     height: 250
   },
-  textField: {paddingLeft: "-15px", width: 200, marginLeft: "70px"},
+  textField: { paddingLeft: "-15px", width: 200, marginLeft: "70px" },
   input: {
     display: "flex",
     padding: 5,
@@ -63,7 +63,7 @@ class LabelSelect extends Component {
   }
 
   render() {
-    const {data, onSelect, classes} = this.props;
+    const { data, onSelect, classes } = this.props;
 
     const allOptions = data.reduce(
       (options, group) => [...options, ...group.labels],
@@ -115,7 +115,7 @@ class LabelSelect extends Component {
           IndicatorSeparator
         }}
         isSearchable
-        filterOption={createFilter({ignoreAccents: false})}
+        filterOption={createFilter({ ignoreAccents: false })}
       />
     );
   }
@@ -146,13 +146,13 @@ const Menu = props => (
 );
 const ValueContainer = props => (
   <div
-    style={{width: 200}}
+    style={{ width: 200 }}
     className={props.selectProps.classes.valueContainer}
   >
     {props.children}
   </div>
 );
-const inputComponent = ({inputRef, ...props}) => (
+const inputComponent = ({ inputRef, ...props }) => (
   <span ref={inputRef} {...props} />
 );
 const Control = props => {
@@ -160,7 +160,7 @@ const Control = props => {
     children,
     innerProps,
     innerRef,
-    selectProps: {classes, TextFieldProps}
+    selectProps: { classes, TextFieldProps }
   } = props;
   return (
     <FormControl
@@ -187,7 +187,7 @@ const Control = props => {
     </FormControl>
   );
 };
-const Group = ({label, options}) => (
+const Group = ({ label, options }) => (
   <div
     style={{
       background: "#8799af",
@@ -201,7 +201,7 @@ const Group = ({label, options}) => (
   </div>
 );
 const IndicatorSeparator = () => null;
-const MenuList = ({children, maxHeight}) => {
+const MenuList = ({ children, maxHeight }) => {
   const height = 48;
 
   const options = Array.isArray(children)
@@ -217,9 +217,9 @@ const MenuList = ({children, maxHeight}) => {
       itemCount={options.length}
       itemSize={height}
     >
-      {({index, style}) => {
+      {({ index, style }) => {
         return (
-          <ListItem style={{...style, padding: "0px", margin: 0}} key={index}>
+          <ListItem style={{ ...style, padding: "0px", margin: 0 }} key={index}>
             <ListItemText primary={options[index]} />
           </ListItem>
         );
