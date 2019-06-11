@@ -32,7 +32,7 @@ const getFrameProps = (
   points: data,
 
   size: [width, height],
-  margin: {left: 60, bottom: 90, right: 10, top: 40},
+  margin: { left: 60, bottom: 90, right: 10, top: 40 },
 
   xAccessor: "x",
   yAccessor: "y",
@@ -45,8 +45,8 @@ const getFrameProps = (
     fillOpacity: highlighted === null || highlighted(d) ? 0.8 : 0.01
   }),
   axes: [
-    {orient: "left", label: " "},
-    {orient: "bottom", label: {name: " ", locationDistance: 55}}
+    { orient: "left", label: " " },
+    { orient: "bottom", label: { name: " ", locationDistance: 55 } }
   ],
   hoverAnnotation: true,
 

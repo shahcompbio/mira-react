@@ -1,13 +1,13 @@
-import React, {useRef, useState, useEffect} from "react";
+import React, { useRef, useState, useEffect } from "react";
 import DataSelect from "./Select/DataSelect";
 import Header from "@bit/viz.spectrum.header";
 import Grid from "@material-ui/core/Grid";
 import Content from "./ReDim/Content";
 
-import {MuiThemeProvider} from "@material-ui/core/styles";
-import {theme} from "./config/config.js";
+import { MuiThemeProvider } from "@material-ui/core/styles";
+import { theme } from "./config/config.js";
 
-import {withRouter} from "react-router";
+import { withRouter } from "react-router";
 
 const title = "scRNA Dashboard";
 const description =
@@ -19,7 +19,7 @@ const ContentStyles = {
   flexDirection: "row"
 };
 
-const App = ({location}) => {
+const App = ({ location }) => {
   const [patientID, sampleID] = location.pathname.substr(1).split("/");
   const [screenWidth, setWidth] = useState(0);
   const [screenHeight, setHeight] = useState(0);

@@ -5,8 +5,8 @@ import "./semiotic.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
-import {BrowserRouter} from "react-router-dom";
-import {ApolloProvider} from "react-apollo";
+import { BrowserRouter } from "react-router-dom";
+import { ApolloProvider } from "react-apollo";
 import client from "./apollo.js";
 
 ReactDOM.render(

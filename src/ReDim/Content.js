@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {Query} from "react-apollo";
+import React, { Component } from "react";
+import { Query } from "react-apollo";
 import gql from "graphql-tag";
 
 import ReDimPlot from "./ReDimPlot";
@@ -7,7 +7,7 @@ import AbundancePlot from "./AbundancePlot";
 
 import FacetController from "semiotic/lib/FacetController";
 
-import {getColorScale} from "./colors";
+import { getColorScale } from "./colors";
 
 const reDimPlotWidthScale = 0.5;
 const abundancesPlotWidthScale = 0.2;
@@ -76,7 +76,13 @@ class Content extends Component {
   };
 
   render() {
-    const {patientID, sampleID, label, screenHeight, screenWidth} = this.props;
+    const {
+      patientID,
+      sampleID,
+      label,
+      screenHeight,
+      screenWidth
+    } = this.props;
 
     return !sampleID || !label ? null : (
       <Query
@@ -88,7 +94,7 @@ class Content extends Component {
           labelType: label.type
         }}
       >
-        {({loading, error, data}) => {
+        {({ loading, error, data }) => {
           if (loading) return null;
           if (error) return null;
 

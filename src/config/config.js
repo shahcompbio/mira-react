@@ -1,4 +1,4 @@
-import {createMuiTheme} from "@material-ui/core/styles";
+import { createMuiTheme } from "@material-ui/core/styles";
 export const theme = createMuiTheme({
   typography: {
     useNextVariants: true,
@@ -19,7 +19,7 @@ export const theme = createMuiTheme({
         padding: "15px"
       }
     },
-    MuiInput: {root: {width: "200px"}},
+    MuiInput: { root: { width: "200px" } },
     MuiInputBase: {
       root: {
         fontSize: 18,
