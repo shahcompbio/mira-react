@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-
 import Select, { createFilter } from "react-select";
 import { FixedSizeList as List } from "react-window";
 
@@ -18,6 +17,7 @@ class LabelSelect extends Component {
 
     const handleChange = item => {
       const result = allOptions.filter(datum => datum.id === item.value)[0];
+      alert(result);
       onSelect(result);
     };
 
@@ -30,7 +30,7 @@ class LabelSelect extends Component {
     }));
 
     return (
-      <div style={{ width: "300px" }}>
+      <div style={{ width: "600px" }}>
         <span>
           Color By
           <Select

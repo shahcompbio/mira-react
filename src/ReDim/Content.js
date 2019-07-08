@@ -122,7 +122,7 @@ class Content extends Component {
 
 const DivStyles = {
   width: "100%",
-  display: "flex",
+  display: "flexwrap",
   flexDirection: "row",
   alignItems: "flex-start",
   justifyContent: "space-between"
