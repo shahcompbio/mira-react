@@ -17,7 +17,6 @@ class LabelSelect extends Component {
 
     const handleChange = item => {
       const result = allOptions.filter(datum => datum.id === item.value)[0];
-      alert(result);
       onSelect(result);
     };
 
@@ -30,7 +29,7 @@ class LabelSelect extends Component {
     }));
 
     return (
-      <div style={{ width: "600px" }}>
+      <div style={{ width: "300px" }}>
         <span>
           Color By
           <Select
