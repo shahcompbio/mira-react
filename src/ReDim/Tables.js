@@ -6,6 +6,17 @@ import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import { Paper } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import gql from "graphql-tag";
+import { Query } from "react-apollo";
+
+const QUERY = gql`
+  query {
+    markers {
+      cellType
+      markerGenes
+    }
+  }
+`;
 
 class Tables extends Component {
   constructor(props) {
@@ -21,8 +32,9 @@ class Tables extends Component {
       __typename: "ColorLabel"
     };
   }
+
   handleClick(e) {
-    let id = e.target.value;
+    let id = e.currentTarget.value;
     this.props.onClick(this.nameToObject(id));
   }
 
@@ -42,81 +54,52 @@ class Tables extends Component {
       }
     }));
 
-    function createData(name, calories, fat, carbs, protein) {
-      return { name, calories, fat, carbs, protein };
-    }
-
-    const rows = [
-      createData("Ovarian cancer cell", "AARSD1", "ABAT", "AATK", "ZNF248"),
-      createData("Mesothelial cell", "Gene2", 9.0, 37, 4.3),
-      createData("Myofibroblast", "Gene3", 16.0, 24, 6.0),
-      createData("Plasma cell", "Gene4", 3.7, 67, 4.3),
-      createData("Endothelial cell", "Gene5", 16.0, 49, 3.9),
-      createData("NK cell", "Gene6", 16.0, 49, 3.9)
-    ];
-
     function makeStyle() {
       const classes = useStyles();
       return classes;
     }
 
     return (
-      <div className={{ makeStyle }.root}>
-        <Paper className={{ makeStyle }.paper}>
-          <Table className={{ makeStyle }.table} size="small">
-            <TableBody>
-              {rows.map(row => (
-                <TableRow key={row.name}>
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="center">
-                    <button
-                      color="default"
-                      value={row.calories}
-                      onClick={this.handleClick}
-                      className={{ makeStyle }.button}
-                    >
-                      {row.calories}
-                    </button>
-                  </TableCell>
-                  <TableCell align="center">
-                    <button
-                      color="default"
-                      value={row.fat}
-                      onClick={this.handleClick}
-                      className={{ makeStyle }.button}
-                    >
-                      {" "}
-                      {row.fat}{" "}
-                    </button>
-                  </TableCell>
-                  <TableCell align="center">
-                    <button
-                      variant="primary"
-                      value={row.carbs}
-                      onClick={this.handleClick}
-                      className={{ makeStyle }.button}
-                    >
-                      {row.carbs}{" "}
-                    </button>
-                  </TableCell>
-                  <TableCell align="center">
-                    <button
-                      color="default"
-                      value={row.protein}
-                      onClick={this.handleClick}
-                      className={{ makeStyle }.button}
-                    >
-                      {row.protein}
-                    </button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Paper>
-      </div>
+      <Query query={QUERY}>
+        {({ data, loading, error }) => {
+          const markers = data.markers;
+          console.log(data);
+          if (loading) return <p> LOADING </p>;
+          if (error) return <p> ERROR </p>;
+          return (
+            <div className={{ makeStyle }.root}>
+              <Paper className={{ makeStyle }.paper}>
+                <Table className={{ makeStyle }.table} size="small">
+                  <TableBody>
+                    {markers.map(row => {
+                      const markerGenes = row["markerGenes"];
+                      return (
+                        <TableRow key={row.cellType}>
+                          <TableCell align="center">{row.cellType}</TableCell>
+                          {markerGenes.map(gene => {
+                            return (
+                              <TableCell align="center">
+                                <Button
+                                  color="outline-primary"
+                                  value={gene}
+                                  onClick={this.handleClick}
+                                  disabled={gene === " "}
+                                >
+                                  {gene}
+                                </Button>
+                              </TableCell>
+                            );
+                          })}
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </Paper>
+            </div>
+          );
+        }}
+      </Query>
     );
   }
 }
