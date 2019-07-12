@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -18,21 +17,6 @@ const QUERY = gql`
   }
 `;
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    width: "100%"
-  },
-  paper: {
-    marginTop: theme.spacing(2),
-    width: "100%",
-    overflowX: "scroll",
-    marginBottom: theme.spacing(2)
-  },
-  table: {
-    minWidth: 600
-  }
-}));
-
 class CellAssignTable extends Component {
   constructor(props) {
     super(props);
@@ -46,8 +30,6 @@ class CellAssignTable extends Component {
   }
 
   render() {
-    const makeStyle = () => useStyles();
-
     return (
       <Query query={QUERY}>
         {({ data, loading, error }) => {
@@ -55,9 +37,9 @@ class CellAssignTable extends Component {
           if (loading) return <p> LOADING </p>;
           if (error) return <p> ERROR </p>;
           return (
-            <div className={{ makeStyle }.root}>
-              <Paper className={{ makeStyle }.paper}>
-                <Table className={{ makeStyle }.table} size="small">
+            <div>
+              <Paper style={{ overflowX: "auto" }}>
+                <Table size="small" padding="default">
                   <TableBody>
                     {cellAndMarkerGenesPair.map(row => {
                       const markerGenes = row["markerGenes"];
@@ -66,6 +48,8 @@ class CellAssignTable extends Component {
                           markerGenes={markerGenes}
                           handleClick={this.handleClick}
                           row={row}
+                          data={cellAndMarkerGenesPair}
+                          colorScale={this.props.colorScale}
                         />
                       );
                     })}
@@ -83,7 +67,18 @@ class CellAssignTable extends Component {
 const CellTypeAndMarkerGenesRow = props => {
   return (
     <TableRow key={props.row.cellType}>
-      <TableCell align="center">{props.row.cellType}</TableCell>
+      <TableCell
+        align="center"
+        style={{
+          position: "sticky",
+          left: 0,
+          background: "#ccc",
+          color: "black",
+          zIndex: 1
+        }}
+      >
+        <h5>{props.row.cellType}</h5>
+      </TableCell>
       {props.markerGenes.map(gene => {
         return <GeneCell gene={gene} handleClick={props.handleClick} />;
       })}
@@ -98,7 +93,6 @@ const GeneCell = props => {
         color="outline-primary"
         value={props.gene}
         onClick={props.handleClick}
-        disabled={props.gene === " "}
       >
         {props.gene}
       </Button>
