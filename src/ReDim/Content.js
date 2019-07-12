@@ -5,6 +5,7 @@ import gql from "graphql-tag";
 
 import ReDimPlot from "./ReDimPlot";
 import AbundancePlot from "./AbundancePlot";
+import CellAssignTable from "./CellAssignTable";
 
 import FacetController from "semiotic/lib/FacetController";
 
@@ -110,6 +111,10 @@ class Content extends Component {
                   data={data.colorLabelValues}
                   colorScale={colorScale}
                   hoverBehavior={this.hoverBehavior}
+                />
+                <CellAssignTable
+                  onClick={this.props.onClick}
+                  colorScale={colorScale}
                 />
               </FacetController>
             </div>

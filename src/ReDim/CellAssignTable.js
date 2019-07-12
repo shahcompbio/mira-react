@@ -34,10 +34,13 @@ class CellAssignTable extends Component {
       <Query query={QUERY}>
         {({ data, loading, error }) => {
           const cellAndMarkerGenesPair = data.cellAndMarkerGenesPair;
-          if (loading) return <p> LOADING </p>;
-          if (error) return <p> ERROR </p>;
+          if (loading) return null;
+          if (error) return null;
           return (
             <div>
+              <h3>
+                <center>CellAssign : Cell Types and Marker Genes</center>
+              </h3>
               <Paper style={{ overflowX: "auto" }}>
                 <Table size="small" padding="default">
                   <TableBody>
@@ -65,18 +68,24 @@ class CellAssignTable extends Component {
 }
 
 const CellTypeAndMarkerGenesRow = props => {
+  const reformatName = name => name.split(" ").join(".");
+
+  const getColor = name =>
+    props.colorScale(reformatName(name)) !== undefined
+      ? props.colorScale(reformatName(name))
+      : "#ccc";
+
+  const createStyles = {
+    position: "sticky",
+    left: 0,
+    color: "black",
+    background: getColor(props.row.cellType),
+    zIndex: 1
+  };
+
   return (
     <TableRow key={props.row.cellType}>
-      <TableCell
-        align="center"
-        style={{
-          position: "sticky",
-          left: 0,
-          background: "#ccc",
-          color: "black",
-          zIndex: 1
-        }}
-      >
+      <TableCell align="center" style={createStyles}>
         <h5>{props.row.cellType}</h5>
       </TableCell>
       {props.markerGenes.map(gene => {

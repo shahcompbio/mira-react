@@ -5,7 +5,6 @@ import gql from "graphql-tag";
 
 import LabelSelect from "./LabelSelect";
 import Content from "./Content";
-import CellAssignTable from "./CellAssignTable";
 
 const QUERY = gql`
   query($patientID: String!, $sampleID: String!) {
@@ -53,8 +52,8 @@ class ReDim extends Component {
                 patientID={patientID}
                 sampleID={sampleID}
                 label={this.state.label}
+                onClick={this.onLabelSelect}
               />
-              <CellAssignTable onClick={this.onLabelSelect} />
             </div>
           );
         }}

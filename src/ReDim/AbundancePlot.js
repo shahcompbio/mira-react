@@ -88,7 +88,6 @@ const getFramePropsBar = (data, colorScale, tooltipContent, hoverBehavior) => ({
   oAccessor: "name",
   axes: [{ orient: "left", label: "# Cells" }],
   style: d => ({ fill: colorScale(d.name), stroke: "white" }),
-
   tooltipContent: ({ pieces }) => tooltipContent(pieces[0]),
   customHoverBehavior: d => hoverBehavior(d ? d.pieces[0].data : d)
 });
