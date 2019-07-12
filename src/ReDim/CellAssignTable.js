@@ -29,13 +29,21 @@ class CellAssignTable extends Component {
     this.props.onClick(nameToObject(id));
   }
 
+  sortData(data) {
+    let dataArray = data.cellAndMarkerGenesPair;
+    let sortedCellTypes = dataArray.map(row => row.cellType).sort();
+    return sortedCellTypes.map(cell =>
+      dataArray.filter(element => element.cellType === cell)
+    );
+  }
+
   render() {
     return (
       <Query query={QUERY}>
         {({ data, loading, error }) => {
-          const cellAndMarkerGenesPair = data.cellAndMarkerGenesPair;
           if (loading) return null;
           if (error) return null;
+          let cellAndMarkerGenes = this.sortData(data);
           return (
             <div>
               <h3>
@@ -44,14 +52,13 @@ class CellAssignTable extends Component {
               <Paper style={{ overflowX: "auto" }}>
                 <Table size="small" padding="default">
                   <TableBody>
-                    {cellAndMarkerGenesPair.map(row => {
-                      const markerGenes = row["markerGenes"];
+                    {cellAndMarkerGenes.map(row => {
+                      const markerGenes = row[0]["markerGenes"];
                       return (
                         <CellTypeAndMarkerGenesRow
                           markerGenes={markerGenes}
                           handleClick={this.handleClick}
                           row={row}
-                          data={cellAndMarkerGenesPair}
                           colorScale={this.props.colorScale}
                         />
                       );
@@ -79,14 +86,14 @@ const CellTypeAndMarkerGenesRow = props => {
     position: "sticky",
     left: 0,
     color: "black",
-    background: getColor(props.row.cellType),
+    background: getColor(props.row[0].cellType),
     zIndex: 1
   };
 
   return (
-    <TableRow key={props.row.cellType}>
+    <TableRow key={props.row[0].cellType}>
       <TableCell align="center" style={createStyles}>
-        <h5>{props.row.cellType}</h5>
+        <h5>{props.row[0].cellType}</h5>
       </TableCell>
       {props.markerGenes.map(gene => {
         return <GeneCell gene={gene} handleClick={props.handleClick} />;
