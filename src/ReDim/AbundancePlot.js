@@ -32,7 +32,9 @@ const getFrameProps = (data, colorScale, label, hoverBehavior) => {
       <p>
         <b>{d.name}</b>
       </p>
-      <p>{d.count} cells</p>
+      <p>
+        {d.count} {d.count === 1 ? "cell" : "cells"}
+      </p>
     </div>
   );
 
