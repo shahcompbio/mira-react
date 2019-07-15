@@ -115,6 +115,7 @@ class Content extends Component {
                 <CellAssignTable
                   onClick={this.props.onClick}
                   colorScale={colorScale}
+                  highlighted={this.state.highlighted}
                 />
               </FacetController>
             </div>

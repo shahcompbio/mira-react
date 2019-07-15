@@ -60,6 +60,7 @@ class CellAssignTable extends Component {
                           handleClick={this.handleClick}
                           row={row}
                           colorScale={this.props.colorScale}
+                          highlighted={this.props.highlighted}
                         />
                       );
                     })}
@@ -76,6 +77,7 @@ class CellAssignTable extends Component {
 
 const CellTypeAndMarkerGenesRow = props => {
   const reformatName = name => name.split(" ").join(".");
+  const nameToObject = name => ({ name: name, label: reformatName(name) });
 
   const getColor = name =>
     props.colorScale(reformatName(name)) !== undefined
@@ -86,7 +88,12 @@ const CellTypeAndMarkerGenesRow = props => {
     position: "sticky",
     left: 0,
     color: "black",
-    background: getColor(props.row[0].cellType),
+    background:
+      props.highlighted === null
+        ? getColor(props.row[0].cellType)
+        : props.highlighted(nameToObject(props.row[0].cellType))
+        ? props.colorScale(nameToObject(props.row[0].cellType).label)
+        : "#ccc",
     zIndex: 1
   };
 
