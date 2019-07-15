@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 
@@ -10,6 +9,10 @@ import CellAssignTable from "./CellAssignTable";
 import FacetController from "semiotic/lib/FacetController";
 
 import { getColorScale } from "./colors";
+
+const reDimPlotWidthScale = 0.5;
+const abundancesPlotWidthScale = 0.2;
+const abundancesPlotHeightScale = 0.6;
 
 const QUERY = gql`
   query(
@@ -74,7 +77,13 @@ class Content extends Component {
   };
 
   render() {
-    const { patientID, sampleID, label } = this.props;
+    const {
+      patientID,
+      sampleID,
+      label,
+      screenHeight,
+      screenWidth
+    } = this.props;
 
     return !sampleID || !label ? null : (
       <Query
@@ -101,17 +110,24 @@ class Content extends Component {
             <div style={DivStyles}>
               <FacetController>
                 <ReDimPlot
+                  height={screenHeight}
+                  width={screenWidth * reDimPlotWidthScale}
                   data={data.cells}
                   colorScale={colorScale}
                   highlighted={this.state.highlighted}
                   labelTitle={label.title}
                 />
-                <AbundancePlot
-                  label={label}
-                  data={data.colorLabelValues}
-                  colorScale={colorScale}
-                  hoverBehavior={this.hoverBehavior}
-                />
+                <div style={ContainerStyles}>
+                  <AbundancePlot
+                    height={screenHeight * abundancesPlotHeightScale}
+                    width={screenWidth * abundancesPlotWidthScale}
+                    label={label}
+                    data={data.colorLabelValues}
+                    colorScale={colorScale}
+                    hoverBehavior={this.hoverBehavior}
+                  />
+                </div>
+
                 <CellAssignTable
                   onClick={this.props.onClick}
                   colorScale={colorScale}
@@ -125,10 +141,15 @@ class Content extends Component {
     );
   }
 }
-
+const ContainerStyles = {
+  marginTop: "140px",
+  paddingLeft: "15px",
+  zIndex: 150
+};
 const DivStyles = {
-  width: "100%",
-  display: "flexwrap",
+  width: "80%",
+  marginLeft: "25px",
+  display: "flex",
   flexDirection: "row",
   alignItems: "flex-start",
   justifyContent: "space-between"
