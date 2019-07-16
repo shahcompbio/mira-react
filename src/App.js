@@ -51,7 +51,8 @@ const App = ({ location }) => {
         ref={widthRef}
         style={{
           flexWrap: "nowrap",
-          whiteSpace: "nowrap"
+          whiteSpace: "nowrap",
+          padding: "50px 0px"
         }}
       >
         <Grid item ref={heightRef}>
@@ -61,25 +62,16 @@ const App = ({ location }) => {
             updateLabel={label => setLabel(label)}
           />
         </Grid>
-        <Grid
-          item
-          style={{
-            marginTop: "45px",
-            marginLeft: "-50px"
-          }}
-        >
-          <div style={ContentStyles}>
-            <Grid item>
-              <Content
-                screenHeight={screenHeight}
-                screenWidth={screenWidth}
-                patientID={patientID}
-                sampleID={sampleID}
-                label={label}
-              />
-            </Grid>{" "}
-          </div>
-        </Grid>
+        <div style={ContentStyles}>
+          <Content
+            screenHeight={screenHeight}
+            screenWidth={screenWidth}
+            patientID={patientID}
+            sampleID={sampleID}
+            label={label}
+            onClick={label => setLabel(label)}
+          />
+        </div>
       </Grid>
     </MuiThemeProvider>
   );

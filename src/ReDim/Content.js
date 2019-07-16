@@ -9,10 +9,12 @@ import CellAssignTable from "./CellAssignTable";
 import FacetController from "semiotic/lib/FacetController";
 
 import { getColorScale } from "./colors";
+import Grid from "@material-ui/core/Grid";
 
 const reDimPlotWidthScale = 0.5;
 const abundancesPlotWidthScale = 0.2;
 const abundancesPlotHeightScale = 0.6;
+const cellAssignWidthScale = abundancesPlotWidthScale + reDimPlotWidthScale;
 
 const QUERY = gql`
   query(
@@ -107,52 +109,70 @@ class Content extends Component {
           );
 
           return (
-            <div style={DivStyles}>
+            <Grid
+              container
+              direction="column"
+              justify="flex-start"
+              alignItems="flex-start"
+              spacing={2}
+              style={{
+                flexWrap: "nowrap",
+                whiteSpace: "nowrap"
+              }}
+            >
               <FacetController>
-                <ReDimPlot
-                  height={screenHeight}
-                  width={screenWidth * reDimPlotWidthScale}
-                  data={data.cells}
-                  colorScale={colorScale}
-                  highlighted={this.state.highlighted}
-                  labelTitle={label.title}
-                />
-                <div style={ContainerStyles}>
-                  <AbundancePlot
-                    height={screenHeight * abundancesPlotHeightScale}
-                    width={screenWidth * abundancesPlotWidthScale}
-                    label={label}
-                    data={data.colorLabelValues}
+                <Grid
+                  container
+                  direction="row"
+                  justify="flex-start"
+                  alignItems="flex-start"
+                  spacing={2}
+                  style={{
+                    flexWrap: "nowrap",
+                    whiteSpace: "nowrap"
+                  }}
+                >
+                  <Grid item style={{ marginTop: "20px" }}>
+                    <ReDimPlot
+                      height={screenHeight}
+                      width={screenWidth * reDimPlotWidthScale}
+                      data={data.cells}
+                      colorScale={colorScale}
+                      highlighted={this.state.highlighted}
+                      labelTitle={label.title}
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    style={{ marginTop: "140px", paddingLeft: "15px" }}
+                  >
+                    <AbundancePlot
+                      height={screenHeight * abundancesPlotHeightScale}
+                      width={screenWidth * abundancesPlotWidthScale}
+                      label={label}
+                      data={data.colorLabelValues}
+                      colorScale={colorScale}
+                      hoverBehavior={this.hoverBehavior}
+                    />
+                  </Grid>
+                </Grid>
+                <Grid
+                  item
+                  style={{ width: screenWidth * cellAssignWidthScale + 30 }}
+                >
+                  <CellAssignTable
+                    onClick={this.props.onClick}
                     colorScale={colorScale}
-                    hoverBehavior={this.hoverBehavior}
+                    highlighted={this.state.highlighted}
                   />
-                </div>
-
-                <CellAssignTable
-                  onClick={this.props.onClick}
-                  colorScale={colorScale}
-                  highlighted={this.state.highlighted}
-                />
+                </Grid>
               </FacetController>
-            </div>
+            </Grid>
           );
         }}
       </Query>
     );
   }
 }
-const ContainerStyles = {
-  marginTop: "140px",
-  paddingLeft: "15px",
-  zIndex: 150
-};
-const DivStyles = {
-  width: "80%",
-  marginLeft: "25px",
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "flex-start",
-  justifyContent: "space-between"
-};
 
 export default Content;
