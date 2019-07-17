@@ -20,7 +20,7 @@ const QUERY = gql`
   }
 `;
 
-const LabelSelectQuery = ({ patientID, sampleID, updateLabel }) => (
+const LabelSelectQuery = ({ patientID, sampleID, updateLabel, labelTitle }) => (
   <Query query={QUERY} variables={{ patientID, sampleID }}>
     {({ loading, error, data }) => {
       if (loading) return null;
@@ -32,6 +32,7 @@ const LabelSelectQuery = ({ patientID, sampleID, updateLabel }) => (
             sampleID={sampleID}
             data={data.colorLabels}
             onSelect={label => updateLabel(label)}
+            labelTitle={{ label: labelTitle, value: labelTitle }}
           />
         </Grid>
       );

@@ -60,6 +60,7 @@ const App = ({ location }) => {
             patientID={patientID}
             sampleID={sampleID}
             updateLabel={label => setLabel(label)}
+            label={label}
           />
         </Grid>
         <div style={ContentStyles}>

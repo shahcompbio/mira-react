@@ -164,6 +164,7 @@ class Content extends Component {
                     onClick={this.props.onClick}
                     colorScale={colorScale}
                     highlighted={this.state.highlighted}
+                    labelTitle={label.title}
                   />
                 </Grid>
               </FacetController>

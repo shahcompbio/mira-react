@@ -63,7 +63,7 @@ class LabelSelect extends Component {
   }
 
   render() {
-    const { data, onSelect, classes } = this.props;
+    const { data, onSelect, classes, labelTitle } = this.props;
 
     const allOptions = data.reduce(
       (options, group) => [...options, ...group.labels],
@@ -87,10 +87,12 @@ class LabelSelect extends Component {
       }))
     }));
 
+    console.log(labelTitle);
     return (
       <Select
         classes={classes}
         defaultValue={groupOptions[0]["options"][0]}
+        value={labelTitle}
         onChange={handleChange}
         options={groupOptions}
         TextFieldProps={{

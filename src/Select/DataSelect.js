@@ -24,7 +24,7 @@ const SelectionStyles = {
   padding: "15px"
 };
 const InputLabelStyle = { padding: "15px" };
-const DataSelect = ({ patientID, sampleID, updateLabel }) => {
+const DataSelect = ({ patientID, sampleID, updateLabel, label }) => {
   const classes = useStyles();
   return (
     <Grid
@@ -54,6 +54,9 @@ const DataSelect = ({ patientID, sampleID, updateLabel }) => {
             updateLabel={updateLabel}
             patientID={patientID}
             sampleID={sampleID}
+            labelTitle={
+              label === null || label === undefined ? "Cell Type" : label.title
+            }
           />
         )}
       </Paper>

@@ -21,12 +21,29 @@ class CellAssignTable extends Component {
   constructor(props) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
+    this.handleMouseEnter = this.handleMouseEnter.bind(this);
+    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    console.log(this.props.labelTitle);
+    this.state = {
+      selectedGene: this.props.labelTitle
+    };
+  }
+
+  handleMouseEnter(e) {
+    this.setState({
+      selectedGene: e.currentTarget.value
+    });
+  }
+
+  handleMouseLeave() {
+    this.setState({
+      selectedGene: "Cell Type"
+    });
   }
 
   handleClick(e) {
     const nameToObject = name => ({ id: name, title: name, type: "gene" });
-    let id = e.currentTarget.value;
-    this.props.onClick(nameToObject(id));
+    this.props.onClick(nameToObject(e.currentTarget.value));
   }
 
   sortData(data) {
@@ -43,7 +60,7 @@ class CellAssignTable extends Component {
         {({ data, loading, error }) => {
           if (loading) return null;
           if (error) return null;
-          let cellAndMarkerGenes = this.sortData(data);
+          const cellAndMarkerGenes = this.sortData(data);
           return (
             <div>
               <h3>
@@ -58,9 +75,12 @@ class CellAssignTable extends Component {
                         <CellTypeAndMarkerGenesRow
                           markerGenes={markerGenes}
                           handleClick={this.handleClick}
-                          row={row}
+                          row={row[0]}
                           colorScale={this.props.colorScale}
                           highlighted={this.props.highlighted}
+                          handleMouseEnter={this.handleMouseEnter}
+                          handleMouseLeave={this.handleMouseLeave}
+                          selectedGene={this.state.selectedGene}
                         />
                       );
                     })}
@@ -75,49 +95,81 @@ class CellAssignTable extends Component {
   }
 }
 
-const CellTypeAndMarkerGenesRow = props => {
+const CellTypeAndMarkerGenesRow = ({
+  colorScale,
+  highlighted,
+  row,
+  markerGenes,
+  handleClick,
+  selectedGene,
+  handleMouseEnter,
+  handleMouseLeave
+}) => {
   const reformatName = name => name.split(" ").join(".");
   const nameToObject = name => ({ name: name, label: reformatName(name) });
 
   const getColor = name =>
-    props.colorScale(reformatName(name)) !== undefined
-      ? props.colorScale(reformatName(name))
+    colorScale(reformatName(name)) !== undefined
+      ? colorScale(reformatName(name))
       : "#ccc";
+
+  const pickBackgroundColor = () => {
+    if (highlighted === null && selectedGene !== "Cell Type") {
+      if (row.markerGenes.includes(selectedGene)) return getColor(row.cellType);
+    } else if (highlighted === null && selectedGene === "Cell Type") {
+      return getColor(row.cellType);
+    } else if (highlighted(nameToObject(row.cellType))) {
+      return getColor(row.cellType);
+    }
+    return "#ccc";
+  };
 
   const createStyles = {
     position: "sticky",
     left: 0,
     color: "black",
-    background:
-      props.highlighted === null
-        ? getColor(props.row[0].cellType)
-        : props.highlighted(nameToObject(props.row[0].cellType))
-        ? props.colorScale(nameToObject(props.row[0].cellType).label)
-        : "#ccc",
+    background: pickBackgroundColor(),
     zIndex: 1
   };
 
   return (
-    <TableRow key={props.row[0].cellType}>
+    <TableRow key={row.cellType}>
       <TableCell align="center" style={createStyles}>
-        <h5>{props.row[0].cellType}</h5>
+        <h5>{row.cellType}</h5>
       </TableCell>
-      {props.markerGenes.map(gene => {
-        return <GeneCell gene={gene} handleClick={props.handleClick} />;
+      {markerGenes.map(gene => {
+        let color = gene === selectedGene ? "default" : "primary";
+        return (
+          <GeneCell
+            gene={gene}
+            handleClick={handleClick}
+            handleMouseEnter={handleMouseEnter}
+            handleMouseLeave={handleMouseLeave}
+            color={color}
+          />
+        );
       })}
     </TableRow>
   );
 };
 
-const GeneCell = props => {
+const GeneCell = ({
+  color,
+  gene,
+  handleClick,
+  handleMouseEnter,
+  handleMouseLeave
+}) => {
   return (
     <TableCell align="center">
       <Button
-        color="outline-primary"
-        value={props.gene}
-        onClick={props.handleClick}
+        color={color}
+        value={gene}
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
-        {props.gene}
+        {gene}
       </Button>
     </TableCell>
   );
