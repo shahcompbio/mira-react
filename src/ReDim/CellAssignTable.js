@@ -23,7 +23,6 @@ class CellAssignTable extends Component {
     this.handleClick = this.handleClick.bind(this);
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
-    console.log(this.props.labelTitle);
     this.state = {
       selectedGene: this.props.labelTitle
     };
@@ -47,10 +46,10 @@ class CellAssignTable extends Component {
   }
 
   sortData(data) {
-    let dataArray = data.cellAndMarkerGenesPair;
-    let sortedCellTypes = dataArray.map(row => row.cellType).sort();
-    return sortedCellTypes.map(cell =>
-      dataArray.filter(element => element.cellType === cell)
+    const dataArray = data.cellAndMarkerGenesPair;
+    const sortedCellTypes = dataArray.map(row => row.cellType).sort();
+    return sortedCellTypes.map(
+      cell => dataArray.filter(element => element.cellType === cell)[0]
     );
   }
 
@@ -70,12 +69,12 @@ class CellAssignTable extends Component {
                 <Table size="small" padding="default">
                   <TableBody>
                     {cellAndMarkerGenes.map(row => {
-                      const markerGenes = row[0]["markerGenes"];
+                      const markerGenes = row["markerGenes"];
                       return (
                         <CellTypeAndMarkerGenesRow
                           markerGenes={markerGenes}
                           handleClick={this.handleClick}
-                          row={row[0]}
+                          row={row}
                           colorScale={this.props.colorScale}
                           highlighted={this.props.highlighted}
                           handleMouseEnter={this.handleMouseEnter}

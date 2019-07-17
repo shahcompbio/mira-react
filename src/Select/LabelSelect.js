@@ -87,7 +87,6 @@ class LabelSelect extends Component {
       }))
     }));
 
-    console.log(labelTitle);
     return (
       <Select
         classes={classes}
