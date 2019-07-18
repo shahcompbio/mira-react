@@ -25,7 +25,7 @@ class CellAssignTable extends Component {
 
   handleMouseLeave() {
     this.setState({
-      selectedGene: "Cell Type"
+      selectedGene: this.props.labelTitle
     });
   }
 
