@@ -5,17 +5,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import { Paper } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import gql from "graphql-tag";
-import { Query } from "react-apollo";
-
-const QUERY = gql`
-  query {
-    cellAndMarkerGenesPair {
-      cellType
-      markerGenes
-    }
-  }
-`;
 
 class CellAssignTable extends Component {
   constructor(props) {
@@ -46,50 +35,41 @@ class CellAssignTable extends Component {
   }
 
   sortData(data) {
-    const dataArray = data.cellAndMarkerGenesPair;
-    const sortedCellTypes = dataArray.map(row => row.cellType).sort();
+    const sortedCellTypes = data.map(row => row.cellType).sort();
     return sortedCellTypes.map(
-      cell => dataArray.filter(element => element.cellType === cell)[0]
+      cell => data.filter(element => element.cellType === cell)[0]
     );
   }
 
   render() {
+    const cellAndMarkerGenes = this.sortData(this.props.data);
     return (
-      <Query query={QUERY}>
-        {({ data, loading, error }) => {
-          if (loading) return null;
-          if (error) return null;
-          const cellAndMarkerGenes = this.sortData(data);
-          return (
-            <div>
-              <h3>
-                <center>CellAssign : Cell Types and Marker Genes</center>
-              </h3>
-              <Paper style={{ overflowX: "auto" }}>
-                <Table size="small" padding="default">
-                  <TableBody>
-                    {cellAndMarkerGenes.map(row => {
-                      const markerGenes = row["markerGenes"];
-                      return (
-                        <CellTypeAndMarkerGenesRow
-                          markerGenes={markerGenes}
-                          handleClick={this.handleClick}
-                          row={row}
-                          colorScale={this.props.colorScale}
-                          highlighted={this.props.highlighted}
-                          handleMouseEnter={this.handleMouseEnter}
-                          handleMouseLeave={this.handleMouseLeave}
-                          selectedGene={this.state.selectedGene}
-                        />
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </Paper>
-            </div>
-          );
-        }}
-      </Query>
+      <div>
+        <h3>
+          <center>CellAssign : Cell Types and Marker Genes</center>
+        </h3>
+        <Paper style={{ overflowX: "auto" }}>
+          <Table size="small" padding="default">
+            <TableBody>
+              {cellAndMarkerGenes.map(row => {
+                const markerGenes = row["markerGenes"];
+                return (
+                  <CellTypeAndMarkerGenesRow
+                    markerGenes={markerGenes}
+                    handleClick={this.handleClick}
+                    row={row}
+                    colorScale={this.props.colorScale}
+                    highlighted={this.props.highlighted}
+                    handleMouseEnter={this.handleMouseEnter}
+                    handleMouseLeave={this.handleMouseLeave}
+                    selectedGene={this.state.selectedGene}
+                  />
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Paper>
+      </div>
     );
   }
 }
@@ -137,14 +117,14 @@ const CellTypeAndMarkerGenesRow = ({
         <h5>{row.cellType}</h5>
       </TableCell>
       {markerGenes.map(gene => {
-        let color = gene === selectedGene ? "default" : "primary";
+        let buttonColor = gene === selectedGene ? "default" : "primary";
         return (
           <GeneCell
             gene={gene}
             handleClick={handleClick}
             handleMouseEnter={handleMouseEnter}
             handleMouseLeave={handleMouseLeave}
-            color={color}
+            buttonColor={buttonColor}
           />
         );
       })}
@@ -153,7 +133,7 @@ const CellTypeAndMarkerGenesRow = ({
 };
 
 const GeneCell = ({
-  color,
+  buttonColor,
   gene,
   handleClick,
   handleMouseEnter,
@@ -162,7 +142,7 @@ const GeneCell = ({
   return (
     <TableCell align="center">
       <Button
-        color={color}
+        color={buttonColor}
         value={gene}
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}

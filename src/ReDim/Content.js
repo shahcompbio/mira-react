@@ -48,6 +48,12 @@ const QUERY = gql`
         max
       }
     }
+    existingCellTypes(patientID: $patientID, sampleID: $sampleID)
+
+    cellAndMarkerGenesPair(patientID: $patientID) {
+      cellType
+      markerGenes
+    }
   }
 `;
 
@@ -108,6 +114,11 @@ class Content extends Component {
             label.type
           );
 
+          const cellAssignColorScale = getColorScale(
+            data.existingCellTypes,
+            "categorical"
+          );
+
           return (
             <Grid
               container
@@ -158,13 +169,16 @@ class Content extends Component {
                 </Grid>
                 <Grid
                   item
-                  style={{ width: screenWidth * cellAssignWidthScale + 30 }}
+                  style={{
+                    width: screenWidth * cellAssignWidthScale
+                  }}
                 >
                   <CellAssignTable
                     onClick={this.props.onClick}
-                    colorScale={colorScale}
+                    colorScale={cellAssignColorScale}
                     highlighted={this.state.highlighted}
                     labelTitle={label.title}
+                    data={data.cellAndMarkerGenesPair}
                   />
                 </Grid>
               </FacetController>
