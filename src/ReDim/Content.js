@@ -90,7 +90,8 @@ class Content extends Component {
       sampleID,
       label,
       screenHeight,
-      screenWidth
+      screenWidth,
+      onClick
     } = this.props;
 
     return !sampleID || !label ? null : (
@@ -174,7 +175,7 @@ class Content extends Component {
                   }}
                 >
                   <CellAssignTable
-                    onClick={this.props.onClick}
+                    onClick={onClick}
                     colorScale={cellAssignColorScale}
                     highlighted={this.state.highlighted}
                     labelTitle={label.title}

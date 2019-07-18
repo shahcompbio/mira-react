@@ -42,7 +42,8 @@ class CellAssignTable extends Component {
   }
 
   render() {
-    const cellAndMarkerGenes = this.sortData(this.props.data);
+    const { colorScale, highlighted, data } = this.props;
+    const cellAndMarkerGenes = this.sortData(data);
     return (
       <div>
         <h3>
@@ -58,8 +59,8 @@ class CellAssignTable extends Component {
                     markerGenes={markerGenes}
                     handleClick={this.handleClick}
                     row={row}
-                    colorScale={this.props.colorScale}
-                    highlighted={this.props.highlighted}
+                    colorScale={colorScale}
+                    highlighted={highlighted}
                     handleMouseEnter={this.handleMouseEnter}
                     handleMouseLeave={this.handleMouseLeave}
                     selectedGene={this.state.selectedGene}
