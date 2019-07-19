@@ -21,9 +21,11 @@ const ReDimPlot = ({
   );
   return (
     <div>
-      <h3>
-        <center>{title}</center>
-      </h3>
+      <center>
+        <h3>
+          {title} {title === labelTitle ? " Expression" : ""}
+        </h3>
+      </center>
       <XYFrame {...frameProps} />{" "}
     </div>
   );
@@ -68,7 +70,6 @@ const getFrameProps = (
   hoverAnnotation: true,
 
   tooltipContent: d => {
-    console.log(labelTitle);
     return (
       <div className="tooltip-content">
         <p>
