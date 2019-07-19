@@ -23,14 +23,13 @@ const App = ({ location }) => {
   const [patientID, sampleID] = location.pathname.substr(1).split("/");
   const [screenWidth, setWidth] = useState(0);
   const [screenHeight, setHeight] = useState(0);
-  const [label, setLabel] = useState(null);
+  const [label, setLabel] = useState("Cluster");
 
   const widthRef = useRef(0);
-  const heightRef = useRef(0);
 
   const updateDimensions = () => {
     setWidth(widthRef.current.clientWidth);
-    setHeight(heightRef.current.clientHeight);
+    setHeight(500);
   };
 
   window.addEventListener("resize", updateDimensions);
@@ -42,9 +41,10 @@ const App = ({ location }) => {
   return (
     <MuiThemeProvider theme={theme}>
       <Header name={title} description={description} />
+
       <Grid
         container
-        direction="row"
+        direction="column"
         justify="flex-start"
         alignItems="flex-start"
         spacing={2}
@@ -55,7 +55,7 @@ const App = ({ location }) => {
           padding: "50px 0px"
         }}
       >
-        <Grid item ref={heightRef}>
+        <Grid item>
           <DataSelect
             patientID={patientID}
             sampleID={sampleID}

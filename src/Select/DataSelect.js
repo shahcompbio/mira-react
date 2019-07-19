@@ -11,9 +11,9 @@ import SampleSelectQuery from "./SampleSelect";
 
 const useStyles = makeStyles({
   root: {
-    display: "inline-block",
-    height: "70vh",
+    display: "inline",
     padding: "15px",
+    width: 710,
     marginTop: "35px",
     marginLeft: "25px"
   }
@@ -23,25 +23,20 @@ const SelectionStyles = {
   width: 225,
   padding: "15px"
 };
-const InputLabelStyle = { padding: "15px" };
+const InputLabelStyle = { padding: "19px" };
 const DataSelect = ({ patientID, sampleID, updateLabel, label }) => {
   const classes = useStyles();
   return (
-    <Grid
-      container
-      direction="column"
-      justify="flex-start"
-      alignItems="flex-start"
-    >
+    <Grid container direction="column" display="inline-flex">
       <Paper className={classes.root}>
-        <Grid item>
+        <Grid item style={{ display: "inline-flex" }}>
           <PatientSelect
             patientID={patientID}
             style={SelectionStyles}
             labelStyle={InputLabelStyle}
           />
         </Grid>
-        <Grid item>
+        <Grid item style={{ display: "inline-flex" }}>
           <SampleSelectQuery
             patientID={patientID}
             sampleID={sampleID}

@@ -11,10 +11,10 @@ import FacetController from "semiotic/lib/FacetController";
 import { getColorScale } from "./colors";
 import Grid from "@material-ui/core/Grid";
 
-const reDimPlotWidthScale = 0.35;
+const reDimPlotWidthScale = 0.37;
 const abundancesPlotWidthScale = 0.2;
 const abundancesPlotHeightScale = 0.6;
-const cellAssignWidthScale = 0.5;
+const cellAssignWidthScale = 0.94;
 
 const QUERY = gql`
   query(
@@ -151,7 +151,7 @@ class Content extends Component {
                     whiteSpace: "nowrap"
                   }}
                 >
-                  <Grid item style={{ marginTop: "20px" }}>
+                  <Grid item style={{ marginTop: "40px", paddingLeft: "65px" }}>
                     <ReDimPlot
                       height={screenHeight}
                       width={screenWidth * reDimPlotWidthScale}
@@ -159,9 +159,10 @@ class Content extends Component {
                       colorScale={cellAssignColorScale}
                       highlighted={this.state.highlighted}
                       labelTitle={label.title}
+                      title={"Cell Types"}
                     />
                   </Grid>
-                  <Grid item style={{ marginTop: "20px" }}>
+                  <Grid item style={{ marginTop: "40px", paddingLeft: "15px" }}>
                     <ReDimPlot
                       height={screenHeight}
                       width={screenWidth * reDimPlotWidthScale}
@@ -169,38 +170,14 @@ class Content extends Component {
                       colorScale={colorScale}
                       highlighted={this.state.highlighted}
                       labelTitle={label.title}
+                      title={
+                        label.title === "Cluster"
+                          ? "Clusters"
+                          : label.title + " Expression"
+                      }
                     />
                   </Grid>
-                </Grid>
-                <Grid
-                  container
-                  direction="row"
-                  justify="flex-start"
-                  alignItems="flex-start"
-                  spacing={2}
-                  style={{
-                    flexWrap: "nowrap",
-                    whiteSpace: "nowrap"
-                  }}
-                >
-                  <Grid
-                    item
-                    style={{
-                      width: screenWidth * cellAssignWidthScale
-                    }}
-                  >
-                    <CellAssignTable
-                      onClick={onClick}
-                      colorScale={cellAssignColorScale}
-                      highlighted={this.state.highlighted}
-                      labelTitle={label.title}
-                      data={data.cellAndMarkerGenesPair}
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    style={{ marginTop: "140px", paddingLeft: "15px" }}
-                  >
+                  <Grid item style={{ marginTop: "180px" }}>
                     <AbundancePlot
                       height={screenHeight * abundancesPlotHeightScale}
                       width={screenWidth * abundancesPlotWidthScale}
@@ -210,6 +187,21 @@ class Content extends Component {
                       hoverBehavior={this.hoverBehavior}
                     />
                   </Grid>
+                </Grid>
+                <Grid
+                  item
+                  style={{
+                    width: screenWidth * cellAssignWidthScale,
+                    paddingLeft: "115px"
+                  }}
+                >
+                  <CellAssignTable
+                    onClick={onClick}
+                    colorScale={cellAssignColorScale}
+                    highlighted={this.state.highlighted}
+                    labelTitle={label.title}
+                    data={data.cellAndMarkerGenesPair}
+                  />
                 </Grid>
               </FacetController>
             </Grid>

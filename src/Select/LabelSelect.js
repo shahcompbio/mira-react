@@ -45,7 +45,8 @@ const styles = {
     flexWrap: "wrap",
     flex: 1,
     alignItems: "center",
-    overflow: "hidden"
+    overflow: "hidden",
+    marginTop: "-4px"
   },
   singleValue: {
     fontSize: 16
@@ -90,7 +91,7 @@ class LabelSelect extends Component {
     return (
       <Select
         classes={classes}
-        defaultValue={groupOptions[0]["options"][0]}
+        //defaultValue={groupOptions[0]["options"][1]}
         value={labelTitle}
         onChange={handleChange}
         options={groupOptions}

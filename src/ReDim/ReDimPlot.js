@@ -8,7 +8,8 @@ const ReDimPlot = ({
   highlighted,
   labelTitle,
   height,
-  width
+  width,
+  title
 }) => {
   const frameProps = getFrameProps(
     data,
@@ -18,7 +19,14 @@ const ReDimPlot = ({
     height,
     width
   );
-  return <XYFrame {...frameProps} />;
+  return (
+    <div>
+      <h3>
+        <center>{title}</center>
+      </h3>
+      <XYFrame {...frameProps} />{" "}
+    </div>
+  );
 };
 
 const getFrameProps = (
@@ -32,7 +40,7 @@ const getFrameProps = (
   points: data,
 
   size: [width, height],
-  margin: { left: 60, bottom: 90, right: 10, top: 40 },
+  margin: { left: 25, bottom: 90, right: 10, top: 10 },
 
   xAccessor: "x",
   yAccessor: "y",
@@ -60,6 +68,7 @@ const getFrameProps = (
   hoverAnnotation: true,
 
   tooltipContent: d => {
+    console.log(labelTitle);
     return (
       <div className="tooltip-content">
         <p>
