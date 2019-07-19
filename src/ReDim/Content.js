@@ -192,7 +192,7 @@ class Content extends Component {
                   item
                   style={{
                     width: screenWidth * cellAssignWidthScale,
-                    paddingLeft: "115px"
+                    paddingLeft: screenWidth / 13.5
                   }}
                 >
                   <CellAssignTable
