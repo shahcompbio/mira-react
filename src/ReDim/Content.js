@@ -11,10 +11,10 @@ import FacetController from "semiotic/lib/FacetController";
 import { getColorScale } from "./colors";
 import Grid from "@material-ui/core/Grid";
 
-const reDimPlotWidthScale = 0.5;
+const reDimPlotWidthScale = 0.35;
 const abundancesPlotWidthScale = 0.2;
 const abundancesPlotHeightScale = 0.6;
-const cellAssignWidthScale = abundancesPlotWidthScale + reDimPlotWidthScale;
+const cellAssignWidthScale = 0.5;
 
 const QUERY = gql`
   query(
@@ -29,6 +29,13 @@ const QUERY = gql`
       label: $label
       labelType: $labelType
     ) {
+      name
+      x
+      y
+      label
+    }
+
+    nonGeneCells(patientID: $patientID, sampleID: $sampleID) {
       name
       x
       y
@@ -148,10 +155,46 @@ class Content extends Component {
                     <ReDimPlot
                       height={screenHeight}
                       width={screenWidth * reDimPlotWidthScale}
+                      data={data.nonGeneCells}
+                      colorScale={cellAssignColorScale}
+                      highlighted={this.state.highlighted}
+                      labelTitle={label.title}
+                    />
+                  </Grid>
+                  <Grid item style={{ marginTop: "20px" }}>
+                    <ReDimPlot
+                      height={screenHeight}
+                      width={screenWidth * reDimPlotWidthScale}
                       data={data.cells}
                       colorScale={colorScale}
                       highlighted={this.state.highlighted}
                       labelTitle={label.title}
+                    />
+                  </Grid>
+                </Grid>
+                <Grid
+                  container
+                  direction="row"
+                  justify="flex-start"
+                  alignItems="flex-start"
+                  spacing={2}
+                  style={{
+                    flexWrap: "nowrap",
+                    whiteSpace: "nowrap"
+                  }}
+                >
+                  <Grid
+                    item
+                    style={{
+                      width: screenWidth * cellAssignWidthScale
+                    }}
+                  >
+                    <CellAssignTable
+                      onClick={onClick}
+                      colorScale={cellAssignColorScale}
+                      highlighted={this.state.highlighted}
+                      labelTitle={label.title}
+                      data={data.cellAndMarkerGenesPair}
                     />
                   </Grid>
                   <Grid
@@ -167,20 +210,6 @@ class Content extends Component {
                       hoverBehavior={this.hoverBehavior}
                     />
                   </Grid>
-                </Grid>
-                <Grid
-                  item
-                  style={{
-                    width: screenWidth * cellAssignWidthScale
-                  }}
-                >
-                  <CellAssignTable
-                    onClick={onClick}
-                    colorScale={cellAssignColorScale}
-                    highlighted={this.state.highlighted}
-                    labelTitle={label.title}
-                    data={data.cellAndMarkerGenesPair}
-                  />
                 </Grid>
               </FacetController>
             </Grid>

@@ -41,8 +41,17 @@ const getFrameProps = (
     r: 4,
     fill: colorScale(d.label),
     stroke:
-      highlighted === null || highlighted(d) ? colorScale(d.label) : "#c7c7c7",
-    fillOpacity: highlighted === null || highlighted(d) ? 0.8 : 0.01
+      labelTitle !== "Cell Type" && typeof d.label === "string"
+        ? colorScale(d.label)
+        : highlighted === null || highlighted(d)
+        ? colorScale(d.label)
+        : "#c7c7c7",
+    fillOpacity:
+      labelTitle !== "Cell Type" && typeof d.label === "string"
+        ? 0.8
+        : highlighted === null || highlighted(d)
+        ? 0.8
+        : 0.01
   }),
   axes: [
     { orient: "left", label: " " },
