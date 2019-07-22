@@ -1,10 +1,19 @@
 import React from "react";
 
 import { scaleLinear, scalePoint, scaleSequential } from "d3-scale";
-import { interpolateRainbow, interpolateYlGnBu } from "d3-scale-chromatic";
+import {
+  interpolateRainbow,
+  interpolateYlGnBu,
+  interpolateSinebow
+} from "d3-scale-chromatic";
 
-export const getColorScale = (data, type) => {
+export const getColorScale = (data, type, title) => {
   if (type === "categorical") {
+    if (title === "Cluster") {
+      const ordinalScale = getOrdinalScale(data);
+      const toColorScale = scaleSequential(interpolateSinebow).domain([0, 1]);
+      return datum => toColorScale(ordinalScale(datum));
+    }
     const ordinalScale = getOrdinalScale(data);
     const toColorScale = scaleSequential(interpolateRainbow).domain([0, 1]);
     return datum => toColorScale(ordinalScale(datum));

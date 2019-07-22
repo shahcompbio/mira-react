@@ -11,9 +11,9 @@ import FacetController from "semiotic/lib/FacetController";
 import { getColorScale } from "./colors";
 import Grid from "@material-ui/core/Grid";
 
-const reDimPlotWidthScale = 0.37;
-const abundancesPlotWidthScale = 0.2;
-const abundancesPlotHeightScale = 0.6;
+const reDimPlotWidthScale = 0.35;
+const abundancesPlotWidthScale = 0.25;
+const abundancesPlotHeightScale = 0.7;
 const cellAssignWidthScale = 0.94;
 
 const QUERY = gql`
@@ -119,12 +119,14 @@ class Content extends Component {
             data.colorLabelValues.map(labelValue =>
               label.type === "categorical" ? labelValue.name : labelValue.max
             ),
-            label.type
+            label.type,
+            label.title
           );
 
           const cellAssignColorScale = getColorScale(
             data.existingCellTypes,
-            "categorical"
+            "categorical",
+            null
           );
 
           return (
@@ -177,7 +179,7 @@ class Content extends Component {
                       }
                     />
                   </Grid>
-                  <Grid item style={{ marginTop: "180px" }}>
+                  <Grid item style={{ marginTop: "120px" }}>
                     <AbundancePlot
                       height={screenHeight * abundancesPlotHeightScale}
                       width={screenWidth * abundancesPlotWidthScale}
