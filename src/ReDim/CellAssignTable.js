@@ -104,17 +104,22 @@ const CellTypeAndMarkerGenesRow = ({
     return "#ccc";
   };
 
-  const createStyles = {
-    position: "sticky",
-    left: 0,
-    color: "black",
-    background: pickBackgroundColor(),
-    zIndex: 1
+  const styles = (backgroundColor, leftPosition, anyPadding) => {
+    return {
+      position: "sticky",
+      left: leftPosition,
+      color: "black",
+      background: backgroundColor,
+      zIndex: 150,
+      padding: anyPadding
+    };
   };
 
   return (
     <TableRow key={row.cellType}>
-      <TableCell align="center" style={createStyles}>
+      <TableCell style={styles(getColor(row.cellType), 0, null)} />
+      <TableCell style={styles("white", 40, 0.5)} />
+      <TableCell align="center" style={styles(pickBackgroundColor(), 41, null)}>
         <h5>{row.cellType}</h5>
       </TableCell>
       {markerGenes.map(gene => {
