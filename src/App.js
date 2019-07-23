@@ -3,6 +3,7 @@ import DataSelect from "./Select/DataSelect";
 import Header from "@bit/viz.spectrum.header";
 import Grid from "@material-ui/core/Grid";
 import Content from "./ReDim/Content";
+import { CollapsePanel } from "./ReDim/CollapsePanel";
 
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { theme } from "./config/config.js";
@@ -41,7 +42,7 @@ const App = ({ location }) => {
   return (
     <MuiThemeProvider theme={theme}>
       <Header name={title} description={description} />
-
+      <CollapsePanel />
       <Grid
         container
         direction="column"
