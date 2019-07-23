@@ -102,6 +102,35 @@ class Content extends Component {
       onClick
     } = this.props;
 
+    const ReDim = (data, colorScale, title, highlight) => {
+      return (
+        <ReDimPlot
+          height={screenHeight}
+          width={screenWidth * reDimPlotWidthScale}
+          data={data}
+          colorScale={colorScale}
+          highlighted={highlight}
+          labelTitle={label.title}
+          title={title}
+        />
+      );
+    };
+
+    const CellAssign = (data, colorScale, highlight) => {
+      return (
+        <CellAssignTable
+          onClick={onClick}
+          colorScale={colorScale}
+          highlighted={highlight}
+          labelTitle={label.title}
+          data={data}
+        />
+      );
+    };
+
+    const cellAssignColorScale = data =>
+      getColorScale(data, "categorical", null);
+
     return !sampleID || !label ? null : (
       <Query
         query={QUERY}
@@ -122,6 +151,12 @@ class Content extends Component {
                 label={label}
                 patientID={patientID}
                 sampleID={sampleID}
+                reDimPlotWidthScale={reDimPlotWidthScale}
+                cellAssignWidthScale={cellAssignWidthScale}
+                ReDim={ReDim}
+                CellAssign={CellAssign}
+                cellAssignColorScale={cellAssignColorScale}
+                highlighted={this.state.highlighted}
               />
             );
           if (error) return null;
@@ -133,26 +168,6 @@ class Content extends Component {
             label.type,
             label.title
           );
-
-          const cellAssignColorScale = getColorScale(
-            data.existingCellTypes,
-            "categorical",
-            null
-          );
-
-          const ReDim = (data, colorScale, title) => {
-            return (
-              <ReDimPlot
-                height={screenHeight}
-                width={screenWidth * reDimPlotWidthScale}
-                data={data}
-                colorScale={colorScale}
-                highlighted={this.state.highlighted}
-                labelTitle={label.title}
-                title={title}
-              />
-            );
-          };
 
           return (
             <Grid
@@ -180,8 +195,9 @@ class Content extends Component {
                   <Grid item style={{ marginTop: "40px", paddingLeft: "65px" }}>
                     {ReDim(
                       data.nonGeneCells,
-                      cellAssignColorScale,
-                      "Cell Types"
+                      cellAssignColorScale(data.existingCellTypes),
+                      "Cell Types",
+                      this.state.highlighted
                     )}
                   </Grid>
                   <Grid item style={{ marginTop: "40px", paddingLeft: "15px" }}>
@@ -190,7 +206,8 @@ class Content extends Component {
                       colorScale,
                       label.title === "Cluster"
                         ? "Clusters"
-                        : label.title + " Expression"
+                        : label.title + " Expression",
+                      this.state.highlighted
                     )}
                   </Grid>
                   <Grid item style={{ marginTop: "120px" }}>
@@ -211,13 +228,11 @@ class Content extends Component {
                     paddingLeft: screenWidth / 13.5
                   }}
                 >
-                  <CellAssignTable
-                    onClick={onClick}
-                    colorScale={cellAssignColorScale}
-                    highlighted={this.state.highlighted}
-                    labelTitle={label.title}
-                    data={data.cellAndMarkerGenesPair}
-                  />
+                  {CellAssign(
+                    data.cellAndMarkerGenesPair,
+                    cellAssignColorScale(data.existingCellTypes),
+                    this.state.highlighted
+                  )}
                 </Grid>
               </FacetController>
             </Grid>
