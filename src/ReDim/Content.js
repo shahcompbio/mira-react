@@ -10,6 +10,7 @@ import FacetController from "semiotic/lib/FacetController";
 
 import { getColorScale } from "./colors";
 import Grid from "@material-ui/core/Grid";
+import ConstantContent from "./ConstantContent";
 
 const reDimPlotWidthScale = 0.35;
 const abundancesPlotWidthScale = 0.25;
@@ -112,7 +113,17 @@ class Content extends Component {
         }}
       >
         {({ loading, error, data }) => {
-          if (loading) return null;
+          if (loading)
+            return (
+              <ConstantContent
+                screenHeight={screenHeight}
+                screenWidth={screenWidth}
+                onClick={onClick}
+                label={label}
+                patientID={patientID}
+                sampleID={sampleID}
+              />
+            );
           if (error) return null;
 
           const colorScale = getColorScale(
@@ -129,11 +140,24 @@ class Content extends Component {
             null
           );
 
+          const ReDim = (data, colorScale, title) => {
+            return (
+              <ReDimPlot
+                height={screenHeight}
+                width={screenWidth * reDimPlotWidthScale}
+                data={data}
+                colorScale={colorScale}
+                highlighted={this.state.highlighted}
+                labelTitle={label.title}
+                title={title}
+              />
+            );
+          };
+
           return (
             <Grid
               container
               direction="column"
-              justify="flex-start"
               alignItems="flex-start"
               spacing={2}
               style={{
@@ -154,30 +178,20 @@ class Content extends Component {
                   }}
                 >
                   <Grid item style={{ marginTop: "40px", paddingLeft: "65px" }}>
-                    <ReDimPlot
-                      height={screenHeight}
-                      width={screenWidth * reDimPlotWidthScale}
-                      data={data.nonGeneCells}
-                      colorScale={cellAssignColorScale}
-                      highlighted={this.state.highlighted}
-                      labelTitle={label.title}
-                      title={"Cell Types"}
-                    />
+                    {ReDim(
+                      data.nonGeneCells,
+                      cellAssignColorScale,
+                      "Cell Types"
+                    )}
                   </Grid>
                   <Grid item style={{ marginTop: "40px", paddingLeft: "15px" }}>
-                    <ReDimPlot
-                      height={screenHeight}
-                      width={screenWidth * reDimPlotWidthScale}
-                      data={data.cells}
-                      colorScale={colorScale}
-                      highlighted={this.state.highlighted}
-                      labelTitle={label.title}
-                      title={
-                        label.title === "Cluster"
-                          ? "Clusters"
-                          : label.title + " Expression"
-                      }
-                    />
+                    {ReDim(
+                      data.cells,
+                      colorScale,
+                      label.title === "Cluster"
+                        ? "Clusters"
+                        : label.title + " Expression"
+                    )}
                   </Grid>
                   <Grid item style={{ marginTop: "120px" }}>
                     <AbundancePlot

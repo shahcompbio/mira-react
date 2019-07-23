@@ -58,10 +58,12 @@ const getFrameProps = (
         : "#c7c7c7",
     fillOpacity:
       labelTitle !== "Cell Type" && typeof d.label === "string"
-        ? 0.8
+        ? 0.3
         : highlighted === null || highlighted(d)
         ? 0.8
-        : 0.01
+        : 0.01,
+    strokeOpacity:
+      labelTitle !== "Cell Type" && typeof d.label === "string" ? 0.4 : 0.8
   }),
   axes: [
     { orient: "left", label: " " },

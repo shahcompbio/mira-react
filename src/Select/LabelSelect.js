@@ -91,7 +91,6 @@ class LabelSelect extends Component {
     return (
       <Select
         classes={classes}
-        //defaultValue={groupOptions[0]["options"][1]}
         value={labelTitle}
         onChange={handleChange}
         options={groupOptions}
