@@ -6,8 +6,6 @@ import ReDimPlot from "./ReDimPlot";
 import AbundancePlot from "./AbundancePlot";
 import CellAssignTable from "./CellAssignTable";
 
-import FacetController from "semiotic/lib/FacetController";
-
 import { getColorScale } from "./colors";
 import Grid from "@material-ui/core/Grid";
 import ConstantContent from "./ConstantContent";
@@ -56,7 +54,10 @@ const QUERY = gql`
         max
       }
     }
-    existingCellTypes(patientID: $patientID, sampleID: $sampleID)
+    existingCellTypes(patientID: $patientID, sampleID: $sampleID) {
+      cell
+      count
+    }
 
     cellAndMarkerGenesPair(patientID: $patientID) {
       cellType
@@ -116,7 +117,7 @@ class Content extends Component {
       );
     };
 
-    const CellAssign = (data, colorScale, highlight) => {
+    const CellAssign = (data, colorScale, highlight, countData) => {
       return (
         <CellAssignTable
           onClick={onClick}
@@ -124,6 +125,7 @@ class Content extends Component {
           highlighted={highlight}
           labelTitle={label.title}
           data={data}
+          countData={countData}
         />
       );
     };
@@ -161,6 +163,9 @@ class Content extends Component {
             );
           if (error) return null;
 
+          const existingCellType = data.existingCellTypes.map(
+            element => element.cell
+          );
           const colorScale = getColorScale(
             data.colorLabelValues.map(labelValue =>
               label.type === "categorical" ? labelValue.name : labelValue.max
@@ -180,61 +185,60 @@ class Content extends Component {
                 whiteSpace: "nowrap"
               }}
             >
-              <FacetController>
-                <Grid
-                  container
-                  direction="row"
-                  justify="flex-start"
-                  alignItems="flex-start"
-                  spacing={2}
-                  style={{
-                    flexWrap: "nowrap",
-                    whiteSpace: "nowrap"
-                  }}
-                >
-                  <Grid item style={{ marginTop: "40px", paddingLeft: "65px" }}>
-                    {ReDim(
-                      data.nonGeneCells,
-                      cellAssignColorScale(data.existingCellTypes),
-                      "Cell Types",
-                      this.state.highlighted
-                    )}
-                  </Grid>
-                  <Grid item style={{ marginTop: "40px", paddingLeft: "15px" }}>
-                    {ReDim(
-                      data.cells,
-                      colorScale,
-                      label.title === "Cluster"
-                        ? "Clusters"
-                        : label.title + " Expression",
-                      this.state.highlighted
-                    )}
-                  </Grid>
-                  <Grid item style={{ marginTop: "120px" }}>
-                    <AbundancePlot
-                      height={screenHeight * abundancesPlotHeightScale}
-                      width={screenWidth * abundancesPlotWidthScale}
-                      label={label}
-                      data={data.colorLabelValues}
-                      colorScale={colorScale}
-                      hoverBehavior={this.hoverBehavior}
-                    />
-                  </Grid>
-                </Grid>
-                <Grid
-                  item
-                  style={{
-                    width: screenWidth * cellAssignWidthScale,
-                    paddingLeft: screenWidth / 13.5
-                  }}
-                >
-                  {CellAssign(
-                    data.cellAndMarkerGenesPair,
-                    cellAssignColorScale(data.existingCellTypes),
+              <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="flex-start"
+                spacing={2}
+                style={{
+                  flexWrap: "nowrap",
+                  whiteSpace: "nowrap"
+                }}
+              >
+                <Grid item style={{ marginTop: "40px", paddingLeft: "65px" }}>
+                  {ReDim(
+                    data.nonGeneCells,
+                    cellAssignColorScale(existingCellType),
+                    "Cell Types",
                     this.state.highlighted
                   )}
                 </Grid>
-              </FacetController>
+                <Grid item style={{ marginTop: "40px", paddingLeft: "15px" }}>
+                  {ReDim(
+                    data.cells,
+                    colorScale,
+                    label.title === "Cluster"
+                      ? "Clusters"
+                      : label.title + " Expression",
+                    this.state.highlighted
+                  )}
+                </Grid>
+                <Grid item style={{ marginTop: "120px" }}>
+                  <AbundancePlot
+                    height={screenHeight * abundancesPlotHeightScale}
+                    width={screenWidth * abundancesPlotWidthScale}
+                    label={label}
+                    data={data.colorLabelValues}
+                    colorScale={colorScale}
+                    hoverBehavior={this.hoverBehavior}
+                  />
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                style={{
+                  width: screenWidth * cellAssignWidthScale,
+                  paddingLeft: screenWidth / 13.5
+                }}
+              >
+                {CellAssign(
+                  data.cellAndMarkerGenesPair,
+                  cellAssignColorScale(existingCellType),
+                  this.state.highlighted,
+                  data.existingCellTypes
+                )}
+              </Grid>
             </Grid>
           );
         }}

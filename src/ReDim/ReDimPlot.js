@@ -17,7 +17,8 @@ const ReDimPlot = ({
     highlighted,
     labelTitle,
     height,
-    width
+    width,
+    title
   );
   return (
     <div>
@@ -37,7 +38,8 @@ const getFrameProps = (
   highlighted,
   labelTitle,
   height,
-  width
+  width,
+  title
 ) => ({
   points: data,
 
@@ -75,7 +77,7 @@ const getFrameProps = (
     return (
       <div className="tooltip-content">
         <p>
-          {labelTitle}: {d.label}
+          {title === "Cell Types" ? "Cell Type" : labelTitle}: {d.label}
         </p>
       </div>
     );

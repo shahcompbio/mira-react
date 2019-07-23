@@ -5,7 +5,10 @@ import gql from "graphql-tag";
 
 const QUERY = gql`
   query($patientID: String!, $sampleID: String!) {
-    existingCellTypes(patientID: $patientID, sampleID: $sampleID)
+    existingCellTypes(patientID: $patientID, sampleID: $sampleID) {
+      cell
+      count
+    }
 
     cellAndMarkerGenesPair(patientID: $patientID) {
       cellType
@@ -46,6 +49,10 @@ class ConstantContent extends Component {
           if (loading) return null;
           if (error) return null;
 
+          const existingCellType = data.existingCellTypes.map(
+            element => element.cell
+          );
+
           return (
             <Grid
               container
@@ -72,7 +79,7 @@ class ConstantContent extends Component {
                 <Grid item style={{ marginTop: "40px", paddingLeft: "65px" }}>
                   {ReDim(
                     data.nonGeneCells,
-                    cellAssignColorScale(data.existingCellTypes),
+                    cellAssignColorScale(existingCellType),
                     "Cell Types",
                     highlighted
                   )}
@@ -97,8 +104,9 @@ class ConstantContent extends Component {
               >
                 {CellAssign(
                   data.cellAndMarkerGenesPair,
-                  cellAssignColorScale(data.existingCellTypes),
-                  highlighted
+                  cellAssignColorScale(existingCellType),
+                  highlighted,
+                  data.existingCellTypes
                 )}
               </Grid>
             </Grid>

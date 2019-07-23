@@ -42,7 +42,7 @@ class CellAssignTable extends Component {
   }
 
   render() {
-    const { colorScale, highlighted, data } = this.props;
+    const { colorScale, highlighted, data, countData } = this.props;
     const cellAndMarkerGenes = this.sortData(data);
     return (
       <div>
@@ -64,6 +64,7 @@ class CellAssignTable extends Component {
                     handleMouseEnter={this.handleMouseEnter}
                     handleMouseLeave={this.handleMouseLeave}
                     selectedGene={this.state.selectedGene}
+                    countData={countData}
                   />
                 );
               })}
@@ -83,7 +84,8 @@ const CellTypeAndMarkerGenesRow = ({
   handleClick,
   selectedGene,
   handleMouseEnter,
-  handleMouseLeave
+  handleMouseLeave,
+  countData
 }) => {
   const reformatName = name => name.split(" ").join(".");
   const nameToObject = name => ({ name: name, label: reformatName(name) });
@@ -96,8 +98,6 @@ const CellTypeAndMarkerGenesRow = ({
   const pickBackgroundColor = () => {
     if (highlighted === null && selectedGene !== "Cell Type") {
       if (row.markerGenes.includes(selectedGene)) return getColor(row.cellType);
-    } else if (highlighted === null && selectedGene === "Cell Type") {
-      return getColor(row.cellType);
     } else if (highlighted(nameToObject(row.cellType))) {
       return getColor(row.cellType);
     }
@@ -117,9 +117,20 @@ const CellTypeAndMarkerGenesRow = ({
 
   return (
     <TableRow key={row.cellType}>
-      <TableCell style={styles(getColor(row.cellType), 0, null)} />
-      <TableCell style={styles("white", 40, 0.5)} />
-      <TableCell align="center" style={styles(pickBackgroundColor(), 41, null)}>
+      <TableCell align="center" style={styles(getColor(row.cellType), 0, null)}>
+        {" "}
+        <h5>
+          {
+            countData.map(element => element.count)[
+              countData
+                .map(element => element.cell)
+                .indexOf(reformatName(row.cellType))
+            ]
+          }
+        </h5>
+      </TableCell>
+      <TableCell style={styles("white", 65, 0.5)} />
+      <TableCell align="center" style={styles(pickBackgroundColor(), 66, null)}>
         <h5>{row.cellType}</h5>
       </TableCell>
       {markerGenes.map(gene => {
