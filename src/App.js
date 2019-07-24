@@ -3,12 +3,15 @@ import DataSelect from "./Select/DataSelect";
 import Header from "@bit/viz.spectrum.header";
 import Grid from "@material-ui/core/Grid";
 import Content from "./ReDim/Content";
-import { CollapsePanel } from "./ReDim/CollapsePanel";
-
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { theme } from "./config/config.js";
 
 import { withRouter } from "react-router";
+import { makeStyles } from "@material-ui/styles";
 
 const title = "scRNA Dashboard";
 const description =
@@ -19,6 +22,13 @@ const ContentStyles = {
   display: "flex",
   flexDirection: "row"
 };
+
+const useStyles = makeStyles(theme => ({
+  summary: {
+    backgroundImage:
+      'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUMAAACcCAMAAADS8jl7AAAABlBMVEXr6+vr6+rffHx5AAAAUElEQVR4nO3MoQEAAAjDsO3/pzF8gEEkpq4JAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Fo3va8GxkIABBQrUsIAAAAASUVORK5CYII=")'
+  }
+}));
 
 const App = ({ location }) => {
   const [patientID, sampleID] = location.pathname.substr(1).split("/");
@@ -39,41 +49,84 @@ const App = ({ location }) => {
     updateDimensions();
   });
 
+  const classes = useStyles();
   return (
     <MuiThemeProvider theme={theme}>
       <Header name={title} description={description} />
-      <CollapsePanel />
       <Grid
         container
         direction="column"
-        justify="flex-start"
-        alignItems="flex-start"
+        width="95%"
         spacing={2}
-        ref={widthRef}
         style={{
-          flexWrap: "nowrap",
-          whiteSpace: "nowrap",
-          padding: "50px 0px"
+          padding: "60px 20px"
         }}
       >
         <Grid item>
-          <DataSelect
-            patientID={patientID}
-            sampleID={sampleID}
-            updateLabel={label => setLabel(label)}
-            label={label}
-          />
+          <ExpansionPanel>
+            <ExpansionPanelSummary
+              className={classes.summary}
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <div style={{ color: "#797979" }}>
+                <h2>Samples</h2>
+              </div>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <Grid
+                container
+                direction="column"
+                justify="flex-start"
+                alignItems="flex-start"
+                spacing={2}
+                ref={widthRef}
+                style={{
+                  flexWrap: "nowrap",
+                  whiteSpace: "nowrap",
+                  padding: "0px 0px"
+                }}
+              >
+                <Grid item>
+                  <DataSelect
+                    patientID={patientID}
+                    sampleID={sampleID}
+                    updateLabel={label => setLabel(label)}
+                    label={label}
+                  />
+                </Grid>
+                <div style={ContentStyles}>
+                  <Content
+                    screenHeight={screenHeight}
+                    screenWidth={screenWidth}
+                    patientID={patientID}
+                    sampleID={sampleID}
+                    label={label}
+                    onClick={label => setLabel(label)}
+                  />
+                </div>
+              </Grid>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
         </Grid>
-        <div style={ContentStyles}>
-          <Content
-            screenHeight={screenHeight}
-            screenWidth={screenWidth}
-            patientID={patientID}
-            sampleID={sampleID}
-            label={label}
-            onClick={label => setLabel(label)}
-          />
-        </div>
+        <Grid item>
+          <ExpansionPanel>
+            <ExpansionPanelSummary
+              className={classes.summary}
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <div style={{ color: "#797979" }}>
+                <h2>DNA Data</h2>
+              </div>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              Content Coming Soon...
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+        </Grid>
       </Grid>
     </MuiThemeProvider>
   );

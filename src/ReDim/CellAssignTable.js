@@ -93,7 +93,7 @@ const CellTypeAndMarkerGenesRow = ({
   const getColor = name =>
     colorScale(reformatName(name)) !== undefined
       ? colorScale(reformatName(name))
-      : "#ccc";
+      : "#D4D4D4";
 
   const pickBackgroundColor = () => {
     if (highlighted === null && selectedGene !== "Cell Type") {
@@ -101,7 +101,7 @@ const CellTypeAndMarkerGenesRow = ({
     } else if (highlighted(nameToObject(row.cellType))) {
       return getColor(row.cellType);
     }
-    return "#ccc";
+    return "#D4D4D4";
   };
 
   const styles = (backgroundColor, leftPosition, anyPadding) => {
@@ -110,7 +110,7 @@ const CellTypeAndMarkerGenesRow = ({
       left: leftPosition,
       color: "black",
       background: backgroundColor,
-      zIndex: 150,
+      zIndex: 1,
       padding: anyPadding
     };
   };
@@ -129,8 +129,11 @@ const CellTypeAndMarkerGenesRow = ({
           }
         </h5>
       </TableCell>
-      <TableCell style={styles("white", 65, 0.5)} />
-      <TableCell align="center" style={styles(pickBackgroundColor(), 66, null)}>
+      <TableCell style={styles("#E0E0E0", 72.75, 0.25)} />
+      <TableCell
+        align="center"
+        style={styles(pickBackgroundColor(), 73.5, null)}
+      >
         <h5>{row.cellType}</h5>
       </TableCell>
       {markerGenes.map(gene => {

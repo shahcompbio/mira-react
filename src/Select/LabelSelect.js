@@ -34,7 +34,7 @@ const styles = {
     flexGrow: 1,
     height: 250
   },
-  textField: { paddingLeft: "-15px", width: 200, marginLeft: "70px" },
+  textField: { paddingLeft: "-15px", width: 200 },
   input: {
     display: "flex",
     padding: 5,

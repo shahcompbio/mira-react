@@ -196,7 +196,7 @@ class Content extends Component {
                   whiteSpace: "nowrap"
                 }}
               >
-                <Grid item style={{ marginTop: "40px", paddingLeft: "65px" }}>
+                <Grid item style={{ marginTop: "40px", paddingLeft: "40px" }}>
                   {ReDim(
                     data.nonGeneCells,
                     cellAssignColorScale(existingCellType),
@@ -229,7 +229,8 @@ class Content extends Component {
                 item
                 style={{
                   width: screenWidth * cellAssignWidthScale,
-                  paddingLeft: screenWidth / 13.5
+                  paddingLeft: screenWidth / 13.5,
+                  paddingBottom: 30
                 }}
               >
                 {CellAssign(
