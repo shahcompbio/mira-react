@@ -129,10 +129,10 @@ const CellTypeAndMarkerGenesRow = ({
           }
         </h5>
       </TableCell>
-      <TableCell style={styles("#E0E0E0", 64.75, 0.25)} />
+      <TableCell style={styles("#E0E0E0", 65, 0.25)} />
       <TableCell
         align="center"
-        style={styles(pickBackgroundColor(), 65.25, null)}
+        style={styles(pickBackgroundColor(), 65.75, null)}
       >
         <h5>{row.cellType}</h5>
       </TableCell>
