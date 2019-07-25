@@ -4,7 +4,6 @@ import { graphql } from "react-apollo";
 import gql from "graphql-tag";
 
 import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 
@@ -29,7 +28,7 @@ class PatientSelect extends Component {
     this.setState({ patient: event.target.value });
   };
   render() {
-    const { data, patientID, history, style, labelStyle } = this.props;
+    const { data, patientID, history, style } = this.props;
     if (data && data.loading) {
       return null;
     }
@@ -39,11 +38,6 @@ class PatientSelect extends Component {
     }
     return (
       <FormControl style={style}>
-        {patientID ? (
-          <InputLabel style={labelStyle}>Patient ID:</InputLabel>
-        ) : (
-          <InputLabel style={labelStyle}>Select a patient:</InputLabel>
-        )}
         <Select
           style={{ width: 200 }}
           onChange={this.handleChange}

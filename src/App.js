@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from "react";
-import DataSelect from "./Select/DataSelect";
 import Header from "@bit/viz.spectrum.header";
 import Grid from "@material-ui/core/Grid";
 import Content from "./ReDim/Content";
@@ -9,9 +8,12 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { theme } from "./config/config.js";
-
+import SampleSelectQuery from "./Select/SampleSelect";
+import PatientSelect from "./Select/PatientSelect";
 import { withRouter } from "react-router";
 import { makeStyles } from "@material-ui/styles";
+import LabelSelectQuery from "./Select/LabelSelectQuery";
+import QCTable from "./QCTable/QCTable";
 
 const title = "scRNA Dashboard";
 const description =
@@ -23,18 +25,19 @@ const ContentStyles = {
   flexDirection: "row"
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   summary: {
     backgroundImage:
       'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUMAAACcCAMAAADS8jl7AAAABlBMVEXr6+vr6+rffHx5AAAAUElEQVR4nO3MoQEAAAjDsO3/pzF8gEEkpq4JAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Fo3va8GxkIABBQrUsIAAAAASUVORK5CYII=")'
   }
-}));
+});
 
 const App = ({ location }) => {
   const [patientID, sampleID] = location.pathname.substr(1).split("/");
   const [screenWidth, setWidth] = useState(0);
   const [screenHeight, setHeight] = useState(0);
   const [label, setLabel] = useState("Cluster");
+  const [sampleLabel, setSampleLabel] = useState();
 
   const widthRef = useRef(0);
 
@@ -49,7 +52,15 @@ const App = ({ location }) => {
     updateDimensions();
   });
 
+  const InputLabelStyle = { padding: "19px" };
+
+  const SelectionStyles = {
+    width: 225,
+    padding: "15px"
+  };
+
   const classes = useStyles();
+
   return (
     <MuiThemeProvider theme={theme}>
       <Header name={title} description={description} />
@@ -70,9 +81,66 @@ const App = ({ location }) => {
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <div style={{ color: "#797979" }}>
-                <h2>Samples</h2>
+              <div
+                style={{
+                  color: "#797979",
+                  marginTop: "18px",
+                  paddingLeft: "0px"
+                }}
+              >
+                <h2>Patient ID: </h2>
               </div>
+
+              <PatientSelect
+                patientID={patientID}
+                style={SelectionStyles}
+                labelStyle={InputLabelStyle}
+              />
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <Grid
+                item
+                style={{
+                  width: screenWidth * 0.99,
+                  paddingLeft: 0,
+                  paddingBottom: 30
+                }}
+              >
+                <QCTable
+                  onClick={sampleLabel => setSampleLabel(sampleLabel)}
+                  patientID={patientID}
+                  sampleLabel={sampleLabel}
+                />
+              </Grid>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+        </Grid>
+        <Grid item>
+          <ExpansionPanel>
+            <ExpansionPanelSummary
+              className={classes.summary}
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <div
+                style={{
+                  color: "#797979",
+                  marginTop: "18px",
+                  paddingLeft: "0px"
+                }}
+              >
+                <h2>Sample ID: </h2>
+              </div>
+
+              <SampleSelectQuery
+                patientID={patientID}
+                sampleID={sampleID}
+                style={SelectionStyles}
+                labelStyle={InputLabelStyle}
+                label={sampleLabel}
+                changeSample={sampleLabel => setSampleLabel(sampleLabel)}
+              />
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <Grid
@@ -89,19 +157,25 @@ const App = ({ location }) => {
                 }}
               >
                 <Grid item>
-                  <DataSelect
-                    patientID={patientID}
-                    sampleID={sampleID}
-                    updateLabel={label => setLabel(label)}
-                    label={label}
-                  />
+                  {!sampleID ? null : (
+                    <LabelSelectQuery
+                      updateLabel={label => setLabel(label)}
+                      patientID={patientID}
+                      sampleID={sampleLabel}
+                      labelTitle={
+                        label === null || label === undefined
+                          ? "Cell Type"
+                          : label.title
+                      }
+                    />
+                  )}
                 </Grid>
                 <div style={ContentStyles}>
                   <Content
                     screenHeight={screenHeight}
                     screenWidth={screenWidth}
                     patientID={patientID}
-                    sampleID={sampleID}
+                    sampleID={sampleLabel}
                     label={label}
                     onClick={label => setLabel(label)}
                   />

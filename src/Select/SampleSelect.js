@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Query } from "react-apollo";
@@ -16,10 +15,11 @@ const QUERY = gql`
 
 const SampleSelectQuery = ({
   patientID,
-  sampleID,
   history,
   style,
-  labelStyle
+  labelStyle,
+  label,
+  changeSample
 }) => {
   return (
     <Query query={QUERY} variables={{ patientID }}>
@@ -32,8 +32,9 @@ const SampleSelectQuery = ({
               history={history}
               patientID={patientID}
               data={data}
-              sampleID={sampleID}
               labelStyle={labelStyle}
+              label={label}
+              changeSample={changeSample}
             />
           );
         }
@@ -43,41 +44,21 @@ const SampleSelectQuery = ({
 };
 
 class SampleSelect extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      sample: ""
-    };
-  }
   handleChange = event => {
     this.props.history.push(
       "/" + this.props.patientID + "/" + event.target.value
     );
-    this.setState({ sample: event.target.value });
+    this.props.changeSample(event.target.value);
   };
   render() {
-    const { patientID, sampleID, data, style, labelStyle } = this.props;
+    const { data, style, label } = this.props;
     return (
       <FormControl style={style}>
-        {patientID && sampleID ? (
-          <InputLabel as="h4" style={labelStyle}>
-            Sample ID:
-          </InputLabel>
-        ) : patientID ? (
-          <InputLabel as="h4" style={labelStyle}>
-            Select a sample
-          </InputLabel>
-        ) : (
-          <InputLabel as="h4" style={{ color: "white" }}>
-            {" "}
-            .
-          </InputLabel>
-        )}
         <Select
           style={{ width: 200 }}
           onChange={this.handleChange}
           name={"sampleSelect"}
-          value={sampleID ? sampleID : this.state.sample}
+          value={label}
         >
           {data.samples.map((option, index) => (
             <MenuItem value={option} key={index + "-sampleSelect"}>

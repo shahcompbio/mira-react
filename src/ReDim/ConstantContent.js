@@ -88,7 +88,7 @@ class ConstantContent extends Component {
                   <img
                     style={{
                       marginTop: 100,
-                      paddingLeft: 150
+                      paddingLeft: 230
                     }}
                     src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
                     alt="LOADING"
