@@ -13,11 +13,8 @@ const QUERY = gql`
   query($patientID: String!) {
     qcTableValues(patientID: $patientID) {
       Sample_ID
-      Mito_5
-      Mito_10
-      Mito_15
-      Mito_20
       Estimated_Number_of_Cells
+      Mito_20
       Number_of_Reads
       Number_of_Genes
       Mean_Reads_per_Cell
@@ -36,18 +33,21 @@ class QCTable extends Component {
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
     this.state = {
-      selectedSample: this.props.sampleLabel
+      highlightedSample: undefined
     };
   }
-  handleClick = e => this.props.onClick(e.currentTarget.value);
+
+  handleClick = e => {
+    this.props.onClick(e.currentTarget.value);
+  };
 
   handleMouseEnter = e =>
-    this.setState({ selectedSample: e.currentTarget.value });
+    this.setState({ highlightedSample: e.currentTarget.value });
 
-  handleMouseLeave = e =>
-    this.setState({ selectedSample: this.props.sampleLabel });
+  handleMouseLeave = e => this.setState({ highlightedSample: undefined });
 
-  reformatPropertyName = name => name.split("_").join(" ");
+  reformatPropertyName = name =>
+    name === "Mito_20" ? "QC (Mito<20)" : name.split("_").join(" ");
 
   render() {
     const { patientID } = this.props;
@@ -71,9 +71,9 @@ class QCTable extends Component {
 
           return (
             <div>
-              <h3>
+              <h2>
                 <center>QC Table</center>
-              </h3>
+              </h2>
               <Paper style={{ overflowX: "auto" }}>
                 <Table size="small" padding="default">
                   <HeaderRow
@@ -86,7 +86,8 @@ class QCTable extends Component {
                     handleClick={this.handleClick}
                     handleMouseEnter={this.handleMouseEnter}
                     handleMouseLeave={this.handleMouseLeave}
-                    selectedSample={this.state.selectedSample}
+                    selectedSample={this.props.label}
+                    highlightedSample={this.state.highlightedSample}
                   />
                 </Table>
               </Paper>
@@ -136,12 +137,19 @@ const Body = ({
   handleClick,
   handleMouseEnter,
   handleMouseLeave,
-  selectedSample
+  selectedSample,
+  highlightedSample
 }) => {
-  const highlightStyle = (element, selectedSample) => {
+  const highlightStyle = element => {
     return {
       backgroundColor:
-        element["Sample_ID"] === selectedSample ? "lightBlue" : "white"
+        highlightedSample === undefined
+          ? element["Sample_ID"] === selectedSample
+            ? "lightBlue"
+            : "white"
+          : element["Sample_ID"] === highlightedSample
+          ? "lightBlue"
+          : "white"
     };
   };
 
@@ -152,10 +160,7 @@ const Body = ({
           <TableRow>
             {properties.map(property => {
               return property !== "Sample_ID" ? (
-                <TableCell
-                  align="center"
-                  style={highlightStyle(element, selectedSample)}
-                >
+                <TableCell align="center" style={highlightStyle(element)}>
                   {element[property]}
                 </TableCell>
               ) : (
@@ -180,10 +185,7 @@ const Body = ({
                 </TableCell>
               );
             })}
-            <TableCell
-              align="center"
-              style={highlightStyle(element, selectedSample)}
-            >
+            <TableCell align="center" style={highlightStyle(element)}>
               <a href="https://www.google.com"> Summary </a>
             </TableCell>
           </TableRow>

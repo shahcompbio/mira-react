@@ -33,17 +33,35 @@ const useStyles = makeStyles({
 });
 
 const App = ({ location }) => {
-  const [patientID, sampleID] = location.pathname.substr(1).split("/");
+  const [patientID] = location.pathname.substr(1).split("/");
   const [screenWidth, setWidth] = useState(0);
   const [screenHeight, setHeight] = useState(0);
-  const [label, setLabel] = useState("Cluster");
+  const [label, setLabel] = useState({
+    id: "A1BG",
+    type: "gene",
+    title: "A1BG"
+  });
   const [sampleLabel, setSampleLabel] = useState();
+  const [patientPanelState, setPatientPanelState] = useState(true);
+  const [samplePanelState, setSamplePanelState] = useState(true);
 
   const widthRef = useRef(0);
 
   const updateDimensions = () => {
     setWidth(widthRef.current.clientWidth);
     setHeight(500);
+  };
+
+  const handlePatientChange = e => {
+    patientID.length > 0 && patientPanelState
+      ? setPatientPanelState(false)
+      : setPatientPanelState(true);
+  };
+
+  const handleSampleChange = e => {
+    sampleLabel !== undefined && samplePanelState
+      ? setSamplePanelState(false)
+      : setSamplePanelState(true);
   };
 
   window.addEventListener("resize", updateDimensions);
@@ -74,7 +92,10 @@ const App = ({ location }) => {
         }}
       >
         <Grid item>
-          <ExpansionPanel>
+          <ExpansionPanel
+            onChange={handlePatientChange}
+            expanded={patientID.length === 0 ? false : patientPanelState}
+          >
             <ExpansionPanelSummary
               className={classes.summary}
               expandIcon={<ExpandMoreIcon />}
@@ -101,22 +122,28 @@ const App = ({ location }) => {
               <Grid
                 item
                 style={{
-                  width: screenWidth * 0.99,
-                  paddingLeft: 0,
-                  paddingBottom: 30
+                  width: screenWidth * 0.97,
+                  paddingLeft: screenWidth / 50,
+                  paddingBottom: 30,
+                  paddingTop: 30
                 }}
               >
-                <QCTable
-                  onClick={sampleLabel => setSampleLabel(sampleLabel)}
-                  patientID={patientID}
-                  sampleLabel={sampleLabel}
-                />
+                {!patientID ? null : (
+                  <QCTable
+                    label={sampleLabel}
+                    onClick={sampleLabel => setSampleLabel(sampleLabel)}
+                    patientID={patientID}
+                  />
+                )}
               </Grid>
             </ExpansionPanelDetails>
           </ExpansionPanel>
         </Grid>
         <Grid item>
-          <ExpansionPanel>
+          <ExpansionPanel
+            onChange={handleSampleChange}
+            expanded={sampleLabel === undefined ? false : samplePanelState}
+          >
             <ExpansionPanelSummary
               className={classes.summary}
               expandIcon={<ExpandMoreIcon />}
@@ -135,7 +162,7 @@ const App = ({ location }) => {
 
               <SampleSelectQuery
                 patientID={patientID}
-                sampleID={sampleID}
+                sampleID={sampleLabel}
                 style={SelectionStyles}
                 labelStyle={InputLabelStyle}
                 label={sampleLabel}
@@ -157,7 +184,7 @@ const App = ({ location }) => {
                 }}
               >
                 <Grid item>
-                  {!sampleID ? null : (
+                  {!sampleLabel ? null : (
                     <LabelSelectQuery
                       updateLabel={label => setLabel(label)}
                       patientID={patientID}

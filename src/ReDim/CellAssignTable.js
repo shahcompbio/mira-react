@@ -87,13 +87,10 @@ const CellTypeAndMarkerGenesRow = ({
   handleMouseLeave,
   countData
 }) => {
-  const reformatName = name => name.split(" ").join(".");
-  const nameToObject = name => ({ name: name, label: reformatName(name) });
+  const nameToObject = name => ({ name: name, label: name });
 
   const getColor = name =>
-    colorScale(reformatName(name)) !== undefined
-      ? colorScale(reformatName(name))
-      : "#D4D4D4";
+    colorScale(name) !== undefined ? colorScale(name) : "#D4D4D4";
 
   const pickBackgroundColor = () => {
     if (highlighted === null && selectedGene !== "Cell Type") {
@@ -122,9 +119,7 @@ const CellTypeAndMarkerGenesRow = ({
         <h5>
           {
             countData.map(element => element.count)[
-              countData
-                .map(element => element.cell)
-                .indexOf(reformatName(row.cellType))
+              countData.map(element => element.cell).indexOf(row.cellType)
             ]
           }
         </h5>
