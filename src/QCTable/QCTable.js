@@ -8,21 +8,50 @@ import { Paper } from "@material-ui/core";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import { withStyles } from "@material-ui/core/styles";
-import { number } from "prop-types";
 
 const QUERY = gql`
   query($patientID: String!) {
     qcTableValues(patientID: $patientID) {
-      Sample_ID
-      Estimated_Number_of_Cells
-      Mito_20
-      Number_of_Reads
-      Number_of_Genes
-      Mean_Reads_per_Cell
-      Median_Genes_per_Cell
-      Valid_Barcodes
-      Sequencing_Saturation
-      Median_UMI_Counts_per_Cell
+      sampleID {
+        name
+        value
+      }
+      numCells {
+        name
+        value
+      }
+      mito20 {
+        name
+        value
+      }
+      numReads {
+        name
+        value
+      }
+      numGenes {
+        name
+        value
+      }
+      medianGenes {
+        name
+        value
+      }
+      meanReads {
+        name
+        value
+      }
+      validBarcodes {
+        name
+        value
+      }
+      seqSat {
+        name
+        value
+      }
+      medUMI {
+        name
+        value
+      }
     }
   }
 `;
@@ -47,13 +76,6 @@ class QCTable extends Component {
     };
   }
 
-  reformatNumbers(item) {
-    if (typeof item === "number" && item !== null) {
-      return item.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-    return item;
-  }
-
   handleClick = e => {
     this.props.onClick(e.currentTarget.value);
   };
@@ -62,9 +84,6 @@ class QCTable extends Component {
     this.setState({ highlightedSample: e.currentTarget.value });
 
   handleMouseLeave = e => this.setState({ highlightedSample: undefined });
-
-  reformatPropertyName = name =>
-    name === "Mito_20" ? "QC (Mito<20)" : name.split("_").join(" ");
 
   handleCellClick = (e, sampleName) => {
     this.setState({ highlightedSample: sampleName });
@@ -86,7 +105,9 @@ class QCTable extends Component {
           if (error) return null;
 
           let properties = Object.getOwnPropertyNames(data.qcTableValues[0]);
+
           const index = properties.indexOf("__typename");
+
           if (index > -1) {
             properties.splice(index, 1);
           }
@@ -100,18 +121,16 @@ class QCTable extends Component {
                 <Table size="medium" padding="default">
                   <HeaderRow
                     properties={properties}
-                    reformatPropertyName={this.reformatPropertyName}
+                    data={data.qcTableValues[0]}
                   />
                   <Body
                     properties={properties}
-                    data={data}
+                    data={data.qcTableValues}
                     handleMouseEnter={this.handleMouseEnter}
                     handleMouseLeave={this.handleMouseLeave}
                     selectedSample={this.props.label}
-                    highlightedSample={this.state.highlightedSample}
                     handleCellClick={this.handleCellClick}
                     classes={this.props.classes}
-                    reformatNumbers={this.reformatNumbers}
                   />
                 </Table>
               </Paper>
@@ -123,14 +142,14 @@ class QCTable extends Component {
   }
 }
 
-const HeaderRow = ({ properties, reformatPropertyName }) => {
+const HeaderRow = ({ properties, data }) => {
   return (
     <TableHead>
       <TableRow>
         {properties.map(element => {
-          return element !== "Sample_ID" ? (
+          return element !== "sampleID" ? (
             <TableCell align="center" style={{ backgroundColor: "#E4E4E4" }}>
-              <h4>{reformatPropertyName(element)}</h4>
+              <h4>{data[element].name}</h4>
             </TableCell>
           ) : (
             <TableCell
@@ -143,7 +162,7 @@ const HeaderRow = ({ properties, reformatPropertyName }) => {
                 zIndex: 1
               }}
             >
-              <h4>{reformatPropertyName(element)}</h4>
+              <h4>{data[element].name}</h4>
             </TableCell>
           );
         })}
@@ -159,36 +178,38 @@ const Body = ({
   properties,
   data,
   selectedSample,
-  highlightedSample,
   handleCellClick,
-  classes,
-  reformatNumbers
+  classes
 }) => {
+  const reformatNumbers = item => {
+    if (typeof item === "number" && item !== null) {
+      return item.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    return item;
+  };
   return (
     <TableBody>
-      {data.qcTableValues.map(element => {
+      {data.map(element => {
         return (
           <TableRow
-            selected={selectedSample === element["Sample_ID"]}
+            selected={selectedSample === element["sampleID"].value}
             className={classes.rowBehavior}
           >
             {properties.map(property => {
-              return property !== "Sample_ID" ? (
+              return property !== "sampleID" ? (
                 <TableCell
                   align="center"
                   onClick={event =>
-                    handleCellClick(event, element["Sample_ID"])
+                    handleCellClick(event, element["sampleID"].value)
                   }
-                  value={element["Sample_ID"]}
                 >
-                  {reformatNumbers(element[property])}
+                  {reformatNumbers(element[property].value)}
                 </TableCell>
               ) : (
                 <TableCell
                   align="center"
-                  value={element["Sample_ID"]}
                   onClick={event =>
-                    handleCellClick(event, element["Sample_ID"])
+                    handleCellClick(event, element["sampleID"].value)
                   }
                   style={{
                     position: "sticky",
@@ -198,11 +219,11 @@ const Body = ({
                     zIndex: 1
                   }}
                 >
-                  <b>{reformatNumbers(element[property])}</b>
+                  <b>{reformatNumbers(element[property].value)}</b>
                 </TableCell>
               );
             })}
-            <TableCell align="center" /*style={highlightStyle(element)}*/>
+            <TableCell align="center">
               <a href="https://www.google.com"> Summary </a>
             </TableCell>
           </TableRow>

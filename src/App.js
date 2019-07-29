@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import Header from "@bit/viz.spectrum.header";
 import Grid from "@material-ui/core/Grid";
-import Content from "./ReDim/Content";
+import SampleData from "./ReDim/SampleData";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
@@ -27,8 +27,7 @@ const ContentStyles = {
 
 const useStyles = makeStyles({
   summary: {
-    backgroundImage:
-      'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUMAAACcCAMAAADS8jl7AAAABlBMVEXr6+vr6+rffHx5AAAAUElEQVR4nO3MoQEAAAjDsO3/pzF8gEEkpq4JAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8Fo3va8GxkIABBQrUsIAAAAASUVORK5CYII=")'
+    backgroundColor: "whiteSmoke"
   }
 });
 
@@ -77,8 +76,6 @@ const App = ({ location }) => {
     padding: "15px"
   };
 
-  const classes = useStyles();
-
   return (
     <MuiThemeProvider theme={theme}>
       <Header name={title} description={description} />
@@ -92,113 +89,61 @@ const App = ({ location }) => {
         }}
       >
         <Grid item>
-          <ExpansionPanel
-            onChange={handlePatientChange}
-            expanded={patientID.length === 0 ? false : patientPanelState}
+          <ExpansionPanelComponent
+            handleChange={handlePatientChange}
+            shouldExpand={patientID.length === 0 ? false : patientPanelState}
+            widthRef={widthRef}
+            patientID={patientID}
+            SelectionStyles={SelectionStyles}
+            InputLabelStyle={InputLabelStyle}
+            name={"Patient ID : "}
+            marginTop={18}
+            styles={{
+              width: screenWidth * 0.97,
+              paddingLeft: screenWidth / 50,
+              paddingBottom: 30,
+              paddingTop: 30
+            }}
           >
-            <ExpansionPanelSummary
-              className={classes.summary}
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <div
-                style={{
-                  color: "#797979",
-                  marginTop: "18px",
-                  paddingLeft: "0px"
-                }}
-              >
-                <h2>Patient ID: </h2>
-              </div>
-
-              <PatientSelect
+            {!patientID ? null : (
+              <QCTable
+                label={sampleLabel}
+                onClick={sampleLabel => setSampleLabel(sampleLabel)}
                 patientID={patientID}
-                style={SelectionStyles}
-                labelStyle={InputLabelStyle}
               />
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <Grid
-                item
-                style={{
-                  width: screenWidth * 0.97,
-                  paddingLeft: screenWidth / 50,
-                  paddingBottom: 30,
-                  paddingTop: 30
-                }}
-              >
-                {!patientID ? null : (
-                  <QCTable
-                    label={sampleLabel}
-                    onClick={sampleLabel => setSampleLabel(sampleLabel)}
-                    patientID={patientID}
-                  />
-                )}
-              </Grid>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
+            )}
+          </ExpansionPanelComponent>
         </Grid>
         <Grid item>
-          <ExpansionPanel
-            onChange={handleSampleChange}
-            expanded={sampleLabel === undefined ? false : samplePanelState}
+          <ExpansionPanelComponent
+            handleChange={handleSampleChange}
+            shouldExpand={sampleLabel === undefined ? false : samplePanelState}
+            patientID={patientID}
+            widthRef={widthRef}
+            SelectionStyles={SelectionStyles}
+            InputLabelStyle={InputLabelStyle}
+            sampleLabel={sampleLabel}
+            setSampleLabel={setSampleLabel}
+            name={"Sample ID : "}
+            marginTop={18}
           >
-            <ExpansionPanelSummary
-              className={classes.summary}
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <div
-                style={{
-                  color: "#797979",
-                  marginTop: "18px",
-                  paddingLeft: "0px"
-                }}
-              >
-                <h2>Sample ID: </h2>
-              </div>
+            {
+              <div>
+                {!sampleLabel ? null : (
+                  <LabelSelectQuery
+                    updateLabel={label => setLabel(label)}
+                    patientID={patientID}
+                    sampleID={sampleLabel}
+                    labelTitle={
+                      label === null || label === undefined
+                        ? "Cell Type"
+                        : label.title
+                    }
+                  />
+                )}
 
-              <SampleSelectQuery
-                patientID={patientID}
-                sampleID={sampleLabel}
-                style={SelectionStyles}
-                labelStyle={InputLabelStyle}
-                label={sampleLabel}
-                changeSample={sampleLabel => setSampleLabel(sampleLabel)}
-              />
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <Grid
-                container
-                direction="column"
-                justify="flex-start"
-                alignItems="flex-start"
-                spacing={2}
-                ref={widthRef}
-                style={{
-                  flexWrap: "nowrap",
-                  whiteSpace: "nowrap",
-                  padding: "0px 0px"
-                }}
-              >
-                <Grid item>
-                  {!sampleLabel ? null : (
-                    <LabelSelectQuery
-                      updateLabel={label => setLabel(label)}
-                      patientID={patientID}
-                      sampleID={sampleLabel}
-                      labelTitle={
-                        label === null || label === undefined
-                          ? "Cell Type"
-                          : label.title
-                      }
-                    />
-                  )}
-                </Grid>
                 <div style={ContentStyles}>
-                  <Content
+                  <SampleData
                     screenHeight={screenHeight}
                     screenWidth={screenWidth}
                     patientID={patientID}
@@ -207,30 +152,88 @@ const App = ({ location }) => {
                     onClick={label => setLabel(label)}
                   />
                 </div>
-              </Grid>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
+              </div>
+            }
+          </ExpansionPanelComponent>
         </Grid>
         <Grid item>
-          <ExpansionPanel>
-            <ExpansionPanelSummary
-              className={classes.summary}
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <div style={{ color: "#797979" }}>
-                <h2>DNA Data</h2>
-              </div>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              Content Coming Soon...
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
+          <ExpansionPanelComponent widthRef={widthRef} name={"DNA Data : "}>
+            {"Content coming soon..."}
+          </ExpansionPanelComponent>
         </Grid>
       </Grid>
     </MuiThemeProvider>
   );
 };
+
+const ExpansionPanelComponent = ({
+  children,
+  handleChange,
+  shouldExpand,
+  widthRef,
+  name,
+  patientID,
+  SelectionStyles,
+  InputLabelStyle,
+  sampleLabel,
+  setSampleLabel,
+  marginTop,
+  styles
+}) => (
+  <ExpansionPanel onChange={handleChange} expanded={shouldExpand}>
+    <ExpansionPanelSummary
+      className={useStyles().summary}
+      expandIcon={<ExpandMoreIcon />}
+      aria-controls="panel1a-content"
+      id="panel1a-header"
+    >
+      <div
+        style={{
+          color: "#797979",
+          marginTop: marginTop,
+          paddingLeft: "0px"
+        }}
+      >
+        <h2> {name} </h2>
+      </div>
+
+      {name === "Patient ID : " ? (
+        <PatientSelect
+          patientID={patientID}
+          style={SelectionStyles}
+          labelStyle={InputLabelStyle}
+        />
+      ) : name === "Sample ID : " ? (
+        <SampleSelectQuery
+          patientID={patientID}
+          sampleID={sampleLabel}
+          style={SelectionStyles}
+          labelStyle={InputLabelStyle}
+          label={sampleLabel}
+          changeSample={sampleLabel => setSampleLabel(sampleLabel)}
+        />
+      ) : name === "DNA Data : " ? null : null}
+    </ExpansionPanelSummary>
+    <ExpansionPanelDetails>
+      <Grid
+        container
+        direction="column"
+        justify="flex-start"
+        alignItems="flex-start"
+        spacing={2}
+        ref={widthRef}
+        style={{
+          flexWrap: "nowrap",
+          whiteSpace: "nowrap",
+          padding: "0px 0px"
+        }}
+      >
+        <Grid item style={styles}>
+          {children}
+        </Grid>
+      </Grid>
+    </ExpansionPanelDetails>
+  </ExpansionPanel>
+);
 
 export default withRouter(App);
