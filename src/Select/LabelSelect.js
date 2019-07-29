@@ -58,12 +58,20 @@ const styles = {
     right: 0
   }
 };
+
 class LabelSelect extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLastActionFocus: false
+    };
+  }
   componentDidMount() {
     this.props.onSelect(this.props.data[0]["labels"][0]);
   }
 
   render() {
+    const { focus } = this.state;
     const { data, onSelect, classes, labelTitle } = this.props;
 
     const allOptions = data.reduce(
@@ -91,8 +99,12 @@ class LabelSelect extends Component {
     return (
       <Select
         classes={classes}
-        value={labelTitle}
+        value={focus ? "" : labelTitle}
+        onInputChange={this.onInputChange}
         onChange={handleChange}
+        onFocus={() => this.setState({ focus: true })}
+        onBlur={() => this.setState({ focus: false })}
+        blurInputOnSelect={true}
         options={groupOptions}
         TextFieldProps={{
           className: classes.textField,

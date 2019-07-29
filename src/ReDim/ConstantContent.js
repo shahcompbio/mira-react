@@ -87,8 +87,8 @@ class ConstantContent extends Component {
                 <Grid item>
                   <img
                     style={{
-                      marginTop: 100,
-                      paddingLeft: 230
+                      paddingTop: 100,
+                      marginLeft: screenWidth / 7.8
                     }}
                     src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
                     alt="LOADING"

@@ -5,9 +5,9 @@ import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import { Paper } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
+import { withStyles } from "@material-ui/core/styles";
 
 const QUERY = gql`
   query($patientID: String!) {
@@ -25,6 +25,15 @@ const QUERY = gql`
     }
   }
 `;
+
+const styles = {
+  rowBehavior: {
+    background: "white",
+    "&:hover": {
+      background: "lightBlue"
+    }
+  }
+};
 
 class QCTable extends Component {
   constructor(props) {
@@ -48,6 +57,11 @@ class QCTable extends Component {
 
   reformatPropertyName = name =>
     name === "Mito_20" ? "QC (Mito<20)" : name.split("_").join(" ");
+
+  handleCellClick = (e, sampleName) => {
+    this.setState({ highlightedSample: sampleName });
+    this.props.onClick(sampleName);
+  };
 
   render() {
     const { patientID } = this.props;
@@ -75,7 +89,7 @@ class QCTable extends Component {
                 <center>QC Table</center>
               </h2>
               <Paper style={{ overflowX: "auto" }}>
-                <Table size="small" padding="default">
+                <Table size="medium" padding="default">
                   <HeaderRow
                     properties={properties}
                     reformatPropertyName={this.reformatPropertyName}
@@ -83,11 +97,12 @@ class QCTable extends Component {
                   <Body
                     properties={properties}
                     data={data}
-                    handleClick={this.handleClick}
                     handleMouseEnter={this.handleMouseEnter}
                     handleMouseLeave={this.handleMouseLeave}
                     selectedSample={this.props.label}
                     highlightedSample={this.state.highlightedSample}
+                    handleCellClick={this.handleCellClick}
+                    classes={this.props.classes}
                   />
                 </Table>
               </Paper>
@@ -105,7 +120,7 @@ const HeaderRow = ({ properties, reformatPropertyName }) => {
       <TableRow>
         {properties.map(element => {
           return element !== "Sample_ID" ? (
-            <TableCell align="center">
+            <TableCell align="center" style={{ backgroundColor: "#E4E4E4" }}>
               <h4>{reformatPropertyName(element)}</h4>
             </TableCell>
           ) : (
@@ -115,7 +130,7 @@ const HeaderRow = ({ properties, reformatPropertyName }) => {
                 position: "sticky",
                 left: 0,
                 color: "black",
-                backgroundColor: "white",
+                backgroundColor: "#E4E4E4",
                 zIndex: 1
               }}
             >
@@ -123,7 +138,7 @@ const HeaderRow = ({ properties, reformatPropertyName }) => {
             </TableCell>
           );
         })}
-        <TableCell align="center">
+        <TableCell align="center" style={{ backgroundColor: "#E4E4E4" }}>
           <h4>Summary</h4>
         </TableCell>
       </TableRow>
@@ -134,38 +149,37 @@ const HeaderRow = ({ properties, reformatPropertyName }) => {
 const Body = ({
   properties,
   data,
-  handleClick,
-  handleMouseEnter,
-  handleMouseLeave,
   selectedSample,
-  highlightedSample
+  highlightedSample,
+  handleCellClick,
+  classes
 }) => {
-  const highlightStyle = element => {
-    return {
-      backgroundColor:
-        highlightedSample === undefined
-          ? element["Sample_ID"] === selectedSample
-            ? "lightBlue"
-            : "white"
-          : element["Sample_ID"] === highlightedSample
-          ? "lightBlue"
-          : "white"
-    };
-  };
-
   return (
     <TableBody>
       {data.qcTableValues.map(element => {
         return (
-          <TableRow>
+          <TableRow
+            selected={selectedSample === element["Sample_ID"]}
+            className={classes.rowBehavior}
+          >
             {properties.map(property => {
               return property !== "Sample_ID" ? (
-                <TableCell align="center" style={highlightStyle(element)}>
+                <TableCell
+                  align="center"
+                  onClick={event =>
+                    handleCellClick(event, element["Sample_ID"])
+                  }
+                  value={element["Sample_ID"]}
+                >
                   {element[property]}
                 </TableCell>
               ) : (
                 <TableCell
                   align="center"
+                  value={element["Sample_ID"]}
+                  onClick={event =>
+                    handleCellClick(event, element["Sample_ID"])
+                  }
                   style={{
                     position: "sticky",
                     left: 0,
@@ -174,18 +188,11 @@ const Body = ({
                     zIndex: 1
                   }}
                 >
-                  <Button
-                    value={element[property]}
-                    onClick={handleClick}
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                  >
-                    <b>{element[property]}</b>
-                  </Button>
+                  <b>{element[property]}</b>
                 </TableCell>
               );
             })}
-            <TableCell align="center" style={highlightStyle(element)}>
+            <TableCell align="center" /*style={highlightStyle(element)}*/>
               <a href="https://www.google.com"> Summary </a>
             </TableCell>
           </TableRow>
@@ -195,4 +202,4 @@ const Body = ({
   );
 };
 
-export default QCTable;
+export default withStyles(styles)(QCTable);
