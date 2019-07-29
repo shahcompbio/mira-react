@@ -8,6 +8,7 @@ import { Paper } from "@material-ui/core";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import { withStyles } from "@material-ui/core/styles";
+import { number } from "prop-types";
 
 const QUERY = gql`
   query($patientID: String!) {
@@ -44,6 +45,13 @@ class QCTable extends Component {
     this.state = {
       highlightedSample: undefined
     };
+  }
+
+  reformatNumbers(item) {
+    if (typeof item === "number" && item !== null) {
+      return item.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    return item;
   }
 
   handleClick = e => {
@@ -103,6 +111,7 @@ class QCTable extends Component {
                     highlightedSample={this.state.highlightedSample}
                     handleCellClick={this.handleCellClick}
                     classes={this.props.classes}
+                    reformatNumbers={this.reformatNumbers}
                   />
                 </Table>
               </Paper>
@@ -152,7 +161,8 @@ const Body = ({
   selectedSample,
   highlightedSample,
   handleCellClick,
-  classes
+  classes,
+  reformatNumbers
 }) => {
   return (
     <TableBody>
@@ -171,7 +181,7 @@ const Body = ({
                   }
                   value={element["Sample_ID"]}
                 >
-                  {element[property]}
+                  {reformatNumbers(element[property])}
                 </TableCell>
               ) : (
                 <TableCell
@@ -188,7 +198,7 @@ const Body = ({
                     zIndex: 1
                   }}
                 >
-                  <b>{element[property]}</b>
+                  <b>{reformatNumbers(element[property])}</b>
                 </TableCell>
               );
             })}
