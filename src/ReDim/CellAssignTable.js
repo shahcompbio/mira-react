@@ -101,16 +101,14 @@ const CellTypeAndMarkerGenesRow = ({
     return "#D4D4D4";
   };
 
-  const styles = (backgroundColor, leftPosition, anyPadding) => {
-    return {
-      position: "sticky",
-      left: leftPosition,
-      color: "black",
-      background: backgroundColor,
-      zIndex: 1,
-      padding: anyPadding
-    };
-  };
+  const styles = (backgroundColor, leftPosition, anyPadding) => ({
+    position: "sticky",
+    left: leftPosition,
+    color: "black",
+    background: backgroundColor,
+    zIndex: 1,
+    padding: anyPadding
+  });
 
   return (
     <TableRow key={row.cellType}>
@@ -153,20 +151,18 @@ const GeneCell = ({
   handleClick,
   handleMouseEnter,
   handleMouseLeave
-}) => {
-  return (
-    <TableCell align="center">
-      <Button
-        color={buttonColor}
-        value={gene}
-        onClick={handleClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {gene}
-      </Button>
-    </TableCell>
-  );
-};
+}) => (
+  <TableCell align="center">
+    <Button
+      color={buttonColor}
+      value={gene}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {gene}
+    </Button>
+  </TableCell>
+);
 
 export default CellAssignTable;

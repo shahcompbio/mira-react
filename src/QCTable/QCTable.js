@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableHead from "@material-ui/core/TableHead";
@@ -65,122 +65,82 @@ const styles = {
   }
 };
 
-class QCTable extends Component {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-    this.handleMouseEnter = this.handleMouseEnter.bind(this);
-    this.handleMouseLeave = this.handleMouseLeave.bind(this);
-    this.state = {
-      highlightedSample: undefined
-    };
-  }
+const QCTable = ({ patientID, label, classes, onClick }) => (
+  <Query
+    query={QUERY}
+    variables={{
+      patientID
+    }}
+  >
+    {({ loading, error, data }) => {
+      if (loading) return null;
+      if (error) return null;
 
-  handleClick = e => {
-    this.props.onClick(e.currentTarget.value);
+      let properties = Object.getOwnPropertyNames(data.qcTableValues[0]);
+
+      const index = properties.indexOf("__typename");
+
+      if (index > -1) {
+        properties.splice(index, 1);
+      }
+
+      return (
+        <div>
+          <h2>
+            <center>QC Table</center>
+          </h2>
+          <Paper style={{ overflowX: "auto" }}>
+            <Table size="medium" padding="default">
+              <HeaderRow properties={properties} data={data.qcTableValues[0]} />
+              <Body
+                properties={properties}
+                data={data.qcTableValues}
+                selectedSample={label}
+                onClick={onClick}
+                classes={classes}
+              />
+            </Table>
+          </Paper>
+        </div>
+      );
+    }}
+  </Query>
+);
+
+const HeaderRow = ({ properties, data }) => (
+  <TableHead>
+    <TableRow>
+      {properties.map(element => {
+        return element !== "sampleID" ? (
+          <TableCell align="center" style={{ backgroundColor: "#E4E4E4" }}>
+            <h4>{data[element].name}</h4>
+          </TableCell>
+        ) : (
+          <TableCell
+            align="center"
+            style={{
+              position: "sticky",
+              left: 0,
+              color: "black",
+              backgroundColor: "#E4E4E4",
+              zIndex: 1
+            }}
+          >
+            <h4>{data[element].name}</h4>
+          </TableCell>
+        );
+      })}
+      <TableCell align="center" style={{ backgroundColor: "#E4E4E4" }}>
+        <h4>Summary</h4>
+      </TableCell>
+    </TableRow>
+  </TableHead>
+);
+
+const Body = ({ properties, data, selectedSample, classes, onClick }) => {
+  const handleCellClick = (e, sampleName) => {
+    onClick(sampleName);
   };
-
-  handleMouseEnter = e =>
-    this.setState({ highlightedSample: e.currentTarget.value });
-
-  handleMouseLeave = e => this.setState({ highlightedSample: undefined });
-
-  handleCellClick = (e, sampleName) => {
-    this.setState({ highlightedSample: sampleName });
-    this.props.onClick(sampleName);
-  };
-
-  render() {
-    const { patientID } = this.props;
-
-    return (
-      <Query
-        query={QUERY}
-        variables={{
-          patientID
-        }}
-      >
-        {({ loading, error, data }) => {
-          if (loading) return null;
-          if (error) return null;
-
-          let properties = Object.getOwnPropertyNames(data.qcTableValues[0]);
-
-          const index = properties.indexOf("__typename");
-
-          if (index > -1) {
-            properties.splice(index, 1);
-          }
-
-          return (
-            <div>
-              <h2>
-                <center>QC Table</center>
-              </h2>
-              <Paper style={{ overflowX: "auto" }}>
-                <Table size="medium" padding="default">
-                  <HeaderRow
-                    properties={properties}
-                    data={data.qcTableValues[0]}
-                  />
-                  <Body
-                    properties={properties}
-                    data={data.qcTableValues}
-                    handleMouseEnter={this.handleMouseEnter}
-                    handleMouseLeave={this.handleMouseLeave}
-                    selectedSample={this.props.label}
-                    handleCellClick={this.handleCellClick}
-                    classes={this.props.classes}
-                  />
-                </Table>
-              </Paper>
-            </div>
-          );
-        }}
-      </Query>
-    );
-  }
-}
-
-const HeaderRow = ({ properties, data }) => {
-  return (
-    <TableHead>
-      <TableRow>
-        {properties.map(element => {
-          return element !== "sampleID" ? (
-            <TableCell align="center" style={{ backgroundColor: "#E4E4E4" }}>
-              <h4>{data[element].name}</h4>
-            </TableCell>
-          ) : (
-            <TableCell
-              align="center"
-              style={{
-                position: "sticky",
-                left: 0,
-                color: "black",
-                backgroundColor: "#E4E4E4",
-                zIndex: 1
-              }}
-            >
-              <h4>{data[element].name}</h4>
-            </TableCell>
-          );
-        })}
-        <TableCell align="center" style={{ backgroundColor: "#E4E4E4" }}>
-          <h4>Summary</h4>
-        </TableCell>
-      </TableRow>
-    </TableHead>
-  );
-};
-
-const Body = ({
-  properties,
-  data,
-  selectedSample,
-  handleCellClick,
-  classes
-}) => {
   const reformatNumbers = item => {
     if (typeof item === "number" && item !== null) {
       return item.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
