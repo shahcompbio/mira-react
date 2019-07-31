@@ -4,8 +4,8 @@ import { Query } from "react-apollo";
 import gql from "graphql-tag";
 
 const QUERY = gql`
-  query($patientID: String!, $sampleID: String) {
-    existingCellTypes(patientID: $patientID, sampleID: $sampleID) {
+  query($patientID: String!) {
+    existingCellTypes(patientID: $patientID) {
       cell
       count
     }
@@ -15,7 +15,7 @@ const QUERY = gql`
       markerGenes
     }
 
-    nonGeneCells(patientID: $patientID, sampleID: $sampleID) {
+    nonGeneCells(patientID: $patientID) {
       x
       y
       celltype
@@ -28,7 +28,6 @@ class ConstantContent extends Component {
     const {
       screenWidth,
       patientID,
-      sampleID,
       ReDim,
       CellAssign,
       cellAssignColorScale,
@@ -39,8 +38,7 @@ class ConstantContent extends Component {
       <Query
         query={QUERY}
         variables={{
-          patientID,
-          sampleID
+          patientID
         }}
       >
         {({ loading, error, data }) => {

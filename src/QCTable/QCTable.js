@@ -65,7 +65,7 @@ const styles = {
   }
 };
 
-const QCTable = ({ patientID, label, classes, onClick }) => (
+const QCTable = ({ patientID, label, classes, onClick, onReClick }) => (
   <Query
     query={QUERY}
     variables={{
@@ -97,6 +97,7 @@ const QCTable = ({ patientID, label, classes, onClick }) => (
                 data={data.qcTableValues}
                 selectedSample={label}
                 onClick={onClick}
+                onReClick={onReClick}
                 classes={classes}
               />
             </Table>
@@ -137,9 +138,16 @@ const HeaderRow = ({ properties, data }) => (
   </TableHead>
 );
 
-const Body = ({ properties, data, selectedSample, classes, onClick }) => {
+const Body = ({
+  properties,
+  data,
+  selectedSample,
+  classes,
+  onClick,
+  onReClick
+}) => {
   const handleCellClick = (e, sampleName) => {
-    onClick(sampleName);
+    return sampleName === selectedSample ? onReClick() : onClick(sampleName);
   };
   const reformatNumbers = item => {
     if (typeof item === "number" && item !== null) {
@@ -147,6 +155,7 @@ const Body = ({ properties, data, selectedSample, classes, onClick }) => {
     }
     return item;
   };
+
   return (
     <TableBody>
       {data.map(element => {

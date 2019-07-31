@@ -4,35 +4,34 @@ import gql from "graphql-tag";
 
 import ReDimPlot from "./ReDimPlot";
 import AbundancePlot from "./AbundancePlot";
-import CellAssignTable from "./CellAssignTable";
 
 import { getColorScale } from "./colors";
 import Grid from "@material-ui/core/Grid";
-import CellAssignData from "./CellAssignData";
+import CellAssignTable from "./CellAssignTable";
+import PatientCellAssignData from "./PatientCellAssignData";
 
 const reDimPlotWidthScale = 0.35;
 const abundancesPlotWidthScale = 0.25;
 const abundancesPlotHeightScale = 0.7;
-const cellAssignWidthScale = 0.94;
 
 const QUERY = gql`
-  query(
-    $patientID: String!
-    $sampleID: String!
-    $label: String!
-    $labelType: String!
-  ) {
-    cells(patientID: $patientID, sampleID: $sampleID, label: $label) {
+  query($patientID: String!, $label: String!, $labelType: String!) {
+    patientCells(patientID: $patientID, label: $label) {
       name
       x
       y
       label
       celltype
+      site
+    }
+
+    existingCellTypes(patientID: $patientID) {
+      cell
+      count
     }
 
     colorLabelValues(
       patientID: $patientID
-      sampleID: $sampleID
       label: $label
       labelType: $labelType
     ) {
@@ -43,11 +42,6 @@ const QUERY = gql`
         max
       }
     }
-    existingCellTypes(patientID: $patientID, sampleID: $sampleID) {
-      cell
-      count
-    }
-
     cellAndMarkerGenesPair(patientID: $patientID) {
       cellType
       markerGenes
@@ -86,15 +80,7 @@ class Content extends Component {
   };
 
   render() {
-    const {
-      patientID,
-      sampleID,
-      label,
-      screenHeight,
-      screenWidth,
-      onClick,
-      typeOfData
-    } = this.props;
+    const { patientID, label, screenHeight, screenWidth, onClick } = this.props;
 
     const ReDim = (data, colorScale, title, highlight) => {
       return (
@@ -111,6 +97,9 @@ class Content extends Component {
       );
     };
 
+    const cellAssignColorScale = data =>
+      getColorScale(data, "categorical", null);
+
     const CellAssign = (data, colorScale, highlight, countData) => {
       return (
         <CellAssignTable
@@ -124,16 +113,11 @@ class Content extends Component {
         />
       );
     };
-
-    const cellAssignColorScale = data =>
-      getColorScale(data, "categorical", null);
-
-    return !sampleID || !label ? null : (
+    return !patientID || !label ? null : (
       <Query
         query={QUERY}
         variables={{
           patientID,
-          sampleID,
           label: label.id,
           labelType: label.type
         }}
@@ -141,15 +125,14 @@ class Content extends Component {
         {({ loading, error, data }) => {
           if (loading)
             return (
-              <CellAssignData
+              <PatientCellAssignData
                 screenHeight={screenHeight}
                 screenWidth={screenWidth}
                 onClick={onClick}
                 patientID={patientID}
-                sampleID={sampleID}
                 reDimPlotWidthScale={reDimPlotWidthScale}
-                cellAssignWidthScale={cellAssignWidthScale}
                 ReDim={ReDim}
+                sampleID={undefined}
                 CellAssign={CellAssign}
                 cellAssignColorScale={cellAssignColorScale}
                 highlighted={this.state.highlighted}
@@ -160,6 +143,7 @@ class Content extends Component {
           const existingCellType = data.existingCellTypes.map(
             element => element.cell
           );
+
           const colorScale = getColorScale(
             data.colorLabelValues.map(labelValue =>
               label.type === "categorical" ? labelValue.name : labelValue.max
@@ -192,7 +176,7 @@ class Content extends Component {
               >
                 <Grid item style={{ marginTop: "40px", paddingLeft: "40px" }}>
                   {ReDim(
-                    typeOfData === "patient" ? data.patientCells : data.cells,
+                    data.patientCells,
                     cellAssignColorScale(existingCellType),
                     "Cell Types",
                     this.state.highlighted
@@ -200,7 +184,7 @@ class Content extends Component {
                 </Grid>
                 <Grid item style={{ marginTop: "40px", paddingLeft: "15px" }}>
                   {ReDim(
-                    typeOfData === "patient" ? data.patientCells : data.cells,
+                    data.patientCells,
                     colorScale,
                     label.title === "Cluster"
                       ? "Clusters"
@@ -227,12 +211,15 @@ class Content extends Component {
                   paddingBottom: 30
                 }}
               >
-                {CellAssign(
-                  data.cellAndMarkerGenesPair,
-                  cellAssignColorScale(existingCellType),
-                  this.state.highlighted,
-                  data.existingCellTypes
-                )}
+                <CellAssignTable
+                  onClick={onClick}
+                  colorScale={cellAssignColorScale(existingCellType)}
+                  highlighted={this.state.highlighted}
+                  labelTitle={label.title}
+                  data={data.cellAndMarkerGenesPair}
+                  countData={data.existingCellTypes}
+                  hoverBehavior={this.hoverBehavior}
+                />
               </Grid>
             </Grid>
           );

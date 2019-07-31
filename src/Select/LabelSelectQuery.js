@@ -7,7 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import LabelSelect from "./LabelSelect";
 
 const QUERY = gql`
-  query($patientID: String!, $sampleID: String!) {
+  query($patientID: String!, $sampleID: String) {
     colorLabels(patientID: $patientID, sampleID: $sampleID) {
       id
       title

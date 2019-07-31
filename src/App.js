@@ -8,12 +8,12 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import { theme } from "./config/config.js";
-import SampleSelectQuery from "./Select/SampleSelect";
 import PatientSelect from "./Select/PatientSelect";
 import { withRouter } from "react-router";
 import { makeStyles } from "@material-ui/styles";
 import LabelSelectQuery from "./Select/LabelSelectQuery";
 import QCTable from "./QCTable/QCTable";
+import PatientData from "./ReDim/PatientData.js";
 
 const title = "scRNA Dashboard";
 const description =
@@ -58,7 +58,7 @@ const App = ({ location }) => {
   };
 
   const handleSampleChange = e => {
-    sampleLabel !== undefined && samplePanelState
+    patientID.length > 0 && samplePanelState
       ? setSamplePanelState(false)
       : setSamplePanelState(true);
   };
@@ -75,6 +75,16 @@ const App = ({ location }) => {
     width: 225,
     padding: "15px"
   };
+
+  const handleClick = sampleLabel => {
+    setSampleLabel(sampleLabel);
+  };
+
+  const handleReClick = e => {
+    console.log("here");
+    setSampleLabel(undefined);
+  };
+  console.log(sampleLabel);
 
   return (
     <MuiThemeProvider theme={theme}>
@@ -99,7 +109,7 @@ const App = ({ location }) => {
             name={"Patient ID : "}
             marginTop={18}
             styles={{
-              width: screenWidth * 0.97,
+              width: screenWidth * 0.99,
               paddingLeft: screenWidth / 50,
               paddingBottom: 30,
               paddingTop: 30
@@ -108,8 +118,9 @@ const App = ({ location }) => {
             {!patientID ? null : (
               <QCTable
                 label={sampleLabel}
-                onClick={sampleLabel => setSampleLabel(sampleLabel)}
+                onClick={handleClick}
                 patientID={patientID}
+                onReClick={handleReClick}
               />
             )}
           </ExpansionPanelComponent>
@@ -117,19 +128,25 @@ const App = ({ location }) => {
         <Grid item>
           <ExpansionPanelComponent
             handleChange={handleSampleChange}
-            shouldExpand={sampleLabel === undefined ? false : samplePanelState}
+            shouldExpand={patientID.length === 0 ? false : samplePanelState}
             patientID={patientID}
             widthRef={widthRef}
             SelectionStyles={SelectionStyles}
             InputLabelStyle={InputLabelStyle}
             sampleLabel={sampleLabel}
             setSampleLabel={setSampleLabel}
-            name={"Sample ID : "}
+            name={"Dashboard : "}
             marginTop={18}
+            styles={{
+              width: screenWidth * 0.99,
+              paddingLeft: screenWidth / 50,
+              paddingBottom: 30,
+              paddingTop: 30
+            }}
           >
-            {
-              <div>
-                {!sampleLabel ? null : (
+            {!sampleLabel ? (
+              !patientID ? null : (
+                <div>
                   <LabelSelectQuery
                     updateLabel={label => setLabel(label)}
                     patientID={patientID}
@@ -140,8 +157,27 @@ const App = ({ location }) => {
                         : label.title
                     }
                   />
-                )}
-
+                  <PatientData
+                    screenHeight={screenHeight}
+                    screenWidth={screenWidth}
+                    patientID={patientID}
+                    label={label}
+                    onClick={label => setLabel(label)}
+                  />
+                </div>
+              )
+            ) : (
+              <div>
+                <LabelSelectQuery
+                  updateLabel={label => setLabel(label)}
+                  patientID={patientID}
+                  sampleID={sampleLabel}
+                  labelTitle={
+                    label === null || label === undefined
+                      ? "Cell Type"
+                      : label.title
+                  }
+                />
                 <div style={ContentStyles}>
                   <SampleData
                     screenHeight={screenHeight}
@@ -153,7 +189,7 @@ const App = ({ location }) => {
                   />
                 </div>
               </div>
-            }
+            )}
           </ExpansionPanelComponent>
         </Grid>
         <Grid item>
@@ -172,12 +208,11 @@ const ExpansionPanelComponent = ({
   shouldExpand,
   widthRef,
   name,
+  marginTop,
   patientID,
   SelectionStyles,
   InputLabelStyle,
   sampleLabel,
-  setSampleLabel,
-  marginTop,
   styles
 }) => (
   <ExpansionPanel onChange={handleChange} expanded={shouldExpand}>
@@ -191,10 +226,11 @@ const ExpansionPanelComponent = ({
         style={{
           color: "#797979",
           marginTop: marginTop,
+          marginBottom: name === "Dashboard : " ? 15 : 0,
           paddingLeft: "0px"
         }}
       >
-        <h2> {name} </h2>
+        <h2> {name + " "} </h2>
       </div>
 
       {name === "Patient ID : " ? (
@@ -203,15 +239,23 @@ const ExpansionPanelComponent = ({
           style={SelectionStyles}
           labelStyle={InputLabelStyle}
         />
-      ) : name === "Sample ID : " ? (
-        <SampleSelectQuery
-          patientID={patientID}
-          sampleID={sampleLabel}
-          style={SelectionStyles}
-          labelStyle={InputLabelStyle}
-          label={sampleLabel}
-          changeSample={sampleLabel => setSampleLabel(sampleLabel)}
-        />
+      ) : name === "Dashboard : " ? (
+        <div
+          style={{
+            color: "#999999",
+            marginTop: marginTop,
+            paddingLeft: "10px"
+          }}
+        >
+          <h2>
+            {" "}
+            {patientID.length > 0 && sampleLabel === undefined
+              ? patientID
+              : sampleLabel !== undefined
+              ? sampleLabel
+              : " "}{" "}
+          </h2>
+        </div>
       ) : name === "DNA Data : " ? null : null}
     </ExpansionPanelSummary>
     <ExpansionPanelDetails>

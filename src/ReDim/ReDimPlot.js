@@ -9,7 +9,8 @@ const ReDimPlot = ({
   labelTitle,
   height,
   width,
-  title
+  title,
+  currTitle
 }) => {
   const frameProps = getFrameProps(
     data,
@@ -18,7 +19,8 @@ const ReDimPlot = ({
     labelTitle,
     height,
     width,
-    title
+    title,
+    currTitle
   );
   return (
     <div>
@@ -39,7 +41,8 @@ const getFrameProps = (
   labelTitle,
   height,
   width,
-  title
+  title,
+  currTitle
 ) => ({
   points: data,
 
@@ -51,21 +54,13 @@ const getFrameProps = (
   canvasPoints: true,
   pointStyle: d => ({
     r: 4,
-    fill: colorScale(d.label),
+    fill: colorScale(title === "Cell Types" ? d.celltype : d.label),
     stroke:
-      labelTitle !== "Cell Type" && typeof d.label === "string"
-        ? colorScale(d.label)
-        : highlighted === null || highlighted(d)
-        ? colorScale(d.label)
+      highlighted === null || highlighted(d)
+        ? colorScale((currTitle = "Cell Type" ? d.celltype : d.label))
         : "#c7c7c7",
-    fillOpacity:
-      labelTitle !== "Cell Type" && typeof d.label === "string"
-        ? 0.3
-        : highlighted === null || highlighted(d)
-        ? 0.8
-        : 0.01,
-    strokeOpacity:
-      labelTitle !== "Cell Type" && typeof d.label === "string" ? 0.4 : 0.8
+    fillOpacity: highlighted === null || highlighted(d) ? 0.8 : 0.01,
+    strokeOpacity: 0.8
   }),
   axes: [
     { orient: "left", label: " " },
@@ -77,7 +72,8 @@ const getFrameProps = (
     return (
       <div className="tooltip-content">
         <p>
-          {title === "Cell Types" ? "Cell Type" : labelTitle}: {d.label}
+          {title === "Cell Types" ? "Cell Type" : labelTitle}:{" "}
+          {title === "Cell Types" ? d.celltype : d.label}
         </p>
       </div>
     );
