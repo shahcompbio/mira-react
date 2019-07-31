@@ -81,10 +81,8 @@ const App = ({ location }) => {
   };
 
   const handleReClick = e => {
-    console.log("here");
     setSampleLabel(undefined);
   };
-  console.log(sampleLabel);
 
   return (
     <MuiThemeProvider theme={theme}>
@@ -192,11 +190,11 @@ const App = ({ location }) => {
             )}
           </ExpansionPanelComponent>
         </Grid>
-        <Grid item>
+        {/* <Grid item>
           <ExpansionPanelComponent widthRef={widthRef} name={"DNA Data : "}>
             {"Content coming soon..."}
           </ExpansionPanelComponent>
-        </Grid>
+        </Grid> */}
       </Grid>
     </MuiThemeProvider>
   );
