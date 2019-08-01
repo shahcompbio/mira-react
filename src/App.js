@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import Header from "@bit/viz.spectrum.header";
 import Grid from "@material-ui/core/Grid";
-import SampleData from "./ReDim/SampleData";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
@@ -13,7 +12,7 @@ import { withRouter } from "react-router";
 import { makeStyles } from "@material-ui/styles";
 import LabelSelectQuery from "./Select/LabelSelectQuery";
 import QCTable from "./QCTable/QCTable";
-import PatientData from "./ReDim/PatientData.js";
+import Dashboard from "./ReDim/Dashboard.js";
 
 const title = "scRNA Dashboard";
 const description =
@@ -149,16 +148,18 @@ const App = ({ location }) => {
                     updateLabel={label => setLabel(label)}
                     patientID={patientID}
                     sampleID={sampleLabel}
+                    dashboard={1}
                     labelTitle={
                       label === null || label === undefined
                         ? "Cell Type"
                         : label.title
                     }
                   />
-                  <PatientData
+                  <Dashboard
                     screenHeight={screenHeight}
                     screenWidth={screenWidth}
                     patientID={patientID}
+                    dashboard={true}
                     label={label}
                     onClick={label => setLabel(label)}
                   />
@@ -177,10 +178,11 @@ const App = ({ location }) => {
                   }
                 />
                 <div style={ContentStyles}>
-                  <SampleData
+                  <Dashboard
                     screenHeight={screenHeight}
                     screenWidth={screenWidth}
                     patientID={patientID}
+                    dashboard={false}
                     sampleID={sampleLabel}
                     label={label}
                     onClick={label => setLabel(label)}
