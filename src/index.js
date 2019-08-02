@@ -11,7 +11,7 @@ import client from "./apollo.js";
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <BrowserRouter>
+    <BrowserRouter basename={"/scrna"}>
       <App />
     </BrowserRouter>
   </ApolloProvider>,
