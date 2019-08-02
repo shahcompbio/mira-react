@@ -110,6 +110,15 @@ class Dashboard extends Component {
       sampleID
     } = this.props;
 
+    const colorScale = data =>
+      getColorScale(
+        data.colorLabelValues.map(labelValue =>
+          label.type === "categorical" ? labelValue.name : labelValue.max
+        ),
+        label.type,
+        label.title
+      );
+
     const cellAssignColorScale = data =>
       data !== undefined ? getColorScale(data, "categorical", null) : null;
 
@@ -123,6 +132,21 @@ class Dashboard extends Component {
           data={data}
           countData={countData}
           hoverBehavior={this.state.hoverBehavior}
+        />
+      );
+    };
+
+    const ReDim = (data, colorScale, title, highlight) => {
+      return (
+        <ReDimPlot
+          height={screenHeight}
+          width={screenWidth * reDimPlotWidthScale}
+          data={data}
+          colorScale={colorScale}
+          highlighted={highlight}
+          labelTitle={label.title}
+          title={title}
+          currTitle={this.state.currTitle}
         />
       );
     };
@@ -147,21 +171,6 @@ class Dashboard extends Component {
       }
     };
 
-    const ReDim = (data, colorScale, title, highlight) => {
-      return (
-        <ReDimPlot
-          height={screenHeight}
-          width={screenWidth * reDimPlotWidthScale}
-          data={data}
-          colorScale={colorScale}
-          highlighted={highlight}
-          labelTitle={label.title}
-          title={title}
-          currTitle={this.state.currTitle}
-        />
-      );
-    };
-
     return !patientID || !label ? null : dashboard ? (
       <Query
         query={PatientQuery}
@@ -175,45 +184,27 @@ class Dashboard extends Component {
           if (loading)
             return (
               <CellAssignData
-                screenHeight={screenHeight}
                 screenWidth={screenWidth}
-                onClick={onClick}
                 patientID={patientID}
-                reDimPlotWidthScale={reDimPlotWidthScale}
                 ReDim={ReDim}
-                sampleID={undefined}
                 CellAssign={CellAssign}
                 cellAssignColorScale={cellAssignColorScale}
                 highlighted={this.state.highlighted}
-                dashboard={1}
+                patientDashboard={true}
               />
             );
           if (error) return null;
-
-          const existingCellType = data.existingCellTypes.map(
-            element => element.cell
-          );
-
-          const colorScale = getColorScale(
-            data.colorLabelValues.map(labelValue =>
-              label.type === "categorical" ? labelValue.name : labelValue.max
-            ),
-            label.type,
-            label.title
-          );
 
           return (
             <Content
               data={data}
               label={label}
               onClick={onClick}
-              currTitle={this.state.currTitle}
               screenHeight={screenHeight}
               screenWidth={screenWidth}
               highlighted={this.state.highlighted}
               ReDim={ReDim}
               cellAssignColorScale={cellAssignColorScale}
-              existingCellType={existingCellType}
               hoverBehavior={hoverBehavior}
               colorScale={colorScale}
             />
@@ -241,14 +232,11 @@ class Dashboard extends Component {
                 CellAssign={CellAssign}
                 cellAssignColorScale={cellAssignColorScale}
                 highlighted={this.state.highlighted}
-                dashboard={false}
+                patientDashboard={false}
               />
             );
           if (error) return null;
 
-          const existingCellType = data.existingCellTypes.map(
-            element => element.cell
-          );
           const colorScale = getColorScale(
             data.colorLabelValues.map(labelValue =>
               label.type === "categorical" ? labelValue.name : labelValue.max
@@ -262,13 +250,11 @@ class Dashboard extends Component {
               data={data}
               label={label}
               onClick={onClick}
-              currTitle={this.state.currTitle}
               screenHeight={screenHeight}
               screenWidth={screenWidth}
               highlighted={this.state.highlighted}
               ReDim={ReDim}
               cellAssignColorScale={cellAssignColorScale}
-              existingCellType={existingCellType}
               hoverBehavior={hoverBehavior}
               colorScale={colorScale}
             />
@@ -288,10 +274,10 @@ const Content = ({
   highlighted,
   ReDim,
   cellAssignColorScale,
-  existingCellType,
   hoverBehavior,
   colorScale
 }) => {
+  const existingCellType = data.existingCellTypes.map(element => element.cell);
   return (
     <Grid
       container
@@ -325,7 +311,7 @@ const Content = ({
         <Grid item style={{ marginTop: "40px", paddingLeft: "15px" }}>
           {ReDim(
             data.cells,
-            colorScale,
+            colorScale(data),
             label.title === "Cluster"
               ? "Clusters"
               : label.title + " Expression",
@@ -338,7 +324,7 @@ const Content = ({
             width={screenWidth * abundancesPlotWidthScale}
             label={label}
             data={data.colorLabelValues}
-            colorScale={colorScale}
+            colorScale={colorScale(data)}
             hoverBehavior={hoverBehavior}
           />
         </Grid>

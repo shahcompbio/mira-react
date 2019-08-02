@@ -51,9 +51,19 @@ const CellAssignData = ({
   CellAssign,
   cellAssignColorScale,
   highlighted,
-  dashboard
+  patientDashboard
 }) => {
-  return dashboard ? (
+  const loadingGif = () => (
+    <img
+      style={{
+        marginLeft: screenWidth / 3
+      }}
+      src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
+      alt="LOADING"
+    />
+  );
+
+  return patientDashboard ? (
     <Query
       query={PatientQuery}
       variables={{
@@ -61,29 +71,13 @@ const CellAssignData = ({
       }}
     >
       {({ loading, error, data }) => {
-        if (loading)
-          return (
-            <Grid item>
-              <img
-                style={{
-                  marginLeft: screenWidth / 3
-                }}
-                src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
-                alt="LOADING"
-              />
-            </Grid>
-          );
+        if (loading) return <Grid item> {loadingGif} </Grid>;
         if (error) return null;
 
-        const existingCellType = data.existingCellTypes.map(
-          element => element.cell
-        );
-
         return (
-          <Components
+          <CellAssignContent
             ReDim={ReDim}
             cellAssignColorScale={cellAssignColorScale}
-            existingCellType={existingCellType}
             highlighted={highlighted}
             screenWidth={screenWidth}
             CellAssign={CellAssign}
@@ -101,29 +95,12 @@ const CellAssignData = ({
       }}
     >
       {({ loading, error, data }) => {
-        if (loading)
-          return (
-            <Grid item>
-              <img
-                style={{
-                  marginLeft: screenWidth / 3
-                }}
-                src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
-                alt="LOADING"
-              />
-            </Grid>
-          );
+        if (loading) return <Grid item>{loadingGif}</Grid>;
         if (error) return null;
-
-        const existingCellType = data.existingCellTypes.map(
-          element => element.cell
-        );
-
         return (
-          <Components
+          <CellAssignContent
             ReDim={ReDim}
             cellAssignColorScale={cellAssignColorScale}
-            existingCellType={existingCellType}
             data={data}
             highlighted={highlighted}
             screenWidth={screenWidth}
@@ -135,15 +112,16 @@ const CellAssignData = ({
   );
 };
 
-const Components = ({
+const CellAssignContent = ({
   ReDim,
   cellAssignColorScale,
-  existingCellType,
   data,
   highlighted,
   screenWidth,
   CellAssign
 }) => {
+  const existingCellType = data.existingCellTypes.map(element => element.cell);
+
   return (
     <Grid
       container
