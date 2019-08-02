@@ -74,12 +74,12 @@ class CellAssignTable extends Component {
               highlighted={highlighted}
               handleMouseEnter={this.handleMouseEnter}
               handleMouseLeave={this.handleMouseLeave}
+              handleCellEnter={this.handleCellEnter}
+              handleCellLeave={this.handleCellLeave}
               selectedGene={this.state.selectedGene}
               countData={countData}
               cellAndMarkerGenes={cellAndMarkerGenes}
               nameToObject={this.nameToObject}
-              handleCellEnter={this.handleCellEnter}
-              handleCellLeave={this.handleCellLeave}
             />
           </Table>
         </Paper>
@@ -94,9 +94,7 @@ const CellTypeAndMarkerGenesRow = ({
   cellAndMarkerGenes,
   handleClick,
   selectedGene,
-  onMouseLeave,
   handleCellEnter,
-  handleCellClick,
   handleCellLeave,
   handleMouseEnter,
   handleMouseLeave,

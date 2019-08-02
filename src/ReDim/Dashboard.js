@@ -122,53 +122,45 @@ class Dashboard extends Component {
     const cellAssignColorScale = data =>
       data !== undefined ? getColorScale(data, "categorical", null) : null;
 
-    const CellAssign = (data, colorScale, highlight, countData) => {
-      return (
-        <CellAssignTable
-          onClick={onClick}
-          colorScale={colorScale}
-          highlighted={highlight}
-          labelTitle={label.title}
-          data={data}
-          countData={countData}
-          hoverBehavior={this.state.hoverBehavior}
-        />
-      );
-    };
+    const CellAssign = (data, colorScale, highlight, countData) => (
+      <CellAssignTable
+        onClick={onClick}
+        colorScale={colorScale}
+        highlighted={highlight}
+        labelTitle={label.title}
+        data={data}
+        countData={countData}
+        hoverBehavior={hoverBehavior}
+      />
+    );
 
-    const ReDim = (data, colorScale, title, highlight) => {
-      return (
-        <ReDimPlot
-          height={screenHeight}
-          width={screenWidth * reDimPlotWidthScale}
-          data={data}
-          colorScale={colorScale}
-          highlighted={highlight}
-          labelTitle={label.title}
-          title={title}
-          currTitle={this.state.currTitle}
-        />
-      );
-    };
+    const ReDim = (data, colorScale, title, highlight) => (
+      <ReDimPlot
+        height={screenHeight}
+        width={screenWidth * reDimPlotWidthScale}
+        data={data}
+        colorScale={colorScale}
+        highlighted={highlight}
+        labelTitle={label.title}
+        title={title}
+        currTitle={this.state.currTitle}
+      />
+    );
 
     const hoverBehavior = d => {
-      if (d) {
-        if (d["__typename"] === "Categorical") {
-          this.setState({
-            highlighted: cell => d.name === cell.celltype,
-            currTitle: "Cell Types"
+      d
+        ? d["__typename"] === "Categorical"
+          ? this.setState({
+              highlighted: cell => d.name === cell.celltype,
+              currTitle: "Cell Types"
+            })
+          : this.setState({
+              highlighted: cell => d.min <= cell.label && cell.label < d.max,
+              currTitle: this.props.label.title + " Expression"
+            })
+        : this.setState({
+            highlighted: null
           });
-        } else {
-          this.setState({
-            highlighted: cell => d.min <= cell.label && cell.label < d.max,
-            currTitle: this.props.label.title + " Expression"
-          });
-        }
-      } else {
-        this.setState({
-          highlighted: null
-        });
-      }
     };
 
     return !patientID || !label ? null : dashboard ? (
@@ -207,6 +199,7 @@ class Dashboard extends Component {
               cellAssignColorScale={cellAssignColorScale}
               hoverBehavior={hoverBehavior}
               colorScale={colorScale}
+              CellAssign={CellAssign}
             />
           );
         }}
@@ -257,6 +250,7 @@ class Dashboard extends Component {
               cellAssignColorScale={cellAssignColorScale}
               hoverBehavior={hoverBehavior}
               colorScale={colorScale}
+              CellAssign={CellAssign}
             />
           );
         }}
@@ -275,7 +269,8 @@ const Content = ({
   ReDim,
   cellAssignColorScale,
   hoverBehavior,
-  colorScale
+  colorScale,
+  CellAssign
 }) => {
   const existingCellType = data.existingCellTypes.map(element => element.cell);
   return (
@@ -337,15 +332,12 @@ const Content = ({
           paddingBottom: 30
         }}
       >
-        <CellAssignTable
-          onClick={onClick}
-          colorScale={cellAssignColorScale(existingCellType)}
-          highlighted={highlighted}
-          labelTitle={label.title}
-          data={data.cellAndMarkerGenesPair}
-          countData={data.existingCellTypes}
-          hoverBehavior={hoverBehavior}
-        />
+        {CellAssign(
+          data.cellAndMarkerGenesPair,
+          cellAssignColorScale(existingCellType),
+          highlighted,
+          data.existingCellTypes
+        )}
       </Grid>
     </Grid>
   );
