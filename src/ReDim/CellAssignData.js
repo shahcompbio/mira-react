@@ -52,18 +52,8 @@ const CellAssignData = ({
   cellAssignColorScale,
   highlighted,
   patientDashboard
-}) => {
-  const loadingGif = () => (
-    <img
-      style={{
-        marginLeft: screenWidth / 3
-      }}
-      src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
-      alt="LOADING"
-    />
-  );
-
-  return patientDashboard ? (
+}) =>
+  patientDashboard ? (
     <Query
       query={PatientQuery}
       variables={{
@@ -71,7 +61,19 @@ const CellAssignData = ({
       }}
     >
       {({ loading, error, data }) => {
-        if (loading) return <Grid item> {loadingGif} </Grid>;
+        if (loading)
+          return (
+            <Grid item>
+              {" "}
+              <img
+                style={{
+                  marginLeft: screenWidth / 3
+                }}
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
+                alt="LOADING"
+              />{" "}
+            </Grid>
+          );
         if (error) return null;
 
         return (
@@ -95,7 +97,18 @@ const CellAssignData = ({
       }}
     >
       {({ loading, error, data }) => {
-        if (loading) return <Grid item>{loadingGif}</Grid>;
+        if (loading)
+          return (
+            <Grid item>
+              <img
+                style={{
+                  marginLeft: screenWidth / 3
+                }}
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
+                alt="LOADING"
+              />{" "}
+            </Grid>
+          );
         if (error) return null;
         return (
           <CellAssignContent
@@ -110,7 +123,6 @@ const CellAssignData = ({
       }}
     </Query>
   );
-};
 
 const CellAssignContent = ({
   ReDim,
@@ -150,7 +162,8 @@ const CellAssignContent = ({
             data.cells,
             cellAssignColorScale(existingCellType),
             "Cell Types",
-            highlighted
+            highlighted,
+            existingCellType
           )}
         </Grid>
         <Grid item>

@@ -110,15 +110,6 @@ class Dashboard extends Component {
       sampleID
     } = this.props;
 
-    const colorScale = data =>
-      getColorScale(
-        data.colorLabelValues.map(labelValue =>
-          label.type === "categorical" ? labelValue.name : labelValue.max
-        ),
-        label.type,
-        label.title
-      );
-
     const cellAssignColorScale = data =>
       data !== undefined ? getColorScale(data, "categorical", null) : null;
 
@@ -134,7 +125,7 @@ class Dashboard extends Component {
       />
     );
 
-    const ReDim = (data, colorScale, title, highlight) => (
+    const ReDim = (data, colorScale, title, highlight, existingCellType) => (
       <ReDimPlot
         height={screenHeight}
         width={screenWidth * reDimPlotWidthScale}
@@ -144,6 +135,7 @@ class Dashboard extends Component {
         labelTitle={label.title}
         title={title}
         currTitle={this.state.currTitle}
+        existingCells={existingCellType}
       />
     );
 
@@ -198,7 +190,6 @@ class Dashboard extends Component {
               ReDim={ReDim}
               cellAssignColorScale={cellAssignColorScale}
               hoverBehavior={hoverBehavior}
-              colorScale={colorScale}
               CellAssign={CellAssign}
             />
           );
@@ -230,26 +221,16 @@ class Dashboard extends Component {
             );
           if (error) return null;
 
-          const colorScale = getColorScale(
-            data.colorLabelValues.map(labelValue =>
-              label.type === "categorical" ? labelValue.name : labelValue.max
-            ),
-            label.type,
-            label.title
-          );
-
           return (
             <Content
               data={data}
               label={label}
-              onClick={onClick}
               screenHeight={screenHeight}
               screenWidth={screenWidth}
               highlighted={this.state.highlighted}
               ReDim={ReDim}
               cellAssignColorScale={cellAssignColorScale}
               hoverBehavior={hoverBehavior}
-              colorScale={colorScale}
               CellAssign={CellAssign}
             />
           );
@@ -262,17 +243,21 @@ class Dashboard extends Component {
 const Content = ({
   data,
   label,
-  onClick,
   screenHeight,
   screenWidth,
   highlighted,
   ReDim,
   cellAssignColorScale,
   hoverBehavior,
-  colorScale,
   CellAssign
 }) => {
   const existingCellType = data.existingCellTypes.map(element => element.cell);
+
+  const colorScale = getColorScale(
+    data.colorLabelValues.map(labelValue => labelValue.max),
+    label.type,
+    label.title
+  );
   return (
     <Grid
       container
@@ -300,17 +285,17 @@ const Content = ({
             data.cells,
             cellAssignColorScale(existingCellType),
             "Cell Types",
-            highlighted
+            highlighted,
+            existingCellType
           )}
         </Grid>
         <Grid item style={{ marginTop: "40px", paddingLeft: "15px" }}>
           {ReDim(
             data.cells,
-            colorScale(data),
-            label.title === "Cluster"
-              ? "Clusters"
-              : label.title + " Expression",
-            highlighted
+            colorScale,
+            label.title + " Expression",
+            highlighted,
+            existingCellType
           )}
         </Grid>
         <Grid item style={{ marginTop: "120px" }}>
@@ -319,7 +304,7 @@ const Content = ({
             width={screenWidth * abundancesPlotWidthScale}
             label={label}
             data={data.colorLabelValues}
-            colorScale={colorScale(data)}
+            colorScale={colorScale}
             hoverBehavior={hoverBehavior}
           />
         </Grid>

@@ -101,6 +101,7 @@ const App = ({ location }) => {
             shouldExpand={patientID.length === 0 ? false : patientPanelState}
             widthRef={widthRef}
             patientID={patientID}
+            setSampleLabel={label => setSampleLabel(label)}
             SelectionStyles={SelectionStyles}
             InputLabelStyle={InputLabelStyle}
             name={"Patient ID : "}
@@ -131,7 +132,7 @@ const App = ({ location }) => {
             SelectionStyles={SelectionStyles}
             InputLabelStyle={InputLabelStyle}
             sampleLabel={sampleLabel}
-            setSampleLabel={setSampleLabel}
+            setSampleLabel={label => setSampleLabel(label)}
             name={"Dashboard : "}
             marginTop={18}
             styles={{
@@ -213,7 +214,8 @@ const ExpansionPanelComponent = ({
   SelectionStyles,
   InputLabelStyle,
   sampleLabel,
-  styles
+  styles,
+  setSampleLabel
 }) => (
   <ExpansionPanel onChange={handleChange} expanded={shouldExpand}>
     <ExpansionPanelSummary
@@ -238,6 +240,7 @@ const ExpansionPanelComponent = ({
           patientID={patientID}
           style={SelectionStyles}
           labelStyle={InputLabelStyle}
+          setSampleLabel={setSampleLabel}
         />
       ) : name === "Dashboard : " ? (
         <div

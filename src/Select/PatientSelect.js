@@ -26,6 +26,7 @@ class PatientSelect extends Component {
   handleChange = event => {
     this.props.history.push("/" + event.target.value);
     this.setState({ patient: event.target.value });
+    this.props.setSampleLabel(undefined);
   };
   render() {
     const { data, patientID, history, style } = this.props;
