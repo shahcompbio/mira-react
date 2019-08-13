@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -6,56 +6,43 @@ import TableRow from "@material-ui/core/TableRow";
 import { Paper } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 
-class CellAssignTable extends Component {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-    this.handleCellClick = this.handleCellClick.bind(this);
-    this.handleMouseEnter = this.handleMouseEnter.bind(this);
-    this.handleMouseLeave = this.handleMouseLeave.bind(this);
-    this.handleCellEnter = this.handleCellEnter.bind(this);
-    this.handleCellLeave = this.handleCellLeave.bind(this);
-    this.state = {
-      selectedGene: this.props.labelTitle,
-      clicked: false,
-      currName: ""
-    };
-  }
+const CellAssignTable = ({
+  labelTitle,
+  hoverBehavior,
+  onClick,
+  data,
+  highlighted,
+  countData,
+  colorScale
+}) => {
+  const [selectedGene, setSelectedGene] = useState(labelTitle);
+  const [clicked, changeClicked] = useState(false);
 
-  handleMouseEnter(e) {
-    this.setState({
-      selectedGene: e.currentTarget.value
-    });
-  }
-
-  handleMouseLeave() {
-    this.setState({
-      selectedGene: this.props.labelTitle
-    });
-  }
-
-  handleCellClick(e, name) {
-    this.setState({
-      clicked: true
-    });
-
-    this.props.hoverBehavior(this.nameToObject(name));
-  }
-
-  handleCellEnter = (e, name) => {
-    this.setState({
-      clicked: false
-    });
-    this.props.hoverBehavior(this.nameToObject(name));
+  const handleMouseEnter = e => {
+    setSelectedGene(e.currentTarget.value);
   };
 
-  handleCellLeave = e => {
-    if (this.state.clicked === false) {
-      this.props.hoverBehavior(undefined);
+  const handleMouseLeave = () => {
+    setSelectedGene(labelTitle);
+  };
+
+  const handleCellClick = (e, name) => {
+    changeClicked(true);
+    hoverBehavior(nameToObject(name));
+  };
+
+  const handleCellEnter = (e, name) => {
+    changeClicked(false);
+    hoverBehavior(nameToObject(name));
+  };
+
+  const handleCellLeave = e => {
+    if (clicked === false) {
+      hoverBehavior(undefined);
     }
   };
 
-  nameToObject = name => ({
+  const nameToObject = name => ({
     id: name,
     name: name,
     title: name,
@@ -63,47 +50,43 @@ class CellAssignTable extends Component {
     __typename: "Categorical"
   });
 
-  handleClick(e) {
-    this.props.onClick(this.nameToObject(e.currentTarget.value));
-  }
+  const handleClick = e => {
+    onClick(nameToObject(e.currentTarget.value));
+  };
 
-  sortData(data) {
+  const sortData = data => {
     const sortedCellTypes = data.map(row => row.cellType).sort();
     return sortedCellTypes.map(
       cell => data.filter(element => element.cellType === cell)[0]
     );
-  }
-
-  render() {
-    const { colorScale, highlighted, data, countData } = this.props;
-    const cellAndMarkerGenes = this.sortData(data);
-    return (
-      <div>
-        <h3>
-          <center>CellAssign : Cell Types and Marker Genes</center>
-        </h3>
-        <Paper style={{ overflowX: "auto", overflowY: "auto" }}>
-          <Table size="small" padding="none">
-            <CellTypeAndMarkerGenesRow
-              handleClick={this.handleClick}
-              colorScale={colorScale}
-              highlighted={highlighted}
-              handleMouseEnter={this.handleMouseEnter}
-              handleMouseLeave={this.handleMouseLeave}
-              handleCellEnter={this.handleCellEnter}
-              handleCellLeave={this.handleCellLeave}
-              handleCellClick={this.handleCellClick.bind(this)}
-              selectedGene={this.state.selectedGene}
-              countData={countData}
-              cellAndMarkerGenes={cellAndMarkerGenes}
-              nameToObject={this.nameToObject}
-            />
-          </Table>
-        </Paper>
-      </div>
-    );
-  }
-}
+  };
+  const cellAndMarkerGenes = sortData(data);
+  return (
+    <div>
+      <h3>
+        <center>CellAssign : Cell Types and Marker Genes</center>
+      </h3>
+      <Paper style={{ overflowX: "auto", overflowY: "auto" }}>
+        <Table size="small" padding="none">
+          <CellTypeAndMarkerGenesRow
+            handleClick={handleClick}
+            colorScale={colorScale}
+            highlighted={highlighted}
+            handleMouseEnter={handleMouseEnter}
+            handleMouseLeave={handleMouseLeave}
+            handleCellEnter={handleCellEnter}
+            handleCellLeave={handleCellLeave}
+            handleCellClick={handleCellClick}
+            selectedGene={selectedGene}
+            countData={countData}
+            cellAndMarkerGenes={cellAndMarkerGenes}
+            nameToObject={nameToObject}
+          />
+        </Table>
+      </Paper>
+    </div>
+  );
+};
 
 const CellTypeAndMarkerGenesRow = ({
   colorScale,

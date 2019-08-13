@@ -99,23 +99,15 @@ const getFrameProps = (
 
   canvasAreas: true,
 
-  summaryStyle: d => {
-    const mostAbundant = getMostAbundant(d.data);
-    return {
-      fill: colorScale(mostAbundant),
-      strokeOpacity: 0.5,
-      fillOpacity: 0.3
-    };
-  },
+  summaryStyle: d => ({
+    fill: colorScale(getMostAbundant(d.data)),
+    fillOpacity: 0.3
+  }),
 
-  pointStyle: d => {
-    return {
-      r: 4,
-      fill: colorScale(title === "Cell Types" ? d.celltype : d.label),
-      stroke: colorScale(title === "Cell Types" ? d.celltype : d.label),
-      strokeOpacity: 0.8
-    };
-  },
+  pointStyle: d => ({
+    r: 4,
+    fill: colorScale(title === "Cell Types" ? d.celltype : d.label)
+  }),
   axes: [
     { orient: "left", label: " " },
     { orient: "bottom", label: { name: " ", locationDistance: 55 } }
