@@ -10,12 +10,15 @@ class CellAssignTable extends Component {
   constructor(props) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
+    this.handleCellClick = this.handleCellClick.bind(this);
     this.handleMouseEnter = this.handleMouseEnter.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
     this.handleCellEnter = this.handleCellEnter.bind(this);
     this.handleCellLeave = this.handleCellLeave.bind(this);
     this.state = {
-      selectedGene: this.props.labelTitle
+      selectedGene: this.props.labelTitle,
+      clicked: false,
+      currName: ""
     };
   }
 
@@ -31,12 +34,25 @@ class CellAssignTable extends Component {
     });
   }
 
+  handleCellClick(e, name) {
+    this.setState({
+      clicked: true
+    });
+
+    this.props.hoverBehavior(this.nameToObject(name));
+  }
+
   handleCellEnter = (e, name) => {
+    this.setState({
+      clicked: false
+    });
     this.props.hoverBehavior(this.nameToObject(name));
   };
 
   handleCellLeave = e => {
-    this.props.hoverBehavior(undefined);
+    if (this.state.clicked === false) {
+      this.props.hoverBehavior(undefined);
+    }
   };
 
   nameToObject = name => ({
@@ -76,6 +92,7 @@ class CellAssignTable extends Component {
               handleMouseLeave={this.handleMouseLeave}
               handleCellEnter={this.handleCellEnter}
               handleCellLeave={this.handleCellLeave}
+              handleCellClick={this.handleCellClick.bind(this)}
               selectedGene={this.state.selectedGene}
               countData={countData}
               cellAndMarkerGenes={cellAndMarkerGenes}
@@ -93,6 +110,7 @@ const CellTypeAndMarkerGenesRow = ({
   highlighted,
   cellAndMarkerGenes,
   handleClick,
+  handleCellClick,
   selectedGene,
   handleCellEnter,
   handleCellLeave,
@@ -176,6 +194,7 @@ const CellTypeAndMarkerGenesRow = ({
                 style={{ textTransform: "none" }}
                 onMouseEnter={e => handleCellEnter(e, row.cellType)}
                 onMouseLeave={e => handleCellLeave(e)}
+                onClick={e => handleCellClick(e, row.cellType)}
               >
                 <h5>{row.cellType}</h5>
               </Button>

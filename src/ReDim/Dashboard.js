@@ -143,12 +143,10 @@ class Dashboard extends Component {
       d
         ? d["__typename"] === "Categorical"
           ? this.setState({
-              highlighted: cell => d.name === cell.celltype,
-              currTitle: "Cell Types"
+              highlighted: cell => d.name === cell.celltype
             })
           : this.setState({
-              highlighted: cell => d.min <= cell.label && cell.label < d.max,
-              currTitle: this.props.label.title + " Expression"
+              highlighted: cell => d.min <= cell.label && cell.label < d.max
             })
         : this.setState({
             highlighted: null
