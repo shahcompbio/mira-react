@@ -50,7 +50,6 @@ const CellAssignData = ({
   ReDim,
   CellAssign,
   cellAssignColorScale,
-  highlighted,
   patientDashboard
 }) =>
   patientDashboard ? (
@@ -80,7 +79,6 @@ const CellAssignData = ({
           <CellAssignContent
             ReDim={ReDim}
             cellAssignColorScale={cellAssignColorScale}
-            highlighted={highlighted}
             screenWidth={screenWidth}
             CellAssign={CellAssign}
             data={data}
@@ -115,7 +113,6 @@ const CellAssignData = ({
             ReDim={ReDim}
             cellAssignColorScale={cellAssignColorScale}
             data={data}
-            highlighted={highlighted}
             screenWidth={screenWidth}
             CellAssign={CellAssign}
           />
@@ -128,7 +125,6 @@ const CellAssignContent = ({
   ReDim,
   cellAssignColorScale,
   data,
-  highlighted,
   screenWidth,
   CellAssign
 }) => {
@@ -162,7 +158,6 @@ const CellAssignContent = ({
             data.cells,
             cellAssignColorScale(existingCellType),
             "Cell Types",
-            highlighted,
             existingCellType
           )}
         </Grid>
@@ -188,7 +183,6 @@ const CellAssignContent = ({
         {CellAssign(
           data.cellAndMarkerGenesPair,
           cellAssignColorScale(existingCellType),
-          highlighted,
           data.existingCellTypes
         )}
       </Grid>

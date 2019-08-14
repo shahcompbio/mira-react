@@ -94,8 +94,7 @@ class Dashboard extends Component {
     super(props);
 
     this.state = {
-      highlighted: null,
-      currTitle: undefined
+      highlighted: null
     };
   }
 
@@ -113,11 +112,11 @@ class Dashboard extends Component {
     const cellAssignColorScale = data =>
       data !== undefined ? getColorScale(data, "categorical", null) : null;
 
-    const CellAssign = (data, colorScale, highlight, countData) => (
+    const CellAssign = (data, colorScale, countData) => (
       <CellAssignTable
         onClick={onClick}
         colorScale={colorScale}
-        highlighted={highlight}
+        highlighted={this.state.highlighted}
         labelTitle={label.title}
         data={data}
         countData={countData}
@@ -125,16 +124,15 @@ class Dashboard extends Component {
       />
     );
 
-    const ReDim = (data, colorScale, title, highlight, existingCellType) => (
+    const ReDim = (data, colorScale, title, existingCellType) => (
       <ReDimPlot
         height={screenHeight}
         width={screenWidth * reDimPlotWidthScale}
         data={data}
         colorScale={colorScale}
-        highlighted={highlight}
+        highlighted={this.state.highlighted}
         labelTitle={label.title}
         title={title}
-        currTitle={this.state.currTitle}
         existingCells={existingCellType}
       />
     );
@@ -171,7 +169,6 @@ class Dashboard extends Component {
                 ReDim={ReDim}
                 CellAssign={CellAssign}
                 cellAssignColorScale={cellAssignColorScale}
-                highlighted={this.state.highlighted}
                 patientDashboard={true}
               />
             );
@@ -184,7 +181,6 @@ class Dashboard extends Component {
               onClick={onClick}
               screenHeight={screenHeight}
               screenWidth={screenWidth}
-              highlighted={this.state.highlighted}
               ReDim={ReDim}
               cellAssignColorScale={cellAssignColorScale}
               hoverBehavior={hoverBehavior}
@@ -213,7 +209,6 @@ class Dashboard extends Component {
                 ReDim={ReDim}
                 CellAssign={CellAssign}
                 cellAssignColorScale={cellAssignColorScale}
-                highlighted={this.state.highlighted}
                 patientDashboard={false}
               />
             );
@@ -225,7 +220,6 @@ class Dashboard extends Component {
               label={label}
               screenHeight={screenHeight}
               screenWidth={screenWidth}
-              highlighted={this.state.highlighted}
               ReDim={ReDim}
               cellAssignColorScale={cellAssignColorScale}
               hoverBehavior={hoverBehavior}
@@ -243,7 +237,6 @@ const Content = ({
   label,
   screenHeight,
   screenWidth,
-  highlighted,
   ReDim,
   cellAssignColorScale,
   hoverBehavior,
@@ -283,7 +276,6 @@ const Content = ({
             data.cells,
             cellAssignColorScale(existingCellType),
             "Cell Types",
-            highlighted,
             existingCellType
           )}
         </Grid>
@@ -292,7 +284,6 @@ const Content = ({
             data.cells,
             colorScale,
             label.title + " Expression",
-            highlighted,
             existingCellType
           )}
         </Grid>
@@ -318,7 +309,6 @@ const Content = ({
         {CellAssign(
           data.cellAndMarkerGenesPair,
           cellAssignColorScale(existingCellType),
-          highlighted,
           data.existingCellTypes
         )}
       </Grid>
