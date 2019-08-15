@@ -42,7 +42,8 @@
   ],
   "proxy": "http://localhost:4000",
   "devDependencies": {
+    "env-cmd": "^9.0.3",
     "prettier": "^1.16.4"
   },
-  "homepage": "http://spectrum.mskcc.org/scrna"
+  "homepage": "."
 }
