@@ -113,11 +113,16 @@ const HeaderRow = ({ properties, data }) => (
     <TableRow>
       {properties.map(element => {
         return element !== "sampleID" ? (
-          <TableCell align="center" style={{ backgroundColor: "#E4E4E4" }}>
+          <TableCell
+            align="center"
+            style={{ backgroundColor: "#E4E4E4" }}
+            key={Math.random(0, 1000000)}
+          >
             <h4>{data[element].name}</h4>
           </TableCell>
         ) : (
           <TableCell
+            key={Math.random(0, 100000)}
             align="center"
             style={{
               position: "sticky",
@@ -131,7 +136,11 @@ const HeaderRow = ({ properties, data }) => (
           </TableCell>
         );
       })}
-      <TableCell align="center" style={{ backgroundColor: "#E4E4E4" }}>
+      <TableCell
+        key={Math.random(0, 100000)}
+        align="center"
+        style={{ backgroundColor: "#E4E4E4" }}
+      >
         <h4>Summary</h4>
       </TableCell>
     </TableRow>
@@ -167,6 +176,7 @@ const Body = ({
             {properties.map(property => {
               return property !== "sampleID" ? (
                 <TableCell
+                  key={Math.random(0, 100000)}
                   align="center"
                   onClick={event =>
                     handleCellClick(event, element["sampleID"].value)
@@ -176,6 +186,7 @@ const Body = ({
                 </TableCell>
               ) : (
                 <TableCell
+                  key={Math.random(0, 100000)}
                   align="center"
                   onClick={event =>
                     handleCellClick(event, element["sampleID"].value)
@@ -192,7 +203,7 @@ const Body = ({
                 </TableCell>
               );
             })}
-            <TableCell align="center">
+            <TableCell key={Math.random(0, 100000)} align="center">
               <a href="https://www.google.com"> Summary </a>
             </TableCell>
           </TableRow>

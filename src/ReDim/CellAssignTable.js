@@ -165,7 +165,7 @@ const CellTypeAndMarkerGenesRow = ({
           return (
             <TableCell
               value={row.cellType}
-              key={Math.random}
+              key={Math.random(0, 1000000)}
               align="center"
               style={{
                 background: pickBackgroundColor(row),
@@ -188,7 +188,7 @@ const CellTypeAndMarkerGenesRow = ({
 
       {allNums.map(element => {
         return (
-          <TableRow key={Math.random}>
+          <TableRow key={Math.random(0, 1000000)}>
             {cellAndMarkerGenes.map(row => {
               const markerGenes = row.markerGenes;
               let gene = markerGenes[element];
@@ -219,7 +219,7 @@ const GeneCell = ({
 }) => (
   <TableCell
     align="center"
-    key={Math.random}
+    key={Math.random(0, 1000000)}
     style={{ paddingTop: 4, paddingBottom: 4 }}
   >
     <Button
