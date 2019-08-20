@@ -9,7 +9,8 @@ const ReDimPlot = ({
   height,
   width,
   title,
-  existingCells
+  existingCells,
+  allSites
 }) => {
   const highlightedCells = data.filter(
     element => highlighted !== null && highlighted(element) === true
@@ -41,6 +42,26 @@ const ReDimPlot = ({
       return highestName;
     }
 
+    if (title === "Site") {
+      const siteCounts = allSites.map(element => ({ name: element, count: 0 }));
+
+      positions
+        .map(point => point.site)
+        .map(element => siteCounts[allSites.indexOf(element)].count++);
+
+      let highestCount = 0;
+      let highestName = "";
+
+      for (let i = 0; i < allSites.length; i++) {
+        if (siteCounts[i].count > highestCount) {
+          highestCount = siteCounts[i].count;
+          highestName = siteCounts[i].name;
+        }
+      }
+
+      return highestName;
+    }
+
     return (
       positions.map(element => element.label).reduce((a, b) => a + b, 0) /
       positions.length
@@ -62,7 +83,8 @@ const ReDimPlot = ({
     <div>
       <center>
         <h3>
-          {title} {title === labelTitle ? " Expression" : ""}
+          {title}{" "}
+          {title === labelTitle && title !== "Site" ? " Expression" : ""}
         </h3>
       </center>
       <XYFrame {...frameProps} />
@@ -106,7 +128,9 @@ const getFrameProps = (
 
   pointStyle: d => ({
     r: 4,
-    fill: colorScale(title === "Cell Types" ? d.celltype : d.label)
+    fill: colorScale(
+      title === "Cell Types" ? d.celltype : title === "Site" ? d.site : d.label
+    )
   }),
   axes: [
     { orient: "left", label: " " },
@@ -119,7 +143,11 @@ const getFrameProps = (
       <div className="tooltip-content">
         <p>
           {title === "Cell Types" ? "Cell Type" : labelTitle}:{" "}
-          {title === "Cell Types" ? d.celltype : d.label}
+          {title === "Cell Types"
+            ? d.celltype
+            : title === "Site"
+            ? d.site
+            : d.label}
         </p>
       </div>
     );

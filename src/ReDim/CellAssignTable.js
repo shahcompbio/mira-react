@@ -124,7 +124,7 @@ const CellTypeAndMarkerGenesRow = ({
     colorScale(name) !== undefined ? colorScale(name) : "#D4D4D4";
 
   const pickBackgroundColor = row => {
-    if (highlighted === null && selectedGene !== "Cell Type") {
+    if (selectedGene !== "Cell Type") {
       if (row.markerGenes.includes(selectedGene)) return getColor(row.cellType);
     } else if (highlighted(nameToObject(row.cellType))) {
       return getColor(row.cellType);

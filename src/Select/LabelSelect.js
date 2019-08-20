@@ -81,8 +81,12 @@ class LabelSelect extends Component {
 
     const handleChange = item => {
       if (item) {
-        const result = allOptions.filter(datum => datum.id === item.value)[0];
-        onSelect(result);
+        const result = allOptions.filter(
+          datum => datum.title === item.label
+        )[0];
+
+        console.log(result.title);
+        onSelect({ id: result.title, type: result.type, title: result.title });
       } else {
         onSelect(null);
       }
@@ -100,7 +104,6 @@ class LabelSelect extends Component {
       <Select
         classes={classes}
         value={focus ? "" : labelTitle}
-        onInputChange={this.onInputChange}
         onChange={handleChange}
         onFocus={() => this.setState({ focus: true })}
         onBlur={() => this.setState({ focus: false })}

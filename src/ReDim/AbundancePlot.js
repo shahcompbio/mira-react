@@ -24,7 +24,7 @@ const AbundancePlot = ({
     width
   );
 
-  return label.type === "categorical" ? (
+  return label.type === "Categorical" ? (
     <OrdinalFrame {...frameProps} />
   ) : (
     <XYFrame {...frameProps} />
@@ -43,9 +43,7 @@ const getFrameProps = (
     size: [width, height],
     margin: 70,
 
-    hoverAnnotation: true,
-
-    title: `${label.title} Abundances`
+    hoverAnnotation: true
   };
 
   const tooltipContent = d => (
@@ -60,9 +58,21 @@ const getFrameProps = (
   );
 
   const additionalFrameProps =
-    label.type === "categorical"
-      ? getFramePropsBar(data, colorScale, tooltipContent, hoverBehavior)
-      : getFramePropsLine(data, colorScale, tooltipContent, hoverBehavior);
+    label.type === "Categorical"
+      ? getFramePropsBar(
+          data,
+          colorScale,
+          tooltipContent,
+          hoverBehavior,
+          label.title
+        )
+      : getFramePropsLine(
+          data,
+          colorScale,
+          tooltipContent,
+          hoverBehavior,
+          label.title
+        );
 
   return { ...defaultFrameProps, ...additionalFrameProps };
 };
@@ -71,8 +81,10 @@ const getFramePropsLine = (
   data,
   colorScale,
   tooltipContent,
-  hoverBehavior
+  hoverBehavior,
+  labelTitle
 ) => ({
+  title: labelTitle + " Abundances",
   lines: [{ coordinates: data }],
 
   xAccessor: "min",
@@ -102,17 +114,25 @@ const getFramePropsLine = (
   customHoverBehavior: hoverBehavior
 });
 
-const getFramePropsBar = (data, colorScale, tooltipContent, hoverBehavior) => ({
-  data: data,
-
-  type: "bar",
-  rAccessor: "count",
-  rScaleType: scalePow().exponent(0.7),
-  oAccessor: "name",
-  axes: [{ orient: "left", label: "# Cells" }],
-  style: d => ({ fill: colorScale(d.name), stroke: "white" }),
-  tooltipContent: ({ pieces }) => tooltipContent(pieces[0]),
-  customHoverBehavior: d => hoverBehavior(d ? d.pieces[0].data : d)
-});
+const getFramePropsBar = (
+  data,
+  colorScale,
+  tooltipContent,
+  hoverBehavior,
+  labelTitle
+) => {
+  return {
+    data: data,
+    title: labelTitle,
+    type: "bar",
+    rAccessor: "count",
+    rScaleType: scalePow().exponent(0.7),
+    oAccessor: "name",
+    axes: [{ orient: "left", label: "# Cells" }],
+    style: d => ({ fill: colorScale(d.name), stroke: "white" }),
+    tooltipContent: ({ pieces }) => tooltipContent(pieces[0]),
+    customHoverBehavior: d => hoverBehavior(d ? d.pieces[0].data : d)
+  };
+};
 
 export default AbundancePlot;

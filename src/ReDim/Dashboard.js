@@ -25,6 +25,8 @@ const PatientQuery = gql`
       site
     }
 
+    sites(patientID: $patientID)
+
     existingCellTypes(patientID: $patientID) {
       cell
       count
@@ -124,7 +126,7 @@ class Dashboard extends Component {
       />
     );
 
-    const ReDim = (data, colorScale, title, existingCellType) => (
+    const ReDim = (data, colorScale, title, existingCellType, sites) => (
       <ReDimPlot
         height={screenHeight}
         width={screenWidth * reDimPlotWidthScale}
@@ -134,15 +136,18 @@ class Dashboard extends Component {
         labelTitle={label.title}
         title={title}
         existingCells={existingCellType}
+        allSites={sites}
       />
     );
 
     const hoverBehavior = d => {
       d
         ? d["__typename"] === "Categorical"
-          ? this.setState({
-              highlighted: cell => d.name === cell.celltype
-            })
+          ? d.hasOwnProperty("count")
+            ? this.setState({ highlighted: cell => d.name === cell.site })
+            : this.setState({
+                highlighted: cell => d.name === cell.celltype
+              })
           : this.setState({
               highlighted: cell => d.min <= cell.label && cell.label < d.max
             })
@@ -151,12 +156,15 @@ class Dashboard extends Component {
           });
     };
 
+    //TODO : Look at the label id and label type + make sure all of that is working well
+    //TODO: in graphql try to find out why the id isn't working
+
     return !patientID || !label ? null : dashboard ? (
       <Query
         query={PatientQuery}
         variables={{
           patientID,
-          label: label.id,
+          label: label.title === "Site" ? "site" : label.title,
           labelType: label.type
         }}
       >
@@ -195,7 +203,7 @@ class Dashboard extends Component {
         variables={{
           patientID,
           sampleID,
-          label: label.id,
+          label: label.title,
           labelType: label.type
         }}
       >
@@ -245,10 +253,13 @@ const Content = ({
   const existingCellType = data.existingCellTypes.map(element => element.cell);
 
   const colorScale = getColorScale(
-    data.colorLabelValues.map(labelValue => labelValue.max),
+    label.title === "Site"
+      ? data.colorLabelValues.map(labelValue => labelValue.name)
+      : data.colorLabelValues.map(labelValue => labelValue.max),
     label.type,
     label.title
   );
+
   return (
     <Grid
       container
@@ -283,8 +294,9 @@ const Content = ({
           {ReDim(
             data.cells,
             colorScale,
-            label.title + " Expression",
-            existingCellType
+            label.title === "Site" ? "Site" : label.title + " Expression",
+            existingCellType,
+            data.sites
           )}
         </Grid>
         <Grid item style={{ marginTop: "120px" }}>
