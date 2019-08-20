@@ -8,7 +8,7 @@ import {
 } from "d3-scale-chromatic";
 
 export const getColorScale = (data, type, title) => {
-  if (type === "categorical" || type === "Categorical") {
+  if (type.toLowerCase() === "categorical") {
     if (title === "Site") {
       const ordinalScale = getOrdinalScale(data);
       const toColorScale = scaleSequential(interpolateSinebow).domain([0, 1]);
