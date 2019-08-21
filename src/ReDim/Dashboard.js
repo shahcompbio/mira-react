@@ -156,15 +156,12 @@ class Dashboard extends Component {
           });
     };
 
-    //TODO : Look at the label id and label type + make sure all of that is working well
-    //TODO: in graphql try to find out why the id isn't working
-
     return !patientID || !label ? null : dashboard ? (
       <Query
         query={PatientQuery}
         variables={{
           patientID,
-          label: label.title === "Site" ? "site" : label.title,
+          label: label.title,
           labelType: label.type
         }}
       >
