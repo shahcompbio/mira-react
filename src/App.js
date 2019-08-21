@@ -13,7 +13,7 @@ import { makeStyles } from "@material-ui/styles";
 import LabelSelectQuery from "./Select/LabelSelectQuery";
 import QCTable from "./QCTable/QCTable";
 import Dashboard from "./ReDim/Dashboard.js";
-import { Button, IconButton } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import InfoIcon from "@material-ui/icons/Info";
 
 const title = "scRNA Dashboard";
