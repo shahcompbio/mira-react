@@ -27,7 +27,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "env-cmd -f .spectrum.prod.env react-scripts build",
+    "build:staging": "env-cmd -f .spectrum.staging.env react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -44,6 +45,5 @@
   "devDependencies": {
     "env-cmd": "^9.0.3",
     "prettier": "^1.16.4"
-  },
-  "homepage": "."
+  }
 }
