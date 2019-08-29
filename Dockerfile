@@ -1,6 +1,8 @@
-FROM node:8 as builder
+FROM node as builder
 
 WORKDIR /usr/src/app
+
+RUN npm config set '@bit:registry' https://node.bit.dev
 
 COPY package*.json ./
 RUN yarn install
