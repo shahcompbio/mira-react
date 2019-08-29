@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -6,40 +6,43 @@ import TableRow from "@material-ui/core/TableRow";
 import { Paper } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 
-class CellAssignTable extends Component {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-    this.handleMouseEnter = this.handleMouseEnter.bind(this);
-    this.handleMouseLeave = this.handleMouseLeave.bind(this);
-    this.handleCellEnter = this.handleCellEnter.bind(this);
-    this.handleCellLeave = this.handleCellLeave.bind(this);
-    this.state = {
-      selectedGene: this.props.labelTitle
-    };
-  }
+const CellAssignTable = ({
+  labelTitle,
+  hoverBehavior,
+  onClick,
+  data,
+  highlighted,
+  countData,
+  colorScale
+}) => {
+  const [selectedGene, setSelectedGene] = useState(labelTitle);
+  const [clicked, changeClicked] = useState(false);
 
-  handleMouseEnter(e) {
-    this.setState({
-      selectedGene: e.currentTarget.value
-    });
-  }
-
-  handleMouseLeave() {
-    this.setState({
-      selectedGene: this.props.labelTitle
-    });
-  }
-
-  handleCellEnter = (e, name) => {
-    this.props.hoverBehavior(this.nameToObject(name));
+  const handleMouseEnter = e => {
+    setSelectedGene(e.currentTarget.value);
   };
 
-  handleCellLeave = e => {
-    this.props.hoverBehavior(undefined);
+  const handleMouseLeave = () => {
+    setSelectedGene(labelTitle);
   };
 
-  nameToObject = name => ({
+  const handleCellClick = (e, name) => {
+    changeClicked(true);
+    hoverBehavior(nameToObject(name));
+  };
+
+  const handleCellEnter = (e, name) => {
+    changeClicked(false);
+    hoverBehavior(nameToObject(name));
+  };
+
+  const handleCellLeave = e => {
+    if (clicked === false) {
+      hoverBehavior(undefined);
+    }
+  };
+
+  const nameToObject = name => ({
     id: name,
     name: name,
     title: name,
@@ -47,52 +50,50 @@ class CellAssignTable extends Component {
     __typename: "Categorical"
   });
 
-  handleClick(e) {
-    this.props.onClick(this.nameToObject(e.currentTarget.value));
-  }
+  const handleClick = e => {
+    onClick(nameToObject(e.currentTarget.value));
+  };
 
-  sortData(data) {
+  const sortData = data => {
     const sortedCellTypes = data.map(row => row.cellType).sort();
     return sortedCellTypes.map(
       cell => data.filter(element => element.cellType === cell)[0]
     );
-  }
-
-  render() {
-    const { colorScale, highlighted, data, countData } = this.props;
-    const cellAndMarkerGenes = this.sortData(data);
-    return (
-      <div>
-        <h3>
-          <center>CellAssign : Cell Types and Marker Genes</center>
-        </h3>
-        <Paper style={{ overflowX: "auto", overflowY: "auto" }}>
-          <Table size="small" padding="none">
-            <CellTypeAndMarkerGenesRow
-              handleClick={this.handleClick}
-              colorScale={colorScale}
-              highlighted={highlighted}
-              handleMouseEnter={this.handleMouseEnter}
-              handleMouseLeave={this.handleMouseLeave}
-              handleCellEnter={this.handleCellEnter}
-              handleCellLeave={this.handleCellLeave}
-              selectedGene={this.state.selectedGene}
-              countData={countData}
-              cellAndMarkerGenes={cellAndMarkerGenes}
-              nameToObject={this.nameToObject}
-            />
-          </Table>
-        </Paper>
-      </div>
-    );
-  }
-}
+  };
+  const cellAndMarkerGenes = sortData(data);
+  return (
+    <div>
+      <h3>
+        <center>CellAssign : Cell Types and Marker Genes</center>
+      </h3>
+      <Paper style={{ overflowX: "auto", overflowY: "auto" }}>
+        <Table size="small" padding="none">
+          <CellTypeAndMarkerGenesRow
+            handleClick={handleClick}
+            colorScale={colorScale}
+            highlighted={highlighted}
+            handleMouseEnter={handleMouseEnter}
+            handleMouseLeave={handleMouseLeave}
+            handleCellEnter={handleCellEnter}
+            handleCellLeave={handleCellLeave}
+            handleCellClick={handleCellClick}
+            selectedGene={selectedGene}
+            countData={countData}
+            cellAndMarkerGenes={cellAndMarkerGenes}
+            nameToObject={nameToObject}
+          />
+        </Table>
+      </Paper>
+    </div>
+  );
+};
 
 const CellTypeAndMarkerGenesRow = ({
   colorScale,
   highlighted,
   cellAndMarkerGenes,
   handleClick,
+  handleCellClick,
   selectedGene,
   handleCellEnter,
   handleCellLeave,
@@ -123,7 +124,7 @@ const CellTypeAndMarkerGenesRow = ({
     colorScale(name) !== undefined ? colorScale(name) : "#D4D4D4";
 
   const pickBackgroundColor = row => {
-    if (highlighted === null && selectedGene !== "Cell Type") {
+    if (selectedGene !== "Cell Type") {
       if (row.markerGenes.includes(selectedGene)) return getColor(row.cellType);
     } else if (highlighted(nameToObject(row.cellType))) {
       return getColor(row.cellType);
@@ -164,7 +165,6 @@ const CellTypeAndMarkerGenesRow = ({
           return (
             <TableCell
               value={row.cellType}
-              key={Math.random}
               align="center"
               style={{
                 background: pickBackgroundColor(row),
@@ -176,6 +176,7 @@ const CellTypeAndMarkerGenesRow = ({
                 style={{ textTransform: "none" }}
                 onMouseEnter={e => handleCellEnter(e, row.cellType)}
                 onMouseLeave={e => handleCellLeave(e)}
+                onClick={e => handleCellClick(e, row.cellType)}
               >
                 <h5>{row.cellType}</h5>
               </Button>
@@ -186,7 +187,7 @@ const CellTypeAndMarkerGenesRow = ({
 
       {allNums.map(element => {
         return (
-          <TableRow key={Math.random}>
+          <TableRow>
             {cellAndMarkerGenes.map(row => {
               const markerGenes = row.markerGenes;
               let gene = markerGenes[element];
@@ -215,11 +216,7 @@ const GeneCell = ({
   handleMouseEnter,
   handleMouseLeave
 }) => (
-  <TableCell
-    align="center"
-    key={Math.random}
-    style={{ paddingTop: 4, paddingBottom: 4 }}
-  >
+  <TableCell align="center" style={{ paddingTop: 4, paddingBottom: 4 }}>
     <Button
       color={buttonColor}
       value={gene}

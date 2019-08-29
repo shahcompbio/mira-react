@@ -50,20 +50,9 @@ const CellAssignData = ({
   ReDim,
   CellAssign,
   cellAssignColorScale,
-  highlighted,
   patientDashboard
-}) => {
-  const loadingGif = () => (
-    <img
-      style={{
-        marginLeft: screenWidth / 3
-      }}
-      src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
-      alt="LOADING"
-    />
-  );
-
-  return patientDashboard ? (
+}) =>
+  patientDashboard ? (
     <Query
       query={PatientQuery}
       variables={{
@@ -71,14 +60,25 @@ const CellAssignData = ({
       }}
     >
       {({ loading, error, data }) => {
-        if (loading) return <Grid item> {loadingGif} </Grid>;
+        if (loading)
+          return (
+            <Grid item>
+              {" "}
+              <img
+                style={{
+                  marginLeft: screenWidth / 3
+                }}
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
+                alt="LOADING"
+              />{" "}
+            </Grid>
+          );
         if (error) return null;
 
         return (
           <CellAssignContent
             ReDim={ReDim}
             cellAssignColorScale={cellAssignColorScale}
-            highlighted={highlighted}
             screenWidth={screenWidth}
             CellAssign={CellAssign}
             data={data}
@@ -95,14 +95,24 @@ const CellAssignData = ({
       }}
     >
       {({ loading, error, data }) => {
-        if (loading) return <Grid item>{loadingGif}</Grid>;
+        if (loading)
+          return (
+            <Grid item>
+              <img
+                style={{
+                  marginLeft: screenWidth / 3
+                }}
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"
+                alt="LOADING"
+              />{" "}
+            </Grid>
+          );
         if (error) return null;
         return (
           <CellAssignContent
             ReDim={ReDim}
             cellAssignColorScale={cellAssignColorScale}
             data={data}
-            highlighted={highlighted}
             screenWidth={screenWidth}
             CellAssign={CellAssign}
           />
@@ -110,13 +120,11 @@ const CellAssignData = ({
       }}
     </Query>
   );
-};
 
 const CellAssignContent = ({
   ReDim,
   cellAssignColorScale,
   data,
-  highlighted,
   screenWidth,
   CellAssign
 }) => {
@@ -150,7 +158,7 @@ const CellAssignContent = ({
             data.cells,
             cellAssignColorScale(existingCellType),
             "Cell Types",
-            highlighted
+            existingCellType
           )}
         </Grid>
         <Grid item>
@@ -175,7 +183,6 @@ const CellAssignContent = ({
         {CellAssign(
           data.cellAndMarkerGenesPair,
           cellAssignColorScale(existingCellType),
-          highlighted,
           data.existingCellTypes
         )}
       </Grid>

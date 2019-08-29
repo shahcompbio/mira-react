@@ -9,10 +9,8 @@ import LabelSelect from "./LabelSelect";
 const QUERY = gql`
   query($patientID: String!, $sampleID: String) {
     colorLabels(patientID: $patientID, sampleID: $sampleID) {
-      id
       title
       labels {
-        id
         title
         type
       }
