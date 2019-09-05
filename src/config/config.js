@@ -41,7 +41,15 @@ export const theme = createMuiTheme({
       }
     },
     MuiTableCell: { root: { padding: "10px 30px 10px 10px" } },
+    MuiExpansionPanel: { rounded: { borderRadius: "5px" } },
     MuiOutlinedInput: { input: { padding: "10px" } },
-    MuiExpansionPanelSummary: { content: { margin: 0 } }
+    MuiExpansionPanelSummary: {
+      root: { borderRadius: "5px" },
+      content: {
+        "&$expanded": {
+          margin: "20px 0 0 0"
+        }
+      }
+    }
   }
 });

@@ -185,7 +185,6 @@ const App = ({ location }) => {
               styles={{
                 width: screenWidth * 0.99,
                 paddingLeft: screenWidth / 50,
-                paddingBottom: 30,
                 paddingTop: 30
               }}
             >
@@ -234,11 +233,7 @@ const ExpansionPanelComponent = ({
   setSampleLabel,
   label
 }) => (
-  <ExpansionPanel
-    onChange={handleChange}
-    expanded={shouldExpand}
-    square={false}
-  >
+  <ExpansionPanel onChange={handleChange} expanded={shouldExpand}>
     <ExpansionPanelSummary
       className={useStyles().summary}
       expandIcon={<ExpandMoreIcon />}
@@ -248,7 +243,6 @@ const ExpansionPanelComponent = ({
       <div
         style={{
           color: "#797979",
-          marginBottom: 15,
           paddingLeft: "0px",
           paddingTop: "10px"
         }}
