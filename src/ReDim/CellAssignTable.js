@@ -66,7 +66,7 @@ const CellAssignTable = ({
       <h3>
         <center>CellAssign : Cell Types and Marker Genes</center>
       </h3>
-      <Paper style={{ overflowX: "auto", overflowY: "auto" }}>
+      <Paper style={{ overflowX: "auto", overflowY: "auto", margin: "10px" }}>
         <Table size="small" padding="none">
           <CellTypeAndMarkerGenesRow
             handleClick={handleClick}

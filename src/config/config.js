@@ -34,11 +34,14 @@ export const theme = createMuiTheme({
     MuiInputBase: {
       root: {
         fontSize: 18,
-        width: 350
+        width: 200
       },
       input: {
         display: "flex"
       }
-    }
+    },
+    MuiTableCell: { root: { padding: "10px 30px 10px 10px" } },
+    MuiOutlinedInput: { input: { padding: "10px" } },
+    MuiExpansionPanelSummary: { content: { margin: 0 } }
   }
 });

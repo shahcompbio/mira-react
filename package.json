@@ -46,6 +46,7 @@
   ],
   "proxy": "http://localhost:4000",
   "devDependencies": {
+    "@fortawesome/fontawesome-pro": "^5.10.2",
     "prettier": "^1.16.4"
   },
   "homepage": "http://spectrum.mskcc.org/scrna"

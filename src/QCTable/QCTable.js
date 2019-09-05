@@ -4,7 +4,6 @@ import TableBody from "@material-ui/core/TableBody";
 import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
-import { Paper } from "@material-ui/core";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import { withStyles } from "@material-ui/core/styles";
@@ -60,8 +59,11 @@ const styles = {
   rowBehavior: {
     background: "white",
     "&:hover": {
-      background: "lightBlue"
+      background: "#fdf2e4"
     }
+  },
+  selectedRow: {
+    background: "#c6d4e8"
   }
 };
 
@@ -85,35 +87,37 @@ const QCTable = ({ patientID, label, classes, onClick, onReClick }) => (
       }
 
       return (
-        <div>
-          <h2>
-            <center>QC Table</center>
-          </h2>
-          <Paper style={{ overflowX: "auto" }}>
-            <Table size="medium" padding="default">
-              <HeaderRow properties={properties} data={data.qcTableValues[0]} />
-              <Body
-                properties={properties}
-                data={data.qcTableValues}
-                selectedSample={label}
-                onClick={onClick}
-                onReClick={onReClick}
-                classes={classes}
-              />
-            </Table>
-          </Paper>
+        <div style={{ overflowX: "auto", margin: "10px", marginTop: "0px" }}>
+          <Table size="medium" padding="default">
+            <HeaderRow
+              classes={classes}
+              properties={properties}
+              data={data.qcTableValues[0]}
+            />
+            <Body
+              properties={properties}
+              data={data.qcTableValues}
+              selectedSample={label}
+              onClick={onClick}
+              onReClick={onReClick}
+              classes={classes}
+            />
+          </Table>
         </div>
       );
     }}
   </Query>
 );
 
-const HeaderRow = ({ properties, data }) => (
+const HeaderRow = ({ properties, data, classes }) => (
   <TableHead>
-    <TableRow>
+    <TableRow className={classes.tableRow}>
       {properties.map(element => {
         return element !== "sampleID" ? (
-          <TableCell align="center" style={{ backgroundColor: "#E4E4E4" }}>
+          <TableCell
+            align="center"
+            style={{ backgroundColor: "white", marginTop: "0px" }}
+          >
             <h4>{data[element].name}</h4>
           </TableCell>
         ) : (
@@ -123,15 +127,16 @@ const HeaderRow = ({ properties, data }) => (
               position: "sticky",
               left: 0,
               color: "black",
-              backgroundColor: "#E4E4E4",
-              zIndex: 1
+              backgroundColor: "white",
+              zIndex: 1,
+              marginTop: "0px"
             }}
           >
             <h4>{data[element].name}</h4>
           </TableCell>
         );
       })}
-      <TableCell align="center" style={{ backgroundColor: "#E4E4E4" }}>
+      <TableCell align="center" style={{ backgroundColor: "#ececec" }}>
         <h4>Summary</h4>
       </TableCell>
     </TableRow>
@@ -167,6 +172,11 @@ const Body = ({
             {properties.map(property => {
               return property !== "sampleID" ? (
                 <TableCell
+                  className={
+                    selectedSample === element["sampleID"].value
+                      ? classes.selectedRow
+                      : ""
+                  }
                   align="center"
                   onClick={event =>
                     handleCellClick(event, element["sampleID"].value)
@@ -184,7 +194,7 @@ const Body = ({
                     position: "sticky",
                     left: 0,
                     color: "black",
-                    backgroundColor: "#D4D4D4",
+                    backgroundColor: "rgb(231, 233, 236)",
                     zIndex: 1
                   }}
                 >

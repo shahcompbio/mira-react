@@ -279,7 +279,7 @@ const Content = ({
           whiteSpace: "nowrap"
         }}
       >
-        <Grid item style={{ marginTop: "40px", paddingLeft: "40px" }}>
+        <Grid item style={{ paddingLeft: "40px" }}>
           {ReDim(
             data.cells,
             cellAssignColorScale(existingCellType),
@@ -287,7 +287,7 @@ const Content = ({
             existingCellType
           )}
         </Grid>
-        <Grid item style={{ marginTop: "40px", paddingLeft: "15px" }}>
+        <Grid item style={{ paddingLeft: "15px" }}>
           {ReDim(
             data.cells,
             colorScale,
