@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 
 import Select, { createFilter } from "react-select";
 import { FixedSizeList as List } from "react-window";
@@ -59,122 +59,104 @@ const styles = {
   }
 };
 
-class LabelSelect extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isLastActionFocus: false
-    };
-  }
-  componentDidMount() {
-    this.props.onSelect(this.props.data[0]["labels"][0]);
-  }
+const LabelSelect = ({ data, onSelect, classes, labelTitle }) => {
+  const [focus, setFocus] = useState(false);
 
-  render() {
-    const { focus } = this.state;
-    const { data, onSelect, classes, labelTitle } = this.props;
+  useEffect(() => onSelect(data[0]["labels"][0]), []);
 
-    const allOptions = data.reduce(
-      (options, group) => [...options, ...group.labels],
-      []
-    );
+  const allOptions = data.reduce(
+    (options, group) => [...options, ...group.labels],
+    []
+  );
 
-    const handleChange = item => {
-      if (item) {
-        const result = allOptions.filter(datum => datum.id === item.value)[0];
-        onSelect(result);
-      } else {
-        onSelect(null);
-      }
-    };
+  const handleChange = item => {
+    if (item) {
+      const result = allOptions.filter(datum => datum.title === item.label)[0];
 
-    const groupOptions = data.map(group => ({
-      label: group.title,
-      options: group.labels.map(label => ({
-        value: label.id,
-        label: label.title
-      }))
-    }));
+      onSelect({ id: result.title, type: result.type, title: result.title });
+    } else {
+      onSelect(null);
+    }
+  };
 
-    return (
-      <Select
-        classes={classes}
-        value={focus ? "" : labelTitle}
-        onInputChange={this.onInputChange}
-        onChange={handleChange}
-        onFocus={() => this.setState({ focus: true })}
-        onBlur={() => this.setState({ focus: false })}
-        blurInputOnSelect={true}
-        options={groupOptions}
-        TextFieldProps={{
-          className: classes.textField,
-          label: "Colour by:",
-          margin: "normal",
-          InputLabelProps: {
-            shrink: true,
-            className: classes.textFieldLabel,
-            htmlFor: "react-select-single"
-          },
-          placeholder: "Colour by"
-        }}
-        components={{
-          Control,
-          MenuList,
-          Group,
-          ValueContainer,
-          Menu,
-          Option,
-          DropdownIndicator,
-          IndicatorSeparator
-        }}
-        isSearchable
-        filterOption={createFilter({ ignoreAccents: false })}
-      />
-    );
-  }
-}
-const Option = props => (
+  const groupOptions = data.map(group => ({
+    label: group.title,
+    options: group.labels.map(label => ({
+      value: label.id,
+      label: label.title
+    }))
+  }));
+
+  return (
+    <Select
+      classes={classes}
+      value={focus ? "" : labelTitle}
+      onChange={handleChange}
+      onFocus={() => setFocus(true)}
+      onBlur={() => setFocus(false)}
+      blurInputOnSelect={true}
+      options={groupOptions}
+      TextFieldProps={{
+        className: classes.textField,
+        label: "Colour by:",
+        margin: "normal",
+        InputLabelProps: {
+          shrink: true,
+          className: classes.textFieldLabel,
+          htmlFor: "react-select-single"
+        },
+        placeholder: "Colour by"
+      }}
+      components={{
+        Control,
+        MenuList,
+        Group,
+        ValueContainer,
+        Menu,
+        Option,
+        DropdownIndicator,
+        IndicatorSeparator
+      }}
+      isSearchable
+      filterOption={createFilter({ ignoreAccents: false })}
+    />
+  );
+};
+
+const Option = ({ innerRef, isFocused, isSelected, innerProps, children }) => (
   <MenuItem
-    ref={props.innerRef}
-    selected={props.isFocused}
+    ref={innerRef}
+    selected={isFocused}
     component="span"
     style={{
-      fontWeight: props.isSelected ? 500 : 400,
-      background: props.isSelected ? "#e8ecf1" : ""
+      fontWeight: isSelected ? 500 : 400,
+      background: isSelected ? "#e8ecf1" : ""
     }}
-    {...props.innerProps}
+    {...innerProps}
   >
-    {props.children}
+    {children}
   </MenuItem>
 );
 const DropdownIndicator = props => <ArrowDropDown />;
-const Menu = props => (
-  <Paper
-    square
-    className={props.selectProps.classes.paper}
-    {...props.innerProps}
-  >
-    {props.children}
+const Menu = ({ selectProps, children, innerProps }) => (
+  <Paper square className={selectProps.classes.paper} {...innerProps}>
+    {children}
   </Paper>
 );
-const ValueContainer = props => (
-  <div
-    style={{ width: 200 }}
-    className={props.selectProps.classes.valueContainer}
-  >
-    {props.children}
+const ValueContainer = ({ selectProps, children }) => (
+  <div style={{ width: 200 }} className={selectProps.classes.valueContainer}>
+    {children}
   </div>
 );
 const inputComponent = ({ inputRef, ...props }) => (
   <span ref={inputRef} {...props} />
 );
-const Control = props => {
-  const {
-    children,
-    innerProps,
-    innerRef,
-    selectProps: { classes, TextFieldProps }
-  } = props;
+const Control = ({
+  children,
+  innerProps,
+  innerRef,
+  selectProps: { classes, TextFieldProps }
+}) => {
   return (
     <FormControl
       style={{

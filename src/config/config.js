@@ -5,7 +5,6 @@ export const theme = createMuiTheme({
     fontFamily: '"Helvetica Neue"'
   },
   palette: {
-    type: "light",
     primary: {
       light: "#acc4e2",
       main: "#8aaedb",
@@ -14,6 +13,18 @@ export const theme = createMuiTheme({
     }
   },
   overrides: {
+    MuiButton: {
+      contained: {
+        backgroundColor: "#ffffff !important",
+        boxShadow: "none",
+        "&:hover": {
+          backgroundColor: "#ffffff"
+        }
+      },
+      sizeLarge: {
+        padding: "8px 10px 0px 10px"
+      }
+    },
     Paper: {
       root: {
         padding: "15px"
