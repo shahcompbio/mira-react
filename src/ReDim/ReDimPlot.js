@@ -1,5 +1,6 @@
 import React from "react";
 import XYFrame from "semiotic/lib/XYFrame";
+import Typography from "@material-ui/core/Typography";
 
 const ReDimPlot = ({
   data,
@@ -81,12 +82,9 @@ const ReDimPlot = ({
 
   return (
     <div>
-      <center>
-        <h3>
-          {title}{" "}
-          {title === labelTitle && title !== "Site" ? " Expression" : ""}
-        </h3>
-      </center>
+      <Typography variant={"h6"} style={{ margin: "0 0 10px 30px" }}>
+        {title} {title === labelTitle && title !== "Site" ? " Expression" : ""}
+      </Typography>
       <XYFrame {...frameProps} />
     </div>
   );
@@ -107,7 +105,7 @@ const getFrameProps = (
   points: highlightedCells,
 
   size: [width, height],
-  margin: { left: 25, bottom: 90, right: 10, top: 10 },
+  margin: { left: 25, bottom: 70, right: 10, top: 0 },
 
   summaryType: {
     type: "hexbin",

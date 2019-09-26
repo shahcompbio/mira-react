@@ -6,15 +6,16 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
+import SelectionPanel from "./Select/SelectionPanel";
+
 import { theme } from "./config/config.js";
-import PatientSelect from "./Select/PatientSelect";
+import Typography from "@material-ui/core/Typography";
 import { withRouter } from "react-router";
 import { makeStyles } from "@material-ui/styles";
+
 import LabelSelectQuery from "./Select/LabelSelectQuery";
 import QCTable from "./QCTable/QCTable";
 import Dashboard from "./ReDim/Dashboard.js";
-import { IconButton } from "@material-ui/core";
-import InfoIcon from "@material-ui/icons/Info";
 
 const name = "Mira";
 const description =
@@ -28,7 +29,12 @@ const ContentStyles = {
 
 const useStyles = makeStyles({
   summary: {
-    backgroundColor: "whiteSmoke"
+    backgroundColor: "#ffffff"
+  },
+  title: {
+    color: "#8a939a",
+    fontSize: "25px",
+    fontWeight: "500"
   }
 });
 
@@ -41,7 +47,9 @@ const App = ({ location }) => {
     type: "gene",
     title: "A1BG"
   });
-  const [sampleLabel, setSampleLabel] = useState();
+  const [sampleLabel, setSampleLabel] = useState(
+    location.pathname ? location.pathname.substr(2).split("/")[1] : 0
+  );
   const [patientPanelState, setPatientPanelState] = useState(true);
   const [samplePanelState, setSamplePanelState] = useState(true);
 
@@ -77,7 +85,7 @@ const App = ({ location }) => {
     padding: "15px"
   };
 
-  const handleClick = sampleLabel => {
+  const handleSampleClick = sampleLabel => {
     setSampleLabel(sampleLabel);
   };
 
@@ -99,33 +107,39 @@ const App = ({ location }) => {
         width="95%"
         spacing={2}
         style={{
-          padding: "60px 20px"
+          padding: "40px 20px"
         }}
       >
         <Grid item>
+          <SelectionPanel
+            handlePatientClick={handlePatientChange}
+            handleSampleClick={handleSampleClick}
+            sampleLabel={sampleLabel}
+            setSampleLabel={label => setSampleLabel(label)}
+            widthRef={widthRef}
+            patientID={patientID}
+            name={"Patient ID : "}
+            styles={{
+              width: screenWidth * 0.99,
+              padding: "0px"
+            }}
+          />
+
           <ExpansionPanelComponent
             handleChange={handlePatientChange}
             shouldExpand={patientID.length === 0 ? false : patientPanelState}
             widthRef={widthRef}
-            handleDemoButtonClick={handleDemoButtonClick}
             patientID={patientID}
-            screenWidth={screenWidth}
-            setSampleLabel={label => setSampleLabel(label)}
-            SelectionStyles={SelectionStyles}
-            InputLabelStyle={InputLabelStyle}
-            name={"Patient ID : "}
-            marginTop={18}
             styles={{
               width: screenWidth * 0.99,
-              paddingLeft: screenWidth / 50,
-              paddingBottom: 30,
-              paddingTop: 30
+              marginRight: 0
             }}
+            label={"QC Table"}
           >
             {!patientID ? null : (
               <QCTable
                 label={sampleLabel}
-                onClick={handleClick}
+                onClick={handleSampleClick}
                 patientID={patientID}
                 onReClick={handleReClick}
               />
@@ -133,80 +147,71 @@ const App = ({ location }) => {
           </ExpansionPanelComponent>
         </Grid>
         <Grid item>
-          <ExpansionPanelComponent
-            handleChange={handleSampleChange}
-            shouldExpand={patientID.length === 0 ? false : samplePanelState}
-            patientID={patientID}
-            widthRef={widthRef}
-            SelectionStyles={SelectionStyles}
-            InputLabelStyle={InputLabelStyle}
-            sampleLabel={sampleLabel}
-            setSampleLabel={label => setSampleLabel(label)}
-            name={"Dashboard : "}
-            marginTop={18}
-            styles={{
-              width: screenWidth * 0.99,
-              paddingLeft: screenWidth / 50,
-              paddingBottom: 30,
-              paddingTop: 30
-            }}
-          >
-            {!sampleLabel ? (
-              !patientID ? null : (
-                <div>
-                  <LabelSelectQuery
-                    updateLabel={label => setLabel(label)}
-                    patientID={patientID}
-                    sampleID={sampleLabel}
-                    dashboard={1}
-                    labelTitle={
-                      label === null || label === undefined
-                        ? "Cell Type"
-                        : label.title
-                    }
-                  />
-                  <Dashboard
-                    screenHeight={screenHeight}
-                    screenWidth={screenWidth}
-                    patientID={patientID}
-                    dashboard={true}
-                    label={label}
-                    onClick={label => setLabel(label)}
-                  />
-                </div>
-              )
-            ) : (
+          {!sampleLabel ? (
+            !patientID ? null : (
               <div>
                 <LabelSelectQuery
                   updateLabel={label => setLabel(label)}
                   patientID={patientID}
                   sampleID={sampleLabel}
+                  dashboard={1}
                   labelTitle={
                     label === null || label === undefined
                       ? "Cell Type"
                       : label.title
                   }
                 />
-                <div style={ContentStyles}>
-                  <Dashboard
-                    screenHeight={screenHeight}
-                    screenWidth={screenWidth}
-                    patientID={patientID}
-                    dashboard={false}
-                    sampleID={sampleLabel}
-                    label={label}
-                    onClick={label => setLabel(label)}
-                  />
-                </div>
+                <Dashboard
+                  screenHeight={screenHeight}
+                  screenWidth={screenWidth}
+                  patientID={patientID}
+                  dashboard={true}
+                  label={label}
+                  onClick={label => setLabel(label)}
+                />
               </div>
-            )}
-          </ExpansionPanelComponent>
+            )
+          ) : (
+            <ExpansionPanelComponent
+              handleChange={handleSampleChange}
+              shouldExpand={patientID.length === 0 ? false : samplePanelState}
+              patientID={patientID}
+              label={"Dashboard"}
+              SelectionStyles={SelectionStyles}
+              InputLabelStyle={InputLabelStyle}
+              sampleLabel={sampleLabel}
+              setSampleLabel={label => setSampleLabel(label)}
+              name={"Dashboard : "}
+              styles={{
+                width: screenWidth * 0.99,
+                paddingLeft: screenWidth / 50,
+                paddingTop: 30
+              }}
+            >
+              <LabelSelectQuery
+                updateLabel={label => setLabel(label)}
+                patientID={patientID}
+                sampleID={sampleLabel}
+                labelTitle={
+                  label === null || label === undefined
+                    ? "Cell Type"
+                    : label.title
+                }
+              />
+              <div style={ContentStyles}>
+                <Dashboard
+                  screenHeight={screenHeight}
+                  screenWidth={screenWidth}
+                  patientID={patientID}
+                  dashboard={false}
+                  sampleID={sampleLabel}
+                  label={label}
+                  onClick={label => setLabel(label)}
+                />
+              </div>
+            </ExpansionPanelComponent>
+          )}
         </Grid>
-        {/* <Grid item>
-          <ExpansionPanelComponent widthRef={widthRef} name={"DNA Data : "}>
-            {"Content coming soon..."}
-          </ExpansionPanelComponent>
-        </Grid> */}
       </Grid>
     </MuiThemeProvider>
   );
@@ -219,14 +224,14 @@ const ExpansionPanelComponent = ({
   widthRef,
   name,
   handleDemoButtonClick,
-  marginTop,
   patientID,
   SelectionStyles,
   InputLabelStyle,
   sampleLabel,
   styles,
   screenWidth,
-  setSampleLabel
+  setSampleLabel,
+  label
 }) => (
   <ExpansionPanel onChange={handleChange} expanded={shouldExpand}>
     <ExpansionPanelSummary
@@ -238,50 +243,16 @@ const ExpansionPanelComponent = ({
       <div
         style={{
           color: "#797979",
-          marginTop: marginTop,
-          marginBottom: name === "Dashboard : " ? 15 : 0,
-          paddingLeft: "0px"
+          paddingLeft: "0px",
+          paddingTop: "10px"
         }}
       >
-        <h2> {name + " "} </h2>
+        <Typography variant="h4" className={useStyles().title}>
+          {label}
+        </Typography>
       </div>
-
-      {name === "Patient ID : " ? (
-        <div>
-          <PatientSelect
-            patientID={patientID}
-            style={SelectionStyles}
-            labelStyle={InputLabelStyle}
-            setSampleLabel={setSampleLabel}
-          />
-
-          <IconButton
-            onClick={handleDemoButtonClick}
-            style={{ marginTop: 10, marginLeft: screenWidth * 0.679 }}
-          >
-            <InfoIcon />
-          </IconButton>
-        </div>
-      ) : name === "Dashboard : " ? (
-        <div
-          style={{
-            color: "#999999",
-            marginTop: marginTop,
-            paddingLeft: "10px"
-          }}
-        >
-          <h2>
-            {" "}
-            {patientID.length > 0 && sampleLabel === undefined
-              ? patientID
-              : sampleLabel !== undefined
-              ? sampleLabel
-              : " "}{" "}
-          </h2>
-        </div>
-      ) : name === "DNA Data : " ? null : null}
     </ExpansionPanelSummary>
-    <ExpansionPanelDetails>
+    <ExpansionPanelDetails style={{ padding: "0px" }}>
       <Grid
         container
         direction="column"

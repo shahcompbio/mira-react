@@ -3,9 +3,34 @@ import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
+
+import Typography from "@material-ui/core/Typography";
 import { Paper } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import { withStyles } from "@material-ui/core/styles";
 
+const styles = theme => ({
+  tableRowHeader: {
+    "&:hover": {
+      backgroundColor: "rgb(158, 158, 158) !important"
+    }
+  },
+  geneLabel: {
+    fontWeight: 400,
+    color: "#242527",
+    "&:hover": {
+      backgroundColor: "#d4d3d4"
+    }
+  },
+  geneLabelSelected: {
+    fontWeight: 700,
+    background: "#aeb0c3",
+    color: "#000000",
+    "&:hover": {
+      backgroundColor: "#d4d3d4"
+    }
+  }
+});
 const CellAssignTable = ({
   labelTitle,
   hoverBehavior,
@@ -13,7 +38,8 @@ const CellAssignTable = ({
   data,
   highlighted,
   countData,
-  colorScale
+  colorScale,
+  classes
 }) => {
   const [selectedGene, setSelectedGene] = useState(labelTitle);
   const [clicked, changeClicked] = useState(false);
@@ -63,10 +89,17 @@ const CellAssignTable = ({
   const cellAndMarkerGenes = sortData(data);
   return (
     <div>
-      <h3>
-        <center>CellAssign : Cell Types and Marker Genes</center>
-      </h3>
-      <Paper style={{ overflowX: "auto", overflowY: "auto" }}>
+      <Typography variant={"h6"} style={{ marginLeft: 10 }}>
+        CellAssign : Cell Types and Marker Genes
+      </Typography>
+      <Paper
+        style={{
+          overflowX: "auto",
+          overflowY: "auto",
+          margin: "10px",
+          marginRight: "30px"
+        }}
+      >
         <Table size="small" padding="none">
           <CellTypeAndMarkerGenesRow
             handleClick={handleClick}
@@ -81,6 +114,7 @@ const CellAssignTable = ({
             countData={countData}
             cellAndMarkerGenes={cellAndMarkerGenes}
             nameToObject={nameToObject}
+            classes={classes}
           />
         </Table>
       </Paper>
@@ -100,7 +134,8 @@ const CellTypeAndMarkerGenesRow = ({
   handleMouseEnter,
   handleMouseLeave,
   countData,
-  nameToObject
+  nameToObject,
+  classes
 }) => {
   const longestArray = () => {
     let longest = 0;
@@ -129,11 +164,19 @@ const CellTypeAndMarkerGenesRow = ({
     } else if (highlighted(nameToObject(row.cellType))) {
       return getColor(row.cellType);
     }
-    return "#D4D4D4";
+    return "#e2e2e2";
   };
 
   const allNums = longestArray();
-
+  const formatTitle = title => {
+    if (title.length <= 10) {
+      return title;
+    } else if (title.indexOf("/") !== -1) {
+      return title.replace("/", "/\n");
+    } else {
+      return title.replace(" ", "\n");
+    }
+  };
   return (
     <TableBody>
       <TableRow>
@@ -142,44 +185,48 @@ const CellTypeAndMarkerGenesRow = ({
             <TableCell
               align="center"
               style={{
-                background: getColor(row.cellType),
-                paddingTop: 8,
-                paddingBottom: 8
+                background: getColor(row.cellType)
               }}
             >
               {" "}
-              <h5>
+              <Typography variant={"h6"}>
                 {
                   countData.map(element => element.count)[
                     countData.map(element => element.cell).indexOf(row.cellType)
                   ]
                 }
-              </h5>
+              </Typography>
             </TableCell>
           );
         })}
       </TableRow>
-
       <TableRow>
         {cellAndMarkerGenes.map(row => {
           return (
             <TableCell
               value={row.cellType}
+              padding="none"
               align="center"
+              variant="head"
+              className={classes.tableRowHeader}
               style={{
-                background: pickBackgroundColor(row),
-                paddingTop: 8,
-                paddingBottom: 8
+                pointerEvents: "all",
+                whiteSpace: "pre-line",
+                textTransform: "none",
+                background: pickBackgroundColor(row)
               }}
+              onMouseEnter={e => handleCellEnter(e, row.cellType)}
+              onMouseLeave={e => handleCellLeave(e)}
+              onClick={e => handleCellClick(e, row.cellType)}
             >
-              <Button
-                style={{ textTransform: "none" }}
-                onMouseEnter={e => handleCellEnter(e, row.cellType)}
-                onMouseLeave={e => handleCellLeave(e)}
-                onClick={e => handleCellClick(e, row.cellType)}
+              <Typography
+                variant={"h8"}
+                style={{
+                  pointerEvents: "none"
+                }}
               >
-                <h5>{row.cellType}</h5>
-              </Button>
+                {formatTitle(row.cellType)}
+              </Typography>
             </TableCell>
           );
         })}
@@ -191,14 +238,15 @@ const CellTypeAndMarkerGenesRow = ({
             {cellAndMarkerGenes.map(row => {
               const markerGenes = row.markerGenes;
               let gene = markerGenes[element];
-              let buttonColor = gene === selectedGene ? "default" : "primary";
+              let isSelected = gene === selectedGene;
               return (
                 <GeneCell
                   gene={gene}
                   handleClick={handleClick}
                   handleMouseEnter={handleMouseEnter}
                   handleMouseLeave={handleMouseLeave}
-                  buttonColor={buttonColor}
+                  isSelected={isSelected}
+                  classes={classes}
                 />
               );
             })}
@@ -210,24 +258,25 @@ const CellTypeAndMarkerGenesRow = ({
 };
 
 const GeneCell = ({
-  buttonColor,
+  isSelected,
   gene,
   handleClick,
   handleMouseEnter,
-  handleMouseLeave
+  handleMouseLeave,
+  classes
 }) => (
-  <TableCell align="center" style={{ paddingTop: 4, paddingBottom: 4 }}>
+  <TableCell align="center">
     <Button
-      color={buttonColor}
       value={gene}
-      size={"medium"}
+      fullWidth={true}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      className={isSelected ? classes.geneLabelSelected : classes.geneLabel}
     >
       {gene}
     </Button>
   </TableCell>
 );
 
-export default CellAssignTable;
+export default withStyles(styles)(CellAssignTable);

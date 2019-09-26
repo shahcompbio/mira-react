@@ -9,6 +9,8 @@ import { BrowserRouter } from "react-router-dom";
 import { ApolloProvider } from "react-apollo";
 import client from "./apollo.js";
 
+require("typeface-roboto");
+
 ReactDOM.render(
   <ApolloProvider client={client}>
     <BrowserRouter basename={process.env.REACT_APP_BASENAME}>

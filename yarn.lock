@@ -941,6 +941,11 @@
   resolved "https://registry.yarnpkg.com/@emotion/utils/-/utils-0.8.2.tgz#576ff7fb1230185b619a75d258cbc98f0867a8dc"
   integrity sha512-rLu3wcBWH4P5q1CGoSSH/i9hrXs7SlbRLkoq9IGuoPYNGQvDJ3pt/wmOM+XgYjIDRMVIdkUWt0RsfzF50JfnCw==
 
+"@fortawesome/fontawesome-pro@^5.10.2":
+  version "5.10.2"
+  resolved "https://npm.fontawesome.com/@fortawesome/fontawesome-pro/-/fontawesome-pro-5.10.2.tgz#03092f3759af9aa7c1b4ef064e18ce35b4f6f9d6"
+  integrity sha512-cWDAbjzIqdEQAbQW/RK5bn1qDUs6pnz2TkJPvR+cTjZHnHlFOX+Zu1iUOEKab+HY38qyZyeA+1C675N+ee/rgg==
+
 "@mapbox/polylabel@1":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@mapbox/polylabel/-/polylabel-1.0.2.tgz#c5714619b65add082638ea06027e69b14500efa6"
@@ -10833,6 +10838,11 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
+typeface-roboto@^0.0.75:
+  version "0.0.75"
+  resolved "https://registry.yarnpkg.com/typeface-roboto/-/typeface-roboto-0.0.75.tgz#98d5ba35ec234bbc7172374c8297277099cc712b"
+  integrity sha512-VrR/IiH00Z1tFP4vDGfwZ1esNqTiDMchBEXYY9kilT6wRGgFoCAlgkEUMHb1E3mB0FsfZhv756IF0+R+SFPfdg==
 
 ua-parser-js@^0.7.18:
   version "0.7.19"
