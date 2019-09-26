@@ -13,7 +13,7 @@ require("typeface-roboto");
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
       <App />
     </BrowserRouter>
   </ApolloProvider>,
