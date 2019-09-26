@@ -1,6 +1,7 @@
 FROM node as builder
 
 WORKDIR /usr/src/app
+ARG BUILD_ENV
 
 RUN npm config set '@bit:registry' https://node.bit.dev
 
@@ -8,7 +9,10 @@ COPY package*.json ./
 RUN yarn install
 
 COPY . .
-RUN yarn build
+RUN if [ "$BUILD_ENV" = "staging" ]; \
+    then yarn build:staging; \
+    else yarn build; \
+    fi
 
 
 
