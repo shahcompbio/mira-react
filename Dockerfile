@@ -5,6 +5,7 @@ ARG BUILD_ENV
 
 RUN npm config set '@bit:registry' https://node.bit.dev
 
+COPY .npmrc ./
 COPY package*.json ./
 RUN yarn install
 

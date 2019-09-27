@@ -2,6 +2,7 @@
 
 # env files
 *.env
+*.npmrc
 
 # dependencies
 /node_modules
