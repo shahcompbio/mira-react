@@ -124,32 +124,46 @@ const App = ({ location }) => {
               padding: "0px"
             }}
           />
-
-          <ExpansionPanelComponent
-            handleChange={handlePatientChange}
-            shouldExpand={patientID.length === 0 ? false : patientPanelState}
-            widthRef={widthRef}
-            patientID={patientID}
-            styles={{
-              width: screenWidth * 0.99,
-              marginRight: 0
-            }}
-            label={"QC Table"}
-          >
-            {!patientID ? null : (
+          {!patientID ? null : (
+            <ExpansionPanelComponent
+              handleChange={handlePatientChange}
+              shouldExpand={patientID.length === 0 ? false : patientPanelState}
+              widthRef={widthRef}
+              patientID={patientID}
+              styles={{
+                width: screenWidth * 0.99,
+                marginRight: 0
+              }}
+              label={"QC Table"}
+            >
               <QCTable
                 label={sampleLabel}
                 onClick={handleSampleClick}
                 patientID={patientID}
                 onReClick={handleReClick}
               />
-            )}
-          </ExpansionPanelComponent>
+            </ExpansionPanelComponent>
+          )}
         </Grid>
         <Grid item>
           {!sampleLabel ? (
             !patientID ? null : (
-              <div>
+              <ExpansionPanelComponent
+                handleChange={handleSampleChange}
+                shouldExpand={patientID.length === 0 ? false : samplePanelState}
+                patientID={patientID}
+                label={"Dashboard"}
+                SelectionStyles={SelectionStyles}
+                InputLabelStyle={InputLabelStyle}
+                sampleLabel={sampleLabel}
+                setSampleLabel={label => setSampleLabel(label)}
+                name={"Dashboard : "}
+                styles={{
+                  width: screenWidth * 0.99,
+                  paddingLeft: screenWidth / 50,
+                  paddingTop: 30
+                }}
+              >
                 <LabelSelectQuery
                   updateLabel={label => setLabel(label)}
                   patientID={patientID}
@@ -169,7 +183,7 @@ const App = ({ location }) => {
                   label={label}
                   onClick={label => setLabel(label)}
                 />
-              </div>
+              </ExpansionPanelComponent>
             )
           ) : (
             <ExpansionPanelComponent
@@ -188,6 +202,7 @@ const App = ({ location }) => {
                 paddingTop: 30
               }}
             >
+              {" "}
               <LabelSelectQuery
                 updateLabel={label => setLabel(label)}
                 patientID={patientID}

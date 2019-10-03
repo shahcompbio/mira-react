@@ -24,7 +24,10 @@ const LabelSelectQuery = ({ patientID, sampleID, updateLabel, labelTitle }) => (
       if (loading) return null;
       if (error) return null;
       return (
-        <Grid item style={{ display: "inline-flex" }}>
+        <Grid
+          item
+          style={{ padding: "0px 0px 25px 25px", display: "inline-flex" }}
+        >
           <LabelSelect
             patientID={patientID}
             sampleID={sampleID}

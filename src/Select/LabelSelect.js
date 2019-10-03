@@ -30,14 +30,13 @@ const groupBadgeStyles = {
 
 const styles = {
   root: {
-    width: 200,
+    width: 220,
     flexGrow: 1,
     height: 250
   },
-  textField: { paddingLeft: "-15px", width: 200 },
+  textField: { paddingLeft: "-15px", width: 220 },
   input: {
     display: "flex",
-    padding: 5,
     height: "auto"
   },
   valueContainer: {
@@ -61,8 +60,12 @@ const styles = {
 
 const LabelSelect = ({ data, onSelect, classes, labelTitle }) => {
   const [focus, setFocus] = useState(false);
-
-  useEffect(() => onSelect(data[0]["labels"][0]), []);
+  console.log(data);
+  useEffect(
+    () =>
+      onSelect(data.length === 1 ? data[0]["labels"][0] : data[1]["labels"][0]),
+    []
+  );
 
   const allOptions = data.reduce(
     (options, group) => [...options, ...group.labels],
@@ -99,6 +102,7 @@ const LabelSelect = ({ data, onSelect, classes, labelTitle }) => {
       TextFieldProps={{
         className: classes.textField,
         label: "Colour by:",
+        variant: "outlined",
         margin: "normal",
         InputLabelProps: {
           shrink: true,
@@ -208,7 +212,7 @@ const MenuList = ({ children, maxHeight }) => {
   return (
     <List
       height={maxHeight + 300}
-      width={"225px"}
+      width={"220px"}
       itemCount={options.length}
       itemSize={height}
     >

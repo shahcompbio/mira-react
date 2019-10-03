@@ -12,10 +12,6 @@ import { withStyles } from "@material-ui/core/styles";
 import { withRouter } from "react-router";
 const styles = theme => ({
   form: { paddingRight: "25px" },
-  selectLabel: {
-    fontSize: "20px",
-    padding: "5px"
-  },
   select: {},
   input: { width: "200px" }
 });

@@ -19,7 +19,7 @@ const styles = {
     padding: "10px",
     marginBottom: "30px",
     boxShadow:
-      "0px 1px 13px 0px rgba(170, 199, 228, 0.18), -3px 1px 14px 2px rgba(170, 199, 228, 0.17), 0px 1px 8px -1px rgba(170, 199, 228, 0.23);"
+      "0px 1px 13px 0px rgba(174, 181, 177, 0.18), -3px 1px 14px 2px rgba(129, 133, 136, 0.17), 0px 1px 8px -1px rgba(78, 79, 80, 0.23);"
   }
 };
 const SelectionPanel = ({

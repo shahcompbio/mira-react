@@ -95,8 +95,6 @@ const SampleSelect = ({
       )
     )
   ];
-  console.log(sample);
-  console.log(expression);
   return (
     <FormControl className={classes.form}>
       <TextField
