@@ -35,7 +35,6 @@ const SampleSelect = ({
   location,
   patientID,
   data,
-  history,
   setSampleLabel,
   classes,
   sampleLabel
@@ -46,7 +45,6 @@ const SampleSelect = ({
 
   const handleExpressionChange = event => {
     if (sample) {
-      history.push("/" + patientID + "/" + event.target.value + "_" + sample);
       setSampleLabel(event.target.value + "_" + sample);
     }
     setExpression(event.target.value);
@@ -54,9 +52,6 @@ const SampleSelect = ({
 
   const handleSampleChange = event => {
     if (expression) {
-      history.push(
-        "/" + patientID + "/" + expression + "_" + event.target.value
-      );
       setSampleLabel(expression + "_" + event.target.value);
     }
     setSample(event.target.value);
@@ -71,6 +66,7 @@ const SampleSelect = ({
       setStatusChoices(choicesLeft);
     }
   }, [sample]);
+
   useEffect(() => {
     if (sampleLabel) {
       setSample(sampleLabel.substr(6, sampleLabel.length));

@@ -38,7 +38,7 @@ const useStyles = makeStyles({
   }
 });
 
-const App = ({ location }) => {
+const App = ({ location, history }) => {
   const [patientID] = location.pathname.substr(1).split("/");
   const [screenWidth, setWidth] = useState(0);
   const [screenHeight, setHeight] = useState(0);
@@ -64,6 +64,7 @@ const App = ({ location }) => {
     patientID.length > 0 && patientPanelState
       ? setPatientPanelState(false)
       : setPatientPanelState(true);
+    history.push("/" + patientID);
   };
 
   const handleSampleChange = e => {
@@ -87,10 +88,12 @@ const App = ({ location }) => {
 
   const handleSampleClick = sampleLabel => {
     setSampleLabel(sampleLabel);
+    history.push("/" + patientID + "/" + sampleLabel);
   };
 
   const handleReClick = e => {
     setSampleLabel(undefined);
+    history.push("/" + patientID);
   };
 
   const handleDemoButtonClick = e => {

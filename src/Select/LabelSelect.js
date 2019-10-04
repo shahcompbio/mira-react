@@ -60,7 +60,7 @@ const styles = {
 
 const LabelSelect = ({ data, onSelect, classes, labelTitle }) => {
   const [focus, setFocus] = useState(false);
-  console.log(data);
+
   useEffect(
     () =>
       onSelect(data.length === 1 ? data[0]["labels"][0] : data[1]["labels"][0]),
