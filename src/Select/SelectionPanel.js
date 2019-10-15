@@ -1,11 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
+
+import { useHistory } from "react-router-dom";
+import { useQuery } from "@apollo/react-hooks";
+import gql from "graphql-tag";
 
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import PatientSelect from "./PatientSelect";
-import SampleSelect from "./SampleSelect";
 import { withStyles } from "@material-ui/core/styles";
+
+import Select from "./Select";
+
+import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
+
+const QUERY = gql`
+  query {
+    dashboards {
+      type
+      dashboards {
+        id
+      }
+    }
+  }
+`;
 
 const styles = {
   title: {
@@ -22,16 +39,30 @@ const styles = {
       "0px 1px 13px 0px rgba(174, 181, 177, 0.18), -3px 1px 14px 2px rgba(129, 133, 136, 0.17), 0px 1px 8px -1px rgba(78, 79, 80, 0.23);"
   }
 };
-const SelectionPanel = ({
-  handlePatientClick,
-  handleSampleClick,
-  setSampleLabel,
-  name,
-  marginTop,
-  patientID,
-  sampleLabel,
-  classes
-}) => {
+
+const SelectionPanel = ({ classes }) => {
+  let history = useHistory();
+  const [dashboardType, setDashboardType] = useState(useDashboardType());
+  const [dashboardID, setDashboardID] = useState(useDashboardID());
+
+  const onDashboardTypeChange = type => {
+    history.push(`/${type}`);
+    setDashboardType(type);
+  };
+
+  const onDashboardIDChange = id => {
+    history.push(`/${dashboardType}/${id}`);
+    setDashboardID(id);
+  };
+
+  const { data, loading, error } = useQuery(QUERY);
+
+  if (loading || error) {
+    return null;
+  }
+
+  const { dashboards } = data;
+
   return (
     <Grid
       container
@@ -40,21 +71,25 @@ const SelectionPanel = ({
       alignItems="flex-start"
     >
       <Typography variant="h4" className={classes.title}>
-        Sample Selection
+        Dashboard Selection
       </Typography>
       <Paper className={classes.paper} elevation={1}>
-        <PatientSelect
-          setSampleLabel={setSampleLabel}
-          onChange={handlePatientClick}
-          patientID={patientID}
+        <Select
+          label={"Dashboard Type"}
+          name={"dashboard-type"}
+          data={dashboards.map(dashboard => dashboard["type"])}
+          value={dashboardType}
+          onChange={onDashboardTypeChange}
         />
-        {patientID && (
-          <SampleSelect
-            setSampleLabel={setSampleLabel}
-            onChange={handleSampleClick}
-            patientID={patientID}
-            labelStyle={{ padding: "19px" }}
-            sampleLabel={sampleLabel}
+        {dashboardType === "" ? null : (
+          <Select
+            label={"Dashboard"}
+            name={"dashboard-id"}
+            data={dashboards
+              .filter(dashboard => dashboard["type"] === dashboardType)[0]
+              ["dashboards"].map(dashboard => dashboard["id"])}
+            value={dashboardID}
+            onChange={onDashboardIDChange}
           />
         )}
       </Paper>
