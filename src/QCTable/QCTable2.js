@@ -9,6 +9,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 
+import formatInteger from "../utils/formatInteger";
+
 const QUERY = gql`
   query($dashboardType: String!, $dashboardID: String!) {
     sampleStatsHeaders(type: $dashboardType, dashboardID: $dashboardID)
@@ -36,7 +38,7 @@ const QCTable = ({ dashboardType, dashboardID }) => {
   }
   const headers = data["sampleStatsHeaders"];
   const stats = formatTableData(data["sampleStats"]);
-  console.log(stats);
+
   return (
     <Table stickyHeader>
       <TableHeader columns={headers} />
@@ -75,7 +77,9 @@ const StatsRow = ({ columns, data }) => (
   <TableRow key={data["sampleID"]}>
     {columns.map(column => (
       <TableCell key={`${data["sampleID"]}_${column}}`}>
-        {data[column]}
+        {Number.isInteger(data[column])
+          ? formatInteger(data[column])
+          : data[column]}
       </TableCell>
     ))}
   </TableRow>

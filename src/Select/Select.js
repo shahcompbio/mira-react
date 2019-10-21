@@ -28,11 +28,16 @@ const Select = ({ classes, label, name, data, value, onChange }) => (
       value={value}
       onChange={event => onChange(event.target.value)}
     >
-      {data.map(option => (
-        <MenuItem value={option} key={`${name}_select_${option}`}>
-          {option}
-        </MenuItem>
-      ))}
+      {[
+        <MenuItem value={null} key={`${name}_select_null`}>
+          None
+        </MenuItem>,
+        ...data.map(option => (
+          <MenuItem value={option} key={`${name}_select_${option}`}>
+            {option}
+          </MenuItem>
+        ))
+      ]}
     </TextField>
   </FormControl>
 );

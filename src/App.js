@@ -1,6 +1,8 @@
 import React from "react";
 import Header from "@bit/viz.spectrum.spectrumheader";
 
+import ExpansionPanel from "./components/ExpansionPanel";
+
 import SelectionPanel from "./Select/SelectionPanel";
 import QCTable from "./QCTable/QCTable2";
 
@@ -49,9 +51,14 @@ const App = () => {
         <Grid item>
           <SelectionPanel />
         </Grid>
-        {dashboardType && dashboardID ? (
+        {/* {dashboardType && dashboardID ? (
           <Grid item>
-            <QCTable dashboardType={dashboardType} dashboardID={dashboardID} />
+            <ExpansionPanel title={"Sample Metadata"}>
+              <QCTable
+                dashboardType={dashboardType}
+                dashboardID={dashboardID}
+              />
+            </ExpansionPanel>
           </Grid>
         ) : null}
         {/* 
