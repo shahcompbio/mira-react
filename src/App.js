@@ -49,7 +49,9 @@ const App = () => {
         }}
       >
         <Grid item>
-          <SelectionPanel />
+          <ExpansionPanel title={"Dashboard Selection"}>
+            <SelectionPanel />
+          </ExpansionPanel>
         </Grid>
         {/* {dashboardType && dashboardID ? (
           <Grid item>
