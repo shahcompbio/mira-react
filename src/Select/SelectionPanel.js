@@ -11,6 +11,7 @@ import { withStyles } from "@material-ui/core/styles";
 
 import Select from "./Select";
 import Filters from "./Filters";
+import MetadataTable from "./MetadataTable";
 
 import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
 
@@ -57,8 +58,8 @@ const SelectionPanel = ({ classes }) => {
   const { dashboardTypes } = data;
   return (
     <Grid container direction="column">
-      <Grid container direction="row">
-        <Paper className={classes.paper} elevation={1}>
+      <Paper className={classes.paper} elevation={1}>
+        <Grid container direction="row">
           <Select
             label={"Dashboard Type"}
             name={"dashboard-type"}
@@ -69,8 +70,11 @@ const SelectionPanel = ({ classes }) => {
           {dashboardType === "" ? null : (
             <Filters chosenFilters={filters} setFilters={setFilters} />
           )}
-        </Paper>
-      </Grid>
+        </Grid>
+        <Grid item>
+          <MetadataTable filters={filters} />
+        </Grid>
+      </Paper>
     </Grid>
   );
   // return (
