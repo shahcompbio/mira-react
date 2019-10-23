@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
@@ -10,7 +10,7 @@ import { withStyles } from "@material-ui/core/styles";
 const styles = theme => ({
   form: { paddingRight: "25px" },
   select: {},
-  input: { width: "200px" }
+  input: { width: "200px", paddingBottom: "10px" }
 });
 
 const Select = ({ classes, label, name, data, value, onChange }) => (
@@ -20,6 +20,9 @@ const Select = ({ classes, label, name, data, value, onChange }) => (
       label={label}
       variant="outlined"
       margin="normal"
+      InputLabelProps={{
+        shrink: true
+      }}
       inputProps={{ name: name, id: `${name}_select` }}
       input={
         <Input name={name} id={`${name}_select`} className={classes.input} />

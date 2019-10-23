@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
-import Title from "../components/Title";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
@@ -48,7 +47,6 @@ const SelectionPanel = ({ classes }) => {
     setDashboardID(id);
   };
 
-  console.log(dashboardTypes);
   const { data, loading, error } = useQuery(QUERY);
 
   if (loading || error) {
@@ -58,8 +56,8 @@ const SelectionPanel = ({ classes }) => {
   const { dashboardTypes } = data;
   return (
     <Grid container direction="column">
-      <Paper className={classes.paper} elevation={1}>
-        <Grid container direction="row">
+      <Grid container direction="row" justify="space-between">
+        <Grid item>
           <Select
             label={"Dashboard Type"}
             name={"dashboard-type"}
@@ -67,46 +65,18 @@ const SelectionPanel = ({ classes }) => {
             value={dashboardType}
             onChange={onDashboardTypeChange}
           />
-          {dashboardType === "" ? null : (
+        </Grid>
+        {dashboardType === "" ? null : (
+          <Grid item>
             <Filters chosenFilters={filters} setFilters={setFilters} />
-          )}
-        </Grid>
-        <Grid item>
-          <MetadataTable filters={filters} />
-        </Grid>
-      </Paper>
+          </Grid>
+        )}
+      </Grid>
+      <Grid item>
+        <MetadataTable filters={filters} onSelect={onDashboardIDChange} />
+      </Grid>
     </Grid>
   );
-  // return (
-  //   <Grid
-  //     container
-  //     direction="row"
-  //     justify="flex-start"
-  //     alignItems="flex-start"
-  //   >
-  //     <Title title={"Dashboard Selection"} />
-  //     <Paper className={classes.paper} elevation={1}>
-  // <Select
-  //   label={"Dashboard Type"}
-  //   name={"dashboard-type"}
-  //   data={dashboards.map(dashboard => dashboard["type"])}
-  //   value={dashboardType}
-  //   onChange={onDashboardTypeChange}
-  // />;
-  //       {dashboardType === "" ? null : (
-  //         <Select
-  //           label={"Dashboard"}
-  //           name={"dashboard-id"}
-  //           data={dashboards
-  //             .filter(dashboard => dashboard["type"] === dashboardType)[0]
-  //             ["dashboards"].map(dashboard => dashboard["id"])}
-  //           value={dashboardID}
-  //           onChange={onDashboardIDChange}
-  //         />
-  //       )}
-  //     </Paper>
-  //   </Grid>
-  // );
 };
 
 export default withStyles(styles)(SelectionPanel);

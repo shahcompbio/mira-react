@@ -9,7 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 
-import { useDashboardType } from "../utils/useDashboardInfo";
+import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
 import formatInteger from "../utils/formatInteger";
 
 const QUERY = gql`
@@ -34,8 +34,11 @@ const QUERY = gql`
   }
 `;
 
-const MetadataTable = ({ filters }) => {
+const MetadataTable = ({ filters, onSelect }) => {
   const dashboardType = useDashboardType();
+  const dashboardID = useDashboardID();
+
+  const isRowSelected = id => id === dashboardID;
 
   const { data, loading, error } = useQuery(QUERY, {
     variables: { dashboardType, filters }
@@ -61,15 +64,16 @@ const MetadataTable = ({ filters }) => {
   // TODO: Unhardcode for samples
   return (
     <div style={{ maxHeight: 400, overflow: "auto" }}>
-      <Table stickyHeader>
+      <Table>
         <TableHeader columns={[...headers, ...statsHeaders]} />
         <TableBody>
           {dashboards.map(row => (
             <StatsRow
-              key={row["id"]}
               columns={headers}
               stats={statsHeaders}
               data={row["samples"][0]}
+              onClick={onSelect}
+              selectedID={dashboardID}
             />
           ))}
         </TableBody>
@@ -97,8 +101,12 @@ const TableHeader = ({ columns }) => (
   </TableHead>
 );
 
-const StatsRow = ({ columns, stats, data }) => (
-  <TableRow key={data["id"]}>
+const StatsRow = ({ columns, stats, data, onClick, selectedID }) => (
+  <TableRow
+    hover
+    onClick={_ => onClick(data["id"])}
+    selected={selectedID === data["id"]}
+  >
     {[
       ...data["metadata"].map(column => (
         <TableCell key={column["id"]}>{column["value"]}</TableCell>
