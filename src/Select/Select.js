@@ -5,6 +5,8 @@ import TextField from "@material-ui/core/TextField";
 import Input from "@material-ui/core/Input";
 import MenuItem from "@material-ui/core/MenuItem";
 
+import capitalizeString from "../utils/capitalizeString";
+
 import { withStyles } from "@material-ui/core/styles";
 
 const styles = theme => ({
@@ -33,11 +35,11 @@ const Select = ({ classes, label, name, data, value, onChange }) => (
     >
       {[
         <MenuItem value={null} key={`${name}_select_null`}>
-          None
+          <i>None</i>
         </MenuItem>,
         ...data.map(option => (
           <MenuItem value={option} key={`${name}_select_${option}`}>
-            {option}
+            {capitalizeString(option)}
           </MenuItem>
         ))
       ]}
