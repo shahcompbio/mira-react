@@ -9,6 +9,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 
+import { withStyles } from "@material-ui/core/styles";
+
 import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
 import formatInteger from "../utils/formatInteger";
 
@@ -30,15 +32,27 @@ const QUERY = gql`
           }
         }
       }
+      metadata {
+        name
+      }
+      stats
     }
   }
 `;
 
-const MetadataTable = ({ filters, onSelect }) => {
+const styles = theme => ({
+  metadataCell: {
+    color: "black",
+    backgroundColor: "rgb(231, 233, 236)",
+    zIndex: 1,
+    fontWeight: "bold",
+    textAlign: "center"
+  }
+});
+
+const MetadataTable = ({ classes, filters, onSelect }) => {
   const dashboardType = useDashboardType();
   const dashboardID = useDashboardID();
-
-  const isRowSelected = id => id === dashboardID;
 
   const { data, loading, error } = useQuery(QUERY, {
     variables: { dashboardType, filters }
@@ -48,30 +62,22 @@ const MetadataTable = ({ filters, onSelect }) => {
     return null;
   }
 
-  const dashboards = data["dashboardClusters"]["dashboards"];
+  const { dashboards, metadata, stats } = data["dashboardClusters"];
 
-  // TODO: Unhard-code headers
-  const headers = ["Patient", "Surgery", "Site", "Sort"];
-  const statsHeaders = [
-    "Estimated Number of Cells",
-    "Median Genes per Cell",
-    "Median UMI Counts",
-    "Mito20",
-    "Number of Genes",
-    "Number of Reads"
-  ];
+  const metadataHeaders = metadata.map(datum => datum["name"]);
+  const statsHeaders = stats;
 
-  // TODO: Unhardcode for samples
   return (
     <div style={{ maxHeight: 400, overflow: "auto" }}>
       <Table>
-        <TableHeader columns={[...headers, ...statsHeaders]} />
+        <TableHeader columns={[...metadataHeaders, ...statsHeaders]} />
         <TableBody>
           {dashboards.map(row => (
-            <StatsRow
-              columns={headers}
+            <DashboardRow
+              classes={classes}
+              metadata={metadataHeaders}
               stats={statsHeaders}
-              data={row["samples"][0]}
+              data={row["samples"]}
               onClick={onSelect}
               selectedID={dashboardID}
             />
@@ -87,6 +93,7 @@ const TableHeader = ({ columns }) => (
     <TableRow>
       {columns.map(column => (
         <TableCell
+          align="center"
           key={column}
           style={{
             backgroundColor: "#fff",
@@ -101,23 +108,71 @@ const TableHeader = ({ columns }) => (
   </TableHead>
 );
 
-const StatsRow = ({ columns, stats, data, onClick, selectedID }) => (
+const DashboardRow = ({
+  metadata,
+  stats,
+  classes,
+  data,
+  onClick,
+  selectedID
+}) => {
+  // Right now just draws on sample level. Later we'll need to accommodate Patient level data.
+
+  const samples = data.map(datum => collapseMetadataAndStats(datum));
+
+  if (samples.length === 1) {
+    return (
+      <SampleRow
+        classes={classes}
+        metadata={metadata}
+        stats={stats}
+        data={samples[0]}
+        onClick={onClick}
+        selectedID={selectedID}
+      />
+    );
+  } else return null;
+};
+
+const SampleRow = ({ metadata, stats, classes, data, onClick, selectedID }) => (
   <TableRow
     hover
     onClick={_ => onClick(data["id"])}
     selected={selectedID === data["id"]}
   >
     {[
-      ...data["metadata"].map(column => (
-        <TableCell key={column["id"]}>{column["value"]}</TableCell>
+      ...metadata.map(column => (
+        <TableCell
+          className={classes.metadataCell}
+          key={`${data["id"]}_metadata_${column}`}
+        >
+          {data["metadata"][column]}
+        </TableCell>
       )),
-      ...data["stats"].map(column => (
-        <TableCell key={column["id"]}>
-          {formatInteger(column["value"])}
+      ...stats.map(column => (
+        <TableCell align="center" key={`${data["id"]}_stats_${column}`}>
+          {formatInteger(data["stats"][column])}
         </TableCell>
       ))
     ]}
   </TableRow>
 );
 
-export default MetadataTable;
+const collapseMetadataAndStats = sample => ({
+  ...sample,
+  metadata: sample["metadata"].reduce(
+    (mapping, datum) => ({
+      ...mapping,
+      [datum["name"]]: datum["value"]
+    }),
+    {}
+  ),
+  stats: sample["stats"].reduce(
+    (mapping, datum) => ({
+      ...mapping,
+      [datum["name"]]: datum["value"]
+    }),
+    {}
+  )
+});
+export default withStyles(styles)(MetadataTable);

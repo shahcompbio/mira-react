@@ -30,12 +30,12 @@ const Select = ({ classes, label, name, data, value, onChange }) => (
         <Input name={name} id={`${name}_select`} className={classes.input} />
       }
       name={name}
-      value={value}
+      value={value ? value : ""}
       onChange={event => onChange(event.target.value)}
     >
       {[
-        <MenuItem value={null} key={`${name}_select_null`}>
-          <i>None</i>
+        <MenuItem value={""} key={`${name}_select_null`}>
+          {""}
         </MenuItem>,
         ...data.map(option => (
           <MenuItem value={option} key={`${name}_select_${option}`}>

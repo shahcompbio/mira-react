@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
-import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -12,7 +11,7 @@ import Select from "./Select";
 import Filters from "./Filters";
 import MetadataTable from "./MetadataTable";
 
-import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
+import { useDashboardType } from "../utils/useDashboardInfo";
 
 const QUERY = gql`
   query {
@@ -32,19 +31,17 @@ const styles = {
 
 const SelectionPanel = ({ classes }) => {
   let history = useHistory();
-  const [dashboardType, setDashboardType] = useState(useDashboardType());
-  const [dashboardID, setDashboardID] = useState(useDashboardID());
+
+  const [dashboardType] = [useDashboardType()];
   const [filters, setFilters] = useState([]);
 
   const onDashboardTypeChange = type => {
     const typeConvert = type ? type : "";
     history.push(`/${typeConvert}`);
-    setDashboardType(typeConvert);
   };
 
   const onDashboardIDChange = id => {
     history.push(`/${dashboardType}/${id}`);
-    setDashboardID(id);
   };
 
   const { data, loading, error } = useQuery(QUERY);
@@ -79,4 +76,4 @@ const SelectionPanel = ({ classes }) => {
   );
 };
 
-export default withStyles(styles)(SelectionPanel);
+export default SelectionPanel;

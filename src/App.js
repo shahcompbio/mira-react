@@ -4,7 +4,6 @@ import Header from "@bit/viz.spectrum.spectrumheader";
 import ExpansionPanel from "./components/ExpansionPanel";
 
 import SelectionPanel from "./Select/SelectionPanel";
-import QCTable from "./QCTable/QCTable2";
 
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import Grid from "@material-ui/core/Grid";

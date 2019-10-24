@@ -10,6 +10,8 @@ import IconButton from "@material-ui/core/IconButton";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import Tooltip from "@material-ui/core/Tooltip";
 
+import Slide from "@material-ui/core/Slide";
+
 import { useDashboardType } from "../utils/useDashboardInfo";
 
 const QUERY = gql`
@@ -37,43 +39,39 @@ const Filters = ({ chosenFilters, setFilters }) => {
     if (loading || error) {
       return;
     } else {
-      setFilters(metadata.map(_ => null));
+      setFilters(data["dashboardClusters"]["metadata"].map(_ => null));
     }
   }, [dashboardType, typeof data === "undefined"]);
 
-  if (loading || error) {
-    return null;
-  }
-
-  const metadata = data["dashboardClusters"]["metadata"];
-
   return (
     <Grid container direction="row">
-      <Grid item>
-        {isShown
-          ? metadata.map((datum, index) => (
-              <Select
-                key={`filter_${datum["id"]}`}
-                label={datum["name"]}
-                name={datum["id"]}
-                data={datum["values"]}
-                value={
-                  chosenFilters[index] ? chosenFilters[index]["value"] : ""
-                }
-                onChange={newValue => {
-                  const newValues = chosenFilters.map((value, valueIndex) =>
-                    valueIndex === index
-                      ? newValue
-                        ? { key: datum["key"], value: newValue }
-                        : null
-                      : value
-                  );
-                  setFilters(newValues);
-                }}
-              />
-            ))
-          : null}
-      </Grid>
+      <Slide direction="left" in={isShown} mountOnEnter unmountOnExit>
+        <Grid item>
+          {loading || error
+            ? null
+            : data["dashboardClusters"]["metadata"].map((datum, index) => (
+                <Select
+                  key={`filter_${datum["id"]}`}
+                  label={datum["name"]}
+                  name={datum["id"]}
+                  data={datum["values"]}
+                  value={
+                    chosenFilters[index] ? chosenFilters[index]["value"] : ""
+                  }
+                  onChange={newValue => {
+                    const newValues = chosenFilters.map((value, valueIndex) =>
+                      valueIndex === index
+                        ? newValue !== ""
+                          ? { key: datum["key"], value: newValue }
+                          : null
+                        : value
+                    );
+                    setFilters(newValues);
+                  }}
+                />
+              ))}
+        </Grid>
+      </Slide>
       <Grid item style={{ paddingTop: "10px" }}>
         <Tooltip title="Filter">
           <IconButton
