@@ -15,7 +15,7 @@ import { makeStyles } from "@material-ui/styles";
 
 import LabelSelectQuery from "./Select/LabelSelectQuery";
 import QCTable from "./QCTable/QCTable";
-import Dashboard from "./ReDim/Dashboard.js";
+import Dashboard from "./ReDim/Dashboard_old.js/index.js";
 
 const name = "Mira";
 const description =

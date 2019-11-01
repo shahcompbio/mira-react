@@ -4,6 +4,7 @@ import Header from "@bit/viz.spectrum.spectrumheader";
 import ExpansionPanel from "./components/ExpansionPanel";
 
 import SelectionPanel from "./Select/SelectionPanel";
+import Dashboard from "./Dashboard/Dashboard";
 
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import Grid from "@material-ui/core/Grid";
@@ -52,18 +53,13 @@ const App = () => {
             <SelectionPanel />
           </ExpansionPanel>
         </Grid>
-        {/* {dashboardType && dashboardID ? (
+        {dashboardType && dashboardID ? (
           <Grid item>
-            <ExpansionPanel title={"Sample Metadata"}>
-              <QCTable
-                dashboardType={dashboardType}
-                dashboardID={dashboardID}
-              />
+            <ExpansionPanel title={"Dashboard"}>
+              <Dashboard />
             </ExpansionPanel>
           </Grid>
         ) : null}
-        {/* 
-    <Dashboard/> */}
       </Grid>
     </MuiThemeProvider>
   );

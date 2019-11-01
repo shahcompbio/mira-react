@@ -82,7 +82,6 @@ const LabelSelect = ({ data, onSelect, classes, labelTitle }) => {
     }
   };
 
-  const groupOptions = data.map(group => ({
     label: group.title,
     options: group.labels.map(label => ({
       value: label.id,
