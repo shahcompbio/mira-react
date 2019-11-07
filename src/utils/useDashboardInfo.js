@@ -1,8 +1,4 @@
-import { useLocation } from "react-router";
-
-const useDashboardInfo = () => {
-  let location = useLocation();
-
+const useDashboardInfo = location => {
   const splitLocation = location.pathname.split("/").reverse();
 
   // Assumption based on root...
@@ -13,10 +9,10 @@ const useDashboardInfo = () => {
   return [type, dashboardID];
 };
 
-export const useDashboardType = () => {
-  return useDashboardInfo()[0];
+export const useDashboardType = location => {
+  return useDashboardInfo(location)[0];
 };
 
-export const useDashboardID = () => {
-  return useDashboardInfo()[1];
+export const useDashboardID = location => {
+  return useDashboardInfo(location)[1];
 };

@@ -12,6 +12,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 
 import Slide from "@material-ui/core/Slide";
 
+import { useLocation } from "react-router";
 import { useDashboardType } from "../utils/useDashboardInfo";
 
 const QUERY = gql`
@@ -29,7 +30,8 @@ const QUERY = gql`
 
 const Filters = ({ chosenFilters, setFilters }) => {
   const [isShown, setIsShown] = useState(false);
-  const dashboardType = useDashboardType();
+  const location = useLocation();
+  const dashboardType = useDashboardType(location);
 
   const { data, loading, error } = useQuery(QUERY, {
     variables: { dashboardType, filters: chosenFilters }

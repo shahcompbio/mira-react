@@ -11,6 +11,7 @@ import Select from "./Select";
 import Filters from "./Filters";
 import MetadataTable from "./MetadataTable";
 
+import { useLocation } from "react-router";
 import { useDashboardType } from "../utils/useDashboardInfo";
 
 const QUERY = gql`
@@ -31,8 +32,9 @@ const styles = {
 
 const SelectionPanel = ({ classes }) => {
   let history = useHistory();
+  const location = useLocation();
 
-  const [dashboardType] = [useDashboardType()];
+  const [dashboardType] = [useDashboardType(location)];
   const [filters, setFilters] = useState([]);
 
   const onDashboardTypeChange = type => {

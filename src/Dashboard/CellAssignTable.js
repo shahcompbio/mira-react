@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
+import { useLocation } from "react-router";
 import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
 
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -59,12 +60,30 @@ const CellAssignTable = ({
   setSelectedCelltype,
   classes
 }) => {
-  const [dashboardType, dashboardID] = [useDashboardType(), useDashboardID()];
+  const location = useLocation();
+  const [dashboardType, dashboardID] = [
+    useDashboardType(location),
+    useDashboardID(location)
+  ];
   const { data, loading, error } = useQuery(QUERY, {
     variables: { dashboardType, dashboardID }
   });
 
-  const colorScale = getCelltypeColors();
+  const colorScale = getCelltypeColors([
+    "B cell",
+    "CD4 T cell",
+    "Cytotoxic T cell",
+    "Endothelial cell",
+    "Mesothelial cell",
+    "Monocyte/Macrophage",
+    "Myofibroblast",
+    "NK cell",
+    "Ovarian cancer cell",
+    "Plasma cell",
+    "T reg cell",
+    "Vascular SMC",
+    "pDC"
+  ]);
   if (loading || error) {
     return <CircularProgress />;
   }

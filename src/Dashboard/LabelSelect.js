@@ -11,6 +11,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
+import { useLocation } from "react-router";
 import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
 
 const QUERY = gql`
@@ -86,7 +87,11 @@ const useStyles = makeStyles({
 
 export default function Virtualize({ onSelect, label }) {
   const classes = useStyles();
-  const [dashboardType, dashboardID] = [useDashboardType(), useDashboardID()];
+  const location = useLocation();
+  const [dashboardType, dashboardID] = [
+    useDashboardType(location),
+    useDashboardID(location)
+  ];
   const { data, loading, error } = useQuery(QUERY, {
     variables: { dashboardType, dashboardID, props: [] }
   });

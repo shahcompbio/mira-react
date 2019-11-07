@@ -11,6 +11,7 @@ import TableRow from "@material-ui/core/TableRow";
 
 import { withStyles } from "@material-ui/core/styles";
 
+import { useLocation } from "react-router";
 import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
 import formatInteger from "../utils/formatInteger";
 
@@ -51,14 +52,15 @@ const styles = theme => ({
 });
 
 const MetadataTable = ({ classes, filters, onSelect }) => {
-  const dashboardType = useDashboardType();
-  const dashboardID = useDashboardID();
+  const location = useLocation();
+  const dashboardType = useDashboardType(location);
+  const dashboardID = useDashboardID(location);
 
   const { data, loading, error } = useQuery(QUERY, {
     variables: { dashboardType, filters }
   });
 
-  if (loading || error) {
+  if (!data && (loading || error)) {
     return null;
   }
 
