@@ -25,8 +25,8 @@ export default (label, data) => {
   } else {
     const maxDataBucket = data[data.length - 1];
     const toColorScale = scaleSequential(interpolateYlGnBu).domain([
-      0,
-      maxDataBucket["label"] + 1
+      maxDataBucket["label"],
+      0
     ]);
 
     return datum => toColorScale(datum);
