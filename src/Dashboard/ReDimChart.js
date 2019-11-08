@@ -66,24 +66,12 @@ const QUERY_OTHER = gql`
 const getQuery = label =>
   label["label"] === "celltype" ? QUERY_CELLTYPES : QUERY_OTHER;
 
-function usePrevious(value) {
-  const ref = useRef();
-
-  useEffect(() => {
-    ref.current = value;
-  }, [value]);
-  return ref.current;
-}
-
 const ReDimChart = ({ labels, index, onSelect, highlightedGroup }) => {
   const location = useLocation();
   const [dashboardType, dashboardID] = [
     useDashboardType(location),
     useDashboardID(location)
   ];
-
-  const prevLabel = usePrevious(labels[index]["label"]);
-
   const { data, loading } = useQuery(getQuery(labels[index]), {
     variables: {
       dashboardType,
@@ -92,9 +80,25 @@ const ReDimChart = ({ labels, index, onSelect, highlightedGroup }) => {
       label: labels[index]
     }
   });
+
+  // This is messy, but this is to store previous label state (and we only want that to update when loading is done)
+  const prevLabelRef = useRef();
+  useEffect(() => {
+    if (!loading) {
+      prevLabelRef.current = labels[index]["label"];
+    }
+  }, [loading, labels[index]["label"]]);
+
+  const prevLabel = prevLabelRef.current;
+
   // only want spinny loading if it's initial load (no previous data) OR this particular label has been changed
-  if (!data || prevLabel !== labels[index]["label"]) {
-    return <CircularProgress />;
+
+  if (!data || (loading && prevLabel !== labels[index]["label"])) {
+    return (
+      <BaseChart onSelect={onSelect} label={labels[index]}>
+        <CircularProgress />
+      </BaseChart>
+    );
   }
 
   const { cells, celltypes, dashboardAttributeValues } = data;
@@ -113,23 +117,27 @@ const ReDimChart = ({ labels, index, onSelect, highlightedGroup }) => {
 
   const colorScale = getColorScale(labels[index], colorData);
   return (
-    <Grid container direction="column" alignItems="center">
-      <Grid item>
-        <LabelSelect onSelect={onSelect} label={labels[index]} />
-      </Grid>
-      <Grid item>
-        <XYFrame
-          {...getFrameProps({
-            data: cellProps,
-            label: labels[index],
-            highlightedGroup,
-            colorScale
-          })}
-        />
-      </Grid>
-    </Grid>
+    <BaseChart onSelect={onSelect} label={labels[index]}>
+      <XYFrame
+        {...getFrameProps({
+          data: cellProps,
+          label: labels[index],
+          highlightedGroup,
+          colorScale
+        })}
+      />
+    </BaseChart>
   );
 };
+
+const BaseChart = ({ children, onSelect, label }) => (
+  <Grid container direction="column" alignItems="center">
+    <Grid item>
+      <LabelSelect onSelect={onSelect} label={label} />
+    </Grid>
+    <Grid item>{children}</Grid>
+  </Grid>
+);
 
 const getFrameProps = ({ data, label, highlightedGroup, colorScale }) => ({
   summaries: data,
@@ -140,7 +148,7 @@ const getFrameProps = ({ data, label, highlightedGroup, colorScale }) => ({
     : [],
 
   size: [500, 500],
-  margin: { left: 25, bottom: 70, right: 10, top: 0 },
+  margin: { left: 25, bottom: 70, right: 25, top: 0 },
 
   xAccessor: "x",
   yAccessor: "y",
