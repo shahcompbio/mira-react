@@ -146,6 +146,7 @@ const CellTypeAndMarkerGenesRow = ({
           {celltypes.map(celltype => {
             return (
               <TableCell
+                key={`cellassign_count_${celltype["name"]}`}
                 align="center"
                 style={{
                   background: getColor(celltype)
@@ -160,6 +161,7 @@ const CellTypeAndMarkerGenesRow = ({
           {celltypes.map(celltype => {
             return (
               <TableCell
+                key={`cellassign_name_${celltype["name"]}`}
                 value={celltype["name"]}
                 align="center"
                 className={classes.tableRowHeader}
@@ -182,11 +184,14 @@ const CellTypeAndMarkerGenesRow = ({
       <TableBody>
         {longestArray().map((_, index) => {
           return (
-            <TableRow>
+            <TableRow key={`cellassign_rho_${index}`}>
               {celltypes.map(celltype => {
                 const gene = celltype["markers"][index];
                 return (
-                  <TableCell align="center">
+                  <TableCell
+                    key={`cellassign_rho_${index}_${celltype["name"]}`}
+                    align="center"
+                  >
                     {celltype["markers"].length - 1 < index ? null : (
                       <Button
                         value={gene}

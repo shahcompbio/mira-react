@@ -16,8 +16,9 @@ const Dashboard = () => {
     <Grid container direction="column">
       <Grid container direction="row">
         {labels.map((label, index) => (
-          <Grid item>
+          <Grid key={`grid_redim_${index}`} item>
             <ReDimChart
+              key={`redim_${index}`}
               labels={labels}
               index={index}
               highlightedGroup={highlightedLabel}

@@ -76,6 +76,7 @@ const MetadataTable = ({ classes, filters, onSelect }) => {
         <TableBody>
           {dashboards.map(row => (
             <DashboardRow
+              key={`dashboardRow_${row["id"]}`}
               classes={classes}
               metadata={metadataHeaders}
               stats={statsHeaders}
