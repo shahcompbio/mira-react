@@ -44,28 +44,30 @@ const App = () => {
   return (
     <MuiThemeProvider theme={theme}>
       <Header name={NAME} description={DESCRIPTION} />
-      <Grid
-        container
-        direction="column"
-        width="95%"
-        spacing={2}
-        style={{
-          padding: "40px 20px"
-        }}
-      >
-        <Grid item>
-          <ExpansionPanel title={"Dashboard Selection"}>
-            <SelectionPanel />
-          </ExpansionPanel>
-        </Grid>
-        {dashboardType && dashboardID ? (
+      <div style={{ flexGrow: 1 }}>
+        <Grid
+          container
+          direction="column"
+          width="95%"
+          spacing={2}
+          style={{
+            padding: "40px 20px"
+          }}
+        >
           <Grid item>
-            <ExpansionPanel title={"Dashboard"}>
-              <Dashboard />
+            <ExpansionPanel title={"Dashboard Selection"}>
+              <SelectionPanel />
             </ExpansionPanel>
           </Grid>
-        ) : null}
-      </Grid>
+          {dashboardType && dashboardID ? (
+            <Grid item>
+              <ExpansionPanel title={"Dashboard"}>
+                <Dashboard />
+              </ExpansionPanel>
+            </Grid>
+          ) : null}
+        </Grid>
+      </div>
     </MuiThemeProvider>
   );
 };

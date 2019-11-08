@@ -66,7 +66,7 @@ const QUERY_OTHER = gql`
 const getQuery = label =>
   label["label"] === "celltype" ? QUERY_CELLTYPES : QUERY_OTHER;
 
-const ReDimChart = ({ labels, index, onSelect, highlightedGroup }) => {
+const ReDimChart = ({ labels, index, onSelect, highlightedGroup, width }) => {
   const location = useLocation();
   const [dashboardType, dashboardID] = [
     useDashboardType(location),
@@ -123,7 +123,8 @@ const ReDimChart = ({ labels, index, onSelect, highlightedGroup }) => {
           data: cellProps,
           label: labels[index],
           highlightedGroup,
-          colorScale
+          colorScale,
+          width
         })}
       />
     </BaseChart>
@@ -131,7 +132,7 @@ const ReDimChart = ({ labels, index, onSelect, highlightedGroup }) => {
 };
 
 const BaseChart = ({ children, onSelect, label }) => (
-  <Grid container direction="column" alignItems="center">
+  <Grid container direction="column" alignItems="center" justify="center">
     <Grid item>
       <LabelSelect onSelect={onSelect} label={label} />
     </Grid>
@@ -139,7 +140,13 @@ const BaseChart = ({ children, onSelect, label }) => (
   </Grid>
 );
 
-const getFrameProps = ({ data, label, highlightedGroup, colorScale }) => ({
+const getFrameProps = ({
+  data,
+  label,
+  highlightedGroup,
+  colorScale,
+  width
+}) => ({
   summaries: data,
   points: highlightedGroup
     ? data.filter(
@@ -147,7 +154,7 @@ const getFrameProps = ({ data, label, highlightedGroup, colorScale }) => ({
       )
     : [],
 
-  size: [500, 500],
+  size: [width, 500],
   margin: { left: 25, bottom: 70, right: 25, top: 0 },
 
   xAccessor: "x",
