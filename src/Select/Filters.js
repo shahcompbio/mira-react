@@ -76,7 +76,7 @@ const Filters = ({ chosenFilters, setFilters }) => {
               ))}
         </Grid>
       </Slide>
-      <Grid item style={{ paddingTop: "10px" }}>
+      <Grid item>
         <Tooltip title="Filter">
           <IconButton
             aria-label="filter list"
