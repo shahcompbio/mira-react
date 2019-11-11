@@ -83,17 +83,24 @@ const ReDimChart = ({ labels, index, onSelect, highlightedGroup, width }) => {
 
   // This is messy, but this is to store previous label state (and we only want that to update when loading is done)
   const prevLabelRef = useRef();
+  const prevIDRef = useRef();
   useEffect(() => {
     if (!loading) {
       prevLabelRef.current = labels[index]["label"];
+      prevIDRef.current = dashboardID;
     }
   }, [loading, labels[index]["label"]]);
 
   const prevLabel = prevLabelRef.current;
+  const prevID = prevIDRef.current;
 
-  // only want spinny loading if it's initial load (no previous data) OR this particular label has been changed
+  // only want spinny loading if it's initial load (no previous data) for new data set OR this particular label has been changed
 
-  if (!data || (loading && prevLabel !== labels[index]["label"])) {
+  if (
+    (loading && prevID !== dashboardID) ||
+    !data ||
+    (loading && prevLabel !== labels[index]["label"])
+  ) {
     return (
       <BaseChart onSelect={onSelect} label={labels[index]}>
         <CircularProgress />
