@@ -65,6 +65,7 @@ const CellAssignTable = ({
     useDashboardType(location),
     useDashboardID(location)
   ];
+
   const { data, loading, error } = useQuery(QUERY, {
     variables: { dashboardType, dashboardID }
   });

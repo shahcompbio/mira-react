@@ -61,19 +61,21 @@ const SelectionPanel = ({ classes }) => {
             label={"Dashboard Type"}
             name={"dashboard-type"}
             data={dashboardTypes}
-            value={dashboardType}
+            value={dashboardType === "" ? undefined : dashboardType}
             onChange={onDashboardTypeChange}
           />
         </Grid>
-        {dashboardType === "" ? null : (
+        {!dashboardType ? null : (
           <Grid item>
             <Filters chosenFilters={filters} setFilters={setFilters} />
           </Grid>
         )}
       </Grid>
-      <Grid item>
-        <MetadataTable filters={filters} onSelect={onDashboardIDChange} />
-      </Grid>
+      {!dashboardType ? null : (
+        <Grid item>
+          <MetadataTable filters={filters} onSelect={onDashboardIDChange} />
+        </Grid>
+      )}
     </Grid>
   );
 };

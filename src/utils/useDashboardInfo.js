@@ -10,7 +10,8 @@ const useDashboardInfo = location => {
 };
 
 export const useDashboardType = location => {
-  return useDashboardInfo(location)[0];
+  const dashboardType = useDashboardInfo(location)[0];
+  return dashboardType === "" ? null : dashboardType;
 };
 
 export const useDashboardID = location => {

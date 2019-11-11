@@ -35,7 +35,12 @@ const Dashboard = () => {
     <Grid container direction="column">
       <Grid container direction="row">
         {labels.map((label, index) => (
-          <Grid key={`grid_redim_${index}`} item xs={4}>
+          <Grid
+            key={`grid_redim_${index}`}
+            item
+            xs={4}
+            style={{ minHeight: 500 }}
+          >
             <ReDimChart
               key={`redim_${index}`}
               width={chartWidth}
@@ -56,9 +61,10 @@ const Dashboard = () => {
       <Grid item>
         <CellAssignTable
           selectedGene={labels[1]["label"]}
-          setSelectedGene={label =>
-            setLabels([labels[0], { label, type: "GENE" }])
-          }
+          setSelectedGene={label => {
+            const [firstLabel, ...restLabels] = labels;
+            setLabels([{ label, type: "GENE" }, ...restLabels]);
+          }}
           setSelectedCelltype={celltype =>
             setHighlightedLabel({ label: "celltype", value: celltype })
           }

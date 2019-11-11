@@ -46,31 +46,33 @@ const Filters = ({ chosenFilters, setFilters }) => {
   }, [dashboardType, typeof data === "undefined"]);
 
   return (
-    <Grid container direction="row">
+    <Grid container direction="row" wrap="nowrap">
       <Slide direction="left" in={isShown} mountOnEnter unmountOnExit>
-        <Grid item>
+        <Grid container direction="row">
           {loading || error
             ? null
             : data["dashboardClusters"]["metadata"].map((datum, index) => (
-                <Select
-                  key={`filter_${datum["id"]}`}
-                  label={datum["name"]}
-                  name={datum["id"]}
-                  data={datum["values"]}
-                  value={
-                    chosenFilters[index] ? chosenFilters[index]["value"] : ""
-                  }
-                  onChange={newValue => {
-                    const newValues = chosenFilters.map((value, valueIndex) =>
-                      valueIndex === index
-                        ? newValue !== ""
-                          ? { key: datum["key"], value: newValue }
-                          : null
-                        : value
-                    );
-                    setFilters(newValues);
-                  }}
-                />
+                <Grid key={`filter_${datum["id"]}`} item>
+                  <Select
+                    label={datum["name"]}
+                    data={datum["values"]}
+                    value={
+                      chosenFilters[index]
+                        ? chosenFilters[index]["value"]
+                        : chosenFilters[index]
+                    }
+                    onChange={newValue => {
+                      const newValues = chosenFilters.map((value, valueIndex) =>
+                        valueIndex === index
+                          ? newValue
+                            ? { key: datum["key"], value: newValue }
+                            : null
+                          : value
+                      );
+                      setFilters(newValues);
+                    }}
+                  />
+                </Grid>
               ))}
         </Grid>
       </Slide>

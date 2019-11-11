@@ -123,7 +123,7 @@ export default function Virtualize({ onSelect, label }) {
             shrink: true
           }}
           variant="outlined"
-          label="10,000 options"
+          label="Color"
           fullWidth
         />
       )}

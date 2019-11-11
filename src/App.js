@@ -61,7 +61,9 @@ const App = () => {
           </Grid>
           {dashboardType && dashboardID ? (
             <Grid item>
-              <ExpansionPanel title={"Dashboard"}>
+              <ExpansionPanel
+                title={`Dashboard : ${dashboardID.replace(/_/g, " ")}`}
+              >
                 <Dashboard />
               </ExpansionPanel>
             </Grid>

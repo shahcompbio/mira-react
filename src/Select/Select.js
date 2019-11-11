@@ -1,50 +1,44 @@
 import React from "react";
 
-import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
-import Input from "@material-ui/core/Input";
-import MenuItem from "@material-ui/core/MenuItem";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 import capitalizeString from "../utils/capitalizeString";
 
-import { withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 
-const styles = theme => ({
-  form: { paddingRight: "25px" },
-  select: {},
-  input: { width: "200px", paddingBottom: "10px" }
+const useStyles = makeStyles({
+  root: {
+    width: "200px",
+    paddingRight: "25px"
+  },
+  inputRoot: {
+    padding: "2px !important"
+  }
 });
 
-const Select = ({ classes, label, name, data, value, onChange }) => (
-  <FormControl className={classes.form}>
-    <TextField
-      select
-      label={label}
-      variant="outlined"
-      margin="normal"
-      InputLabelProps={{
-        shrink: true
-      }}
-      inputProps={{ name: name, id: `${name}_select` }}
-      input={
-        <Input name={name} id={`${name}_select`} className={classes.input} />
-      }
-      name={name}
-      value={value ? value : ""}
-      onChange={event => onChange(event.target.value)}
-    >
-      {[
-        <MenuItem value={""} key={`${name}_select_null`}>
-          {""}
-        </MenuItem>,
-        ...data.map(option => (
-          <MenuItem value={option} key={`${name}_select_${option}`}>
-            {capitalizeString(option)}
-          </MenuItem>
-        ))
-      ]}
-    </TextField>
-  </FormControl>
-);
+const Select = ({ label, data, value, onChange }) => {
+  const classes = useStyles();
+  return (
+    <Autocomplete
+      classes={classes}
+      value={value}
+      options={data}
+      getOptionLabel={option => capitalizeString(option)}
+      onChange={(_, value) => onChange(value)}
+      renderInput={params => (
+        <TextField
+          {...params}
+          InputLabelProps={{
+            shrink: true
+          }}
+          variant="outlined"
+          label={label}
+          fullWidth
+        />
+      )}
+    />
+  );
+};
 
-export default withStyles(styles)(Select);
+export default Select;
