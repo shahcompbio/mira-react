@@ -1,4 +1,4 @@
-import { scaleLinear, scalePoint, scaleSequential } from "d3-scale";
+import { scalePoint, scaleSequential } from "d3-scale";
 import {
   interpolateRainbow,
   interpolateYlGnBu,

@@ -4,7 +4,8 @@ const useDashboardInfo = location => {
   // Assumption based on root...
   // Best way is to replace based on REACT ROOT
 
-  const [dashboardID, type, ...root] =
+  // eslint-disable-next-line
+  const [dashboardID, type, ..._] =
     splitLocation.length < 3 ? ["", ...splitLocation] : splitLocation;
   return [type, dashboardID];
 };

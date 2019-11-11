@@ -63,7 +63,8 @@ const Dashboard = () => {
         <CellAssignTable
           selectedGene={labels[1]["label"]}
           setSelectedGene={label => {
-            const [firstLabel, ...restLabels] = labels;
+            // eslint-disable-next-line
+            const [_, ...restLabels] = labels;
             setLabels([{ label, type: "GENE" }, ...restLabels]);
           }}
           setSelectedCelltype={celltype =>
