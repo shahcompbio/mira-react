@@ -13,6 +13,7 @@ import gql from "graphql-tag";
 
 import { useLocation } from "react-router";
 import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
+import Legend from "./Legend";
 
 const QUERY_CELLTYPES = gql`
   query(
@@ -66,7 +67,14 @@ const QUERY_OTHER = gql`
 const getQuery = label =>
   label["label"] === "celltype" ? QUERY_CELLTYPES : QUERY_OTHER;
 
-const ReDimChart = ({ labels, index, onSelect, highlightedGroup, width }) => {
+const ReDimChart = ({
+  labels,
+  index,
+  onSelect,
+  onLegendHover,
+  highlightedGroup,
+  width
+}) => {
   const location = useLocation();
   const [dashboardType, dashboardID] = [
     useDashboardType(location),
@@ -125,27 +133,43 @@ const ReDimChart = ({ labels, index, onSelect, highlightedGroup, width }) => {
   const colorScale = getColorScale(labels[index], colorData);
   return (
     <BaseChart onSelect={onSelect} label={labels[index]}>
-      <XYFrame
-        {...getFrameProps({
-          data: cellProps,
-          label: labels[index],
-          highlightedGroup,
-          colorScale,
-          width
-        })}
-      />
+      <Grid item>
+        <XYFrame
+          {...getFrameProps({
+            data: cellProps,
+            label: labels[index],
+            highlightedGroup,
+            colorScale,
+            width
+          })}
+        />
+      </Grid>
+      <Grid item>
+        <Legend
+          data={colorData}
+          colorScale={colorScale}
+          width={width}
+          label={labels[index]}
+          onHover={onLegendHover}
+        />
+      </Grid>
     </BaseChart>
   );
 };
 
-const BaseChart = ({ children, onSelect, label }) => (
-  <Grid container direction="column" alignItems="center" justify="center">
-    <Grid item>
-      <LabelSelect onSelect={onSelect} label={label} />
+const BaseChart = ({ children, onSelect, label }) => {
+  return (
+    <Grid container direction="column" alignItems="center" justify="center">
+      <Grid item>
+        <LabelSelect onSelect={onSelect} label={label} />
+      </Grid>
+      {children}
     </Grid>
-    <Grid item>{children}</Grid>
-  </Grid>
-);
+  );
+};
+
+const isInRange = (point, min) =>
+  min <= point && point < min + (min < 1 ? 0.1 : 1);
 
 const getFrameProps = ({
   data,
@@ -156,13 +180,18 @@ const getFrameProps = ({
 }) => ({
   summaries: data,
   points: highlightedGroup
-    ? data.filter(
-        datum => datum[highlightedGroup["label"]] === highlightedGroup["value"]
+    ? data.filter(datum =>
+        highlightedGroup["label"] === "celltype"
+          ? datum[highlightedGroup["label"]] === highlightedGroup["value"]
+          : isInRange(
+              datum[highlightedGroup["label"]],
+              highlightedGroup["value"]
+            )
       )
     : [],
 
   size: [width, 500],
-  margin: { left: 25, bottom: 70, right: 25, top: 0 },
+  margin: { left: 25, bottom: 45, right: 25, top: 0 },
 
   xAccessor: "x",
   yAccessor: "y",

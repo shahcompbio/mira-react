@@ -47,6 +47,7 @@ const Dashboard = () => {
               labels={labels}
               index={index}
               highlightedGroup={highlightedLabel}
+              onLegendHover={setHighlightedLabel}
               onSelect={label =>
                 setLabels(
                   labels.map((oldLabel, oldLabelIndex) =>

@@ -44,7 +44,7 @@ const QUERY = gql`
 const styles = theme => ({
   metadataCell: {
     color: "black",
-    backgroundColor: "rgb(231, 233, 236)",
+    backgroundColor: "rgb(245, 246, 247)",
     zIndex: 1,
     fontWeight: "bold",
     textAlign: "center"

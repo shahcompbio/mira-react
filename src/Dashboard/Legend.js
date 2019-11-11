@@ -1,64 +1,34 @@
-import React, { useRef, useEffect } from "react";
+import React from "react";
 
-import { useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
+import OrdinalFrame from "semiotic/lib/OrdinalFrame";
 
-import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
+const Legend = ({ label, data, colorScale, width, onHover }) => {
+  const dataNames =
+    label["label"] === "celltype" ? data : data.map(datum => datum["label"]);
 
-import {
-  scaleLinear,
-  scalePoint,
-  scaleSequential,
-  scaleOrdinal
-} from "d3-scale";
-import {
-  interpolateRainbow,
-  interpolateYlGnBu,
-  interpolateOrRd
-} from "d3-scale-chromatic";
+  const frameProps = {
+    data: dataNames.map(name => ({ type: "legend", name, value: 5 })),
+    size: [width * 0.9, 15],
+    type: "bar",
+    projection: "horizontal",
 
-import { legendColor } from "d3-svg-legend";
-import { select } from "d3-selection";
-import { getCelltypeColors } from "./getColors";
+    oAccessor: "type",
+    rAccessor: "value",
 
-const QUERY = gql`
-  query(
-    $dashboardType: String!
-    $dashboardID: String!
-    $prop: DashboardAttributeInput!
-  ) {
-    dashboardAttributeValues(
-      type: $dashboardType
-      dashboardID: $dashboardID
-      prop: $prop
-    ) {
-      label
+    style: d => ({ fill: colorScale(d["data"].name), stroke: "white" }),
+
+    pieceHoverAnnotation: true,
+    tooltipContent: d => (
+      <div className="tooltip-content">
+        <p>{d.name}</p>
+      </div>
+    ),
+    customHoverBehavior: d => {
+      onHover(d ? { label: label["label"], value: d["name"] } : null);
     }
-  }
-`;
+  };
 
-const Legend = ({ colorScale }) => {
-  const d3Container = useRef(null);
-  const [dashboardType, dashboardID] = [useDashboardType(), useDashboardID()];
-
-  const { data, loading, error } = useQuery(QUERY, {
-    variables: { dashboardType, dashboardID, props: labels }
-  });
-  useEffect(() => {
-    const svg = select(d3Container.current);
-
-    svg.append("g").attr("class", "legendSequential");
-
-    var legendSequential = legendColor()
-      .shapeWidth(30)
-      .cells(10)
-      .orient("horizontal")
-      .scale(scaleSequential(interpolateRainbow).domain([0, 1]));
-
-    svg.select(".legendSequential").call(legendSequential);
-  }, [d3Container.current, data === undefined]);
-
-  return <svg className="legend" width={400} height={50} ref={d3Container} />;
+  return <OrdinalFrame {...frameProps} />;
 };
 
 export default Legend;

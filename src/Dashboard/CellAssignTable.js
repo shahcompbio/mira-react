@@ -70,30 +70,18 @@ const CellAssignTable = ({
     variables: { dashboardType, dashboardID }
   });
 
-  const colorScale = getCelltypeColors([
-    "B cell",
-    "CD4 T cell",
-    "Cytotoxic T cell",
-    "Endothelial cell",
-    "Mesothelial cell",
-    "Monocyte/Macrophage",
-    "Myofibroblast",
-    "NK cell",
-    "Ovarian cancer cell",
-    "Plasma cell",
-    "T reg cell",
-    "Vascular SMC",
-    "pDC"
-  ]);
   if (loading || error) {
     return <CircularProgress />;
   }
 
   const { celltypes } = data;
+  const colorScale = getCelltypeColors(
+    celltypes.map(celltype => celltype["name"])
+  );
 
   return (
     <div>
-      <Typography variant={"h6"} style={{ marginLeft: 10 }}>
+      <Typography variant={"h6"} style={{ marginLeft: 10, marginTop: 30 }}>
         CellAssign : Cell Types and Marker Genes
       </Typography>
       <Paper
