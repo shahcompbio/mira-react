@@ -24,6 +24,15 @@ const useStyles = makeStyles({
     zIndex: 1,
     fontWeight: "bold",
     textAlign: "center"
+  },
+  dropdown: {
+    transition: "all .5s ease-in-out"
+  },
+  dropdownOpen: {
+    transform: "rotate(0)"
+  },
+  dropdownClosed: {
+    transform: "rotate(-90deg)"
   }
 });
 
@@ -130,6 +139,7 @@ const DashboardTable = ({
   selectedID
 }) => {
   const [expanded, setExpanded] = useState(true);
+  const classes = useStyles();
   return (
     <Fragment>
       <TableRow
@@ -139,6 +149,10 @@ const DashboardTable = ({
       >
         <TableCell colSpan={metadata.length + stats.length}>
           <IconButton
+            className={[
+              classes.dropdown,
+              expanded ? classes.dropdownOpen : classes.dropdownClosed
+            ]}
             size="small"
             onClick={event => {
               setExpanded(!expanded);
