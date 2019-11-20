@@ -198,7 +198,7 @@ const getFrameProps = ({
   summaryType: {
     type: "hexbin",
     bins: 0.03,
-    binValue: d => getMaxLabel(d, label["label"])
+    binValue: d => getMaxLabel(d, label)
   },
   canvasAreas: true,
   summaryStyle: d => ({
@@ -222,9 +222,9 @@ const getFrameProps = ({
 });
 
 const getMaxLabel = (data, label) => {
-  if (label === "celltype") {
+  if (label["label"] === "celltype" || label["type"] === "SAMPLE") {
     const counts = data
-      .map(point => point[label])
+      .map(point => point[label["label"]])
       .reduce(
         (countMap, point) =>
           countMap.hasOwnProperty(point)

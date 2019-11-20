@@ -1,8 +1,9 @@
-import { scalePoint, scaleSequential } from "d3-scale";
+import { scalePoint, scaleSequential, scaleOrdinal } from "d3-scale";
 import {
   interpolateRainbow,
   interpolateYlGnBu,
-  interpolateOrRd
+  interpolateOrRd,
+  schemeCategory10
 } from "d3-scale-chromatic";
 
 export const getCelltypeColors = data => {
@@ -21,6 +22,11 @@ export default (label, data) => {
     return getCelltypeColors(data);
   } else if (label["type"] === "CELL") {
     const toColorScale = scaleSequential(interpolateOrRd).domain([-0.2, 1]);
+    return datum => toColorScale(datum);
+  } else if (label["type"] === "SAMPLE") {
+    const toColorScale = scaleOrdinal(schemeCategory10).domain(
+      data.map(datum => datum["label"])
+    );
     return datum => toColorScale(datum);
   } else {
     const maxDataBucket = data[data.length - 1];
