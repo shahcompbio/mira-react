@@ -17,11 +17,23 @@ import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
 import { makeStyles } from "@material-ui/core/styles";
 import formatInteger from "../utils/formatInteger";
 
-const useStyles = makeStyles({
-  metadataCell: {
+const useStyles = makeStyles(theme => ({
+  tableRow: {
+    "&:hover": {
+      backgroundColor: theme.palette.primary.main + " !important"
+    }
+  },
+  mergedDashboardCell: {
     color: "black",
     backgroundColor: "rgb(245, 246, 247)",
-    zIndex: 1,
+    fontWeight: "bold",
+    "&:hover": {
+      backgroundColor: theme.palette.primary.main
+    }
+  },
+  metadataCell: {
+    color: "black",
+    backgroundColor: "rgba(0, 0, 0, 0.07)",
     fontWeight: "bold",
     textAlign: "center"
   },
@@ -34,7 +46,7 @@ const useStyles = makeStyles({
   dropdownClosed: {
     transform: "rotate(-90deg)"
   }
-});
+}));
 
 const QUERY = gql`
   query($dashboardType: String!, $filters: [filterInput]!) {
@@ -81,7 +93,7 @@ const MetadataTable = ({ filters, onSelect }) => {
 
   return (
     <div style={{ maxHeight: 400, overflow: "auto", marginTop: "20px" }}>
-      <Table>
+      <Table size="small">
         <TableHeader columns={[...metadataHeaders, ...stats]} />
         <TableBody>
           {dashboardType === "sample"
@@ -144,10 +156,14 @@ const DashboardTable = ({
     <Fragment>
       <TableRow
         hover={onClick}
+        className={classes.tableRow}
         onClick={_ => onClick(dashboard["id"])}
         selected={selectedID === dashboard["id"]}
       >
-        <TableCell colSpan={metadata.length + stats.length}>
+        <TableCell
+          colSpan={metadata.length + stats.length}
+          className={classes.mergedDashboardCell}
+        >
           <IconButton
             className={[
               classes.dropdown,
@@ -182,6 +198,7 @@ const SampleRow = ({ metadata, stats, data, onClick, selectedID }) => {
   const classes = useStyles();
   return (
     <TableRow
+      className={onClick ? classes.tableRow : null}
       hover={onClick}
       onClick={onClick ? _ => onClick(data["id"]) : null}
       selected={selectedID === data["id"]}
