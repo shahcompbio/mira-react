@@ -25,11 +25,8 @@ const useStyles = makeStyles(theme => ({
   },
   mergedDashboardCell: {
     color: "black",
-    backgroundColor: "rgb(245, 246, 247)",
-    fontWeight: "bold",
-    "&:hover": {
-      backgroundColor: theme.palette.primary.main
-    }
+    backgroundColor: "rgba(0, 0, 0, 0.09)",
+    fontWeight: "bold"
   },
   metadataCell: {
     color: "black",
