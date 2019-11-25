@@ -18,19 +18,22 @@ import { makeStyles } from "@material-ui/core/styles";
 import formatInteger from "../utils/formatInteger";
 
 const useStyles = makeStyles(theme => ({
-  tableRow: {
+  tableRowRoot: {
     "&:hover": {
-      backgroundColor: theme.palette.primary.main + " !important"
+      backgroundColor: theme.palette.primary.dark + " !important"
     }
+  },
+  tableRowSelected: {
+    backgroundColor: theme.palette.primary.main + " !important"
   },
   mergedDashboardCell: {
     color: "black",
-    backgroundColor: "rgba(0, 0, 0, 0.09)",
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
     fontWeight: "bold"
   },
   metadataCell: {
     color: "black",
-    backgroundColor: "rgba(0, 0, 0, 0.07)",
+    backgroundColor: "rgba(0, 0, 0, 0.05)",
     fontWeight: "bold",
     textAlign: "center"
   },
@@ -44,6 +47,8 @@ const useStyles = makeStyles(theme => ({
     transform: "rotate(-90deg)"
   }
 }));
+
+const useRowStyles = makeStyles(theme => ({}));
 
 const QUERY = gql`
   query($dashboardType: String!, $filters: [filterInput]!) {
@@ -61,6 +66,10 @@ const QUERY = gql`
             name
             value
           }
+        }
+        metadata {
+          name
+          values
         }
       }
       metadata {
@@ -147,36 +156,20 @@ const DashboardTable = ({
   onClick,
   selectedID
 }) => {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const classes = useStyles();
   return (
     <Fragment>
-      <TableRow
-        hover={onClick}
-        className={classes.tableRow}
-        onClick={_ => onClick(dashboard["id"])}
-        selected={selectedID === dashboard["id"]}
-      >
-        <TableCell
-          colSpan={metadata.length + stats.length}
-          className={classes.mergedDashboardCell}
-        >
-          <IconButton
-            className={[
-              classes.dropdown,
-              expanded ? classes.dropdownOpen : classes.dropdownClosed
-            ]}
-            size="small"
-            onClick={event => {
-              setExpanded(!expanded);
-              event.stopPropagation();
-            }}
-          >
-            <ExpandMoreIcon />
-          </IconButton>{" "}
-          {dashboard["id"]}
-        </TableCell>
-      </TableRow>
+      <MergedRow
+        dashboard={dashboard}
+        metadata={metadata}
+        stats={stats}
+        expanded={expanded}
+        setExpanded={setExpanded}
+        classes={classes}
+        onClick={onClick}
+        selectedID={selectedID}
+      />
       {expanded
         ? dashboard["samples"].map(sample => (
             <SampleRow
@@ -191,6 +184,66 @@ const DashboardTable = ({
   );
 };
 
+const MergedRow = ({
+  dashboard,
+  metadata,
+  stats,
+  expanded,
+  setExpanded,
+  classes,
+  onClick,
+  selectedID
+}) => {
+  // TODO: Want to change to adapt to other merge styles
+  const dashboardMetadata = dashboard["metadata"];
+  const [patientID, ...restMetadata] = dashboardMetadata;
+
+  return (
+    <TableRow
+      hover={onClick}
+      classes={{
+        root: classes.tableRowRoot,
+        selected: classes.tableRowSelected
+      }}
+      onClick={_ => onClick(dashboard["id"])}
+      selected={selectedID === dashboard["id"]}
+    >
+      <TableCell className={classes.mergedDashboardCell}>
+        <IconButton
+          className={[
+            classes.dropdown,
+            expanded ? classes.dropdownOpen : classes.dropdownClosed
+          ]}
+          size="small"
+          onClick={event => {
+            setExpanded(!expanded);
+            event.stopPropagation();
+          }}
+        >
+          <ExpandMoreIcon />
+        </IconButton>{" "}
+        {patientID["values"][0]}
+      </TableCell>
+      {restMetadata.map(datum => (
+        <TableCell
+          style={{ textAlign: "center" }}
+          className={classes.mergedDashboardCell}
+        >
+          {datum["values"].length > 1
+            ? `${datum["values"].length} ${datum["name"]}`
+            : datum["values"][0]}
+        </TableCell>
+      ))}
+      <TableCell
+        style={{ textAlign: "center" }}
+        colSpan={stats.length}
+        className={classes.mergedDashboardCell}
+      >
+        {""}
+      </TableCell>
+    </TableRow>
+  );
+};
 const SampleRow = ({ metadata, stats, data, onClick, selectedID }) => {
   const classes = useStyles();
   return (
