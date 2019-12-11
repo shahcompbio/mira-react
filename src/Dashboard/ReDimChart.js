@@ -243,8 +243,9 @@ const getMaxLabel = (data, label) => {
         );
   } else {
     const total = data
-      .map(point => point[label])
+      .map(point => point[label["label"]])
       .reduce((currSum, point) => currSum + point, 0);
+
     const count = data.length;
 
     return total / count;
