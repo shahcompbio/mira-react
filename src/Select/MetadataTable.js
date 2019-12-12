@@ -48,8 +48,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const useRowStyles = makeStyles(theme => ({}));
-
 const QUERY = gql`
   query($dashboardType: String!, $filters: [filterInput]!) {
     dashboardClusters(type: $dashboardType, filters: $filters) {
@@ -139,7 +137,8 @@ const TableHeader = ({ columns }) => (
           style={{
             backgroundColor: "#fff",
             position: "sticky",
-            top: 0
+            top: 0,
+            zIndex: 1000
           }}
         >
           {column}
