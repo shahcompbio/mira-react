@@ -137,8 +137,7 @@ const TableHeader = ({ columns }) => (
           style={{
             backgroundColor: "#fff",
             position: "sticky",
-            top: 0,
-            zIndex: 1000
+            top: 0
           }}
         >
           {column}
@@ -185,7 +184,6 @@ const DashboardTable = ({
 
 const MergedRow = ({
   dashboard,
-  metadata,
   stats,
   expanded,
   setExpanded,
@@ -237,9 +235,7 @@ const MergedRow = ({
         style={{ textAlign: "center" }}
         colSpan={stats.length}
         className={classes.mergedDashboardCell}
-      >
-        {""}
-      </TableCell>
+      />
     </TableRow>
   );
 };
@@ -247,7 +243,14 @@ const SampleRow = ({ metadata, stats, data, onClick, selectedID }) => {
   const classes = useStyles();
   return (
     <TableRow
-      className={onClick ? classes.tableRow : null}
+      classes={
+        onClick
+          ? {
+              root: classes.tableRowRoot,
+              selected: classes.tableRowSelected
+            }
+          : null
+      }
       hover={onClick}
       onClick={onClick ? _ => onClick(data["id"]) : null}
       selected={selectedID === data["id"]}
