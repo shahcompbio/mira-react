@@ -137,7 +137,8 @@ const TableHeader = ({ columns }) => (
           style={{
             backgroundColor: "#fff",
             position: "sticky",
-            top: 0
+            top: 0,
+            zIndex: 1
           }}
         >
           {column}
