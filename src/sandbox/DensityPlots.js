@@ -11,6 +11,7 @@ import Legend from "../Dashboard/Legend";
 
 const TEST_ID = "SPECTRUM-OV-014_CD45P";
 const TEST_TYPE = "patient";
+const TEST_LABEL = { label: "celltype", type: "CELL" };
 
 const QUERY_CELLTYPES = gql`
   query(
@@ -23,10 +24,6 @@ const QUERY_CELLTYPES = gql`
       x
       y
       celltype
-      values {
-        label
-        value
-      }
     }
     celltypes(type: $dashboardType, dashboardID: $dashboardID) {
       name
@@ -40,8 +37,8 @@ const DensityPlots = () => {
     variables: {
       dashboardType: TEST_TYPE,
       dashboardID: TEST_ID,
-      props: [{ label: "celltype", type: "CELL" }],
-      label: { label: "celltype", type: "CELL" }
+      props: [TEST_LABEL],
+      label: TEST_LABEL
     }
   });
 
@@ -49,102 +46,98 @@ const DensityPlots = () => {
     return null;
   }
 
-  const width = 500;
-  const { cells, celltypes, dashboardAttributeValues } = data;
-  const cellProps = cells.map(cell => {
-    const cellProps = cell["values"].reduce(
-      (props, value) => ({ ...props, [value["label"]]: value["value"] }),
-      {}
-    );
-
-    return { ...cell, ...cellProps };
-  });
+  const { cells, celltypes } = data;
 
   const colorData = celltypes.map(celltype => celltype["name"]);
 
-  const colorScale = getColorScale(
-    { label: "celltype", type: "CELL" },
-    colorData
-  );
+  const colorScale = getColorScale(TEST_LABEL, colorData);
 
   return (
     <Grid container direction="column" alignItems="center" justify="center">
       <Grid item>
-        <XYFrame
-          {...getFrameProps({
-            data: cellProps,
-            label: { label: "celltype", type: "CELL" },
-            highlightedGroup: highlightedLabel,
-            colorScale,
-            width
-          })}
-        />
-      </Grid>
-      <Grid item>
         <Legend
           data={colorData}
           colorScale={colorScale}
-          width={width}
-          label={{ label: "celltype", type: "CELL" }}
+          width={500}
+          label={TEST_LABEL}
           onHover={group => setHighlightedLabel(group)}
         />
+      </Grid>
+      <Grid container direction="row" alignItems="center" justify="center">
+        <Grid item>
+          <PureScatterplot
+            data={cells}
+            label={TEST_LABEL}
+            highlightedGroup={highlightedLabel}
+            colorScale={colorScale}
+          />
+        </Grid>
+        <Grid item>
+          <DensityScatterplot
+            data={cells}
+            label={TEST_LABEL}
+            highlightedGroup={highlightedLabel}
+            colorScale={colorScale}
+          />
+        </Grid>
       </Grid>
     </Grid>
   );
 };
 
-const isInRange = (point, min) =>
-  min <= point && point < min + (min < 1 ? 0.1 : 1);
+const PureScatterplot = ({ data, highlightedGroup, colorScale, label }) => (
+  <XYFrame
+    {...{
+      ...framePropsBase,
+      points: data,
 
-const getFrameProps = ({
-  data,
-  label,
-  highlightedGroup,
-  colorScale,
-  width
-}) => ({
-  summaries: data,
-  points: highlightedGroup
-    ? data.filter(datum =>
-        highlightedGroup["label"] === "celltype"
-          ? datum[highlightedGroup["label"]] === highlightedGroup["value"]
-          : isInRange(
-              datum[highlightedGroup["label"]],
-              highlightedGroup["value"]
-            )
-      )
-    : [],
+      pointStyle: d => {
+        return {
+          r: 4,
+          fill:
+            !highlightedGroup || d[label["label"]] === highlightedGroup["value"]
+              ? colorScale(d[label["label"]])
+              : "#333333",
+          stroke: "#eee",
+          strokeWidth: 1
+        };
+      }
+    }}
+  />
+);
 
-  size: [width, 500],
-  margin: { left: 25, bottom: 45, right: 25, top: 0 },
+const DensityScatterplot = ({ data, label, highlightedGroup, colorScale }) => (
+  <XYFrame
+    {...{
+      ...framePropsBase,
+      summaries: data,
+      points: highlightedGroup
+        ? data.filter(
+            datum =>
+              datum[highlightedGroup["label"]] === highlightedGroup["value"]
+          )
+        : [],
 
-  xAccessor: "x",
-  yAccessor: "y",
-  summaryType: {
-    type: "hexbin",
-    bins: 0.03,
-    binValue: d => getMaxLabel(d, label)
-  },
-  canvasAreas: true,
-  summaryStyle: d => ({
-    fill: d["value"] === "" ? "#FFFFFF" : colorScale(d["value"]),
-    fillOpacity: 0.3
-  }),
-  canvasPoints: true,
-  pointStyle: d => {
-    return {
-      r: 4,
-      fill: colorScale(d[label["label"]]),
-      stroke: "#eee",
-      strokeWidth: 1
-    };
-  },
-
-  axes: [
-    { orient: "left", label: " " },
-    { orient: "bottom", label: { name: " ", locationDistance: 55 } }
-  ]
-});
+      summaryType: {
+        type: "hexbin",
+        bins: 0.03,
+        binValue: d => getMaxLabel(d, label)
+      },
+      summaryStyle: d => ({
+        fill: d["value"] === "" ? "#FFFFFF" : colorScale(d["value"]),
+        fillOpacity: 0.3
+      }),
+      pointStyle: d => {
+        return {
+          r: 4,
+          fill: colorScale(d[label["label"]]),
+          stroke: "#eee",
+          strokeWidth: 1
+        };
+      }
+    }}
+  />
+);
 
 const getMaxLabel = (data, label) => {
   if (label["label"] === "celltype" || label["type"] === "SAMPLE") {
@@ -175,6 +168,21 @@ const getMaxLabel = (data, label) => {
 
     return total / count;
   }
+};
+
+const framePropsBase = {
+  size: [500, 500],
+  margin: { left: 25, bottom: 45, right: 25, top: 25 },
+
+  xAccessor: "x",
+  yAccessor: "y",
+  canvasAreas: true,
+  canvasPoints: true,
+
+  axes: [
+    { orient: "left", label: " " },
+    { orient: "bottom", label: { name: " ", locationDistance: 55 } }
+  ]
 };
 
 export default DensityPlots;
