@@ -14,19 +14,18 @@ const TEST_TYPE = "patient";
 const TEST_LABEL = { label: "celltype", type: "CELL" };
 
 const QUERY_CELLTYPES = gql`
-  query(
-    $dashboardType: String!
-    $dashboardID: String!
-    $props: [DashboardAttributeInput!]!
-  ) {
-    cells(type: $dashboardType, dashboardID: $dashboardID, props: $props) {
-      name
-      x
-      y
-      celltype
-    }
+  query($dashboardType: String!, $dashboardID: String!) {
     celltypes(type: $dashboardType, dashboardID: $dashboardID) {
       name
+    }
+    density2(type: $dashboardType, dashboardID: $dashboardID) {
+      x
+      y
+      values {
+        celltype
+        count
+        proportion
+      }
     }
   }
 `;
@@ -37,7 +36,6 @@ const DensityPlots = () => {
     variables: {
       dashboardType: TEST_TYPE,
       dashboardID: TEST_ID,
-      props: [TEST_LABEL],
       label: TEST_LABEL
     }
   });
@@ -46,7 +44,7 @@ const DensityPlots = () => {
     return null;
   }
 
-  const { cells, celltypes } = data;
+  const { celltypes, density2 } = data;
 
   const colorData = celltypes.map(celltype => celltype["name"]);
 
@@ -64,7 +62,7 @@ const DensityPlots = () => {
         />
       </Grid>
       <Grid container direction="row" alignItems="center" justify="center">
-        <Grid item>
+        {/* <Grid item>
           <PureScatterplot
             data={cells}
             label={TEST_LABEL}
@@ -75,6 +73,26 @@ const DensityPlots = () => {
         <Grid item>
           <DensityScatterplot
             data={cells}
+            label={TEST_LABEL}
+            highlightedGroup={highlightedLabel}
+            colorScale={colorScale}
+          />
+        </Grid> */}
+        {/* {density.map(bin => (
+          <Grid item>
+            <Bleck
+              data={bin["bin"]}
+              size={bin["size"]}
+              label={TEST_LABEL}
+              highlightedGroup={highlightedLabel}
+              colorScale={colorScale}
+            />
+          </Grid>
+        ))} */}
+        <Grid item>
+          <Bleck
+            data={density2}
+            size={80}
             label={TEST_LABEL}
             highlightedGroup={highlightedLabel}
             colorScale={colorScale}
@@ -91,6 +109,7 @@ const PureScatterplot = ({ data, highlightedGroup, colorScale, label }) => (
       ...framePropsBase,
       points: data,
 
+      canvasPoints: true,
       pointStyle: d => {
         return {
           r: 4,
@@ -118,6 +137,7 @@ const DensityScatterplot = ({ data, label, highlightedGroup, colorScale }) => (
           )
         : [],
 
+      canvasPoints: true,
       summaryType: {
         type: "hexbin",
         bins: 0.03,
@@ -138,6 +158,58 @@ const DensityScatterplot = ({ data, label, highlightedGroup, colorScale }) => (
     }}
   />
 );
+
+const Bleck = ({ data, highlightedGroup, colorScale, size }) => (
+  <XYFrame
+    {...{
+      ...framePropsBase,
+      points: data,
+      pointStyle: d => {
+        return {
+          r: { 50: 4, 60: 3, 70: 2.5, 80: 2, 90: 2, 100: 1.5 }[size],
+          fill: highlightedGroup
+            ? getHighlightedColor(
+                highlightedGroup["value"],
+                d["values"],
+                colorScale
+              )
+            : colorScale(d["values"][0]["celltype"]),
+          fillOpacity: highlightedGroup
+            ? getHighlightedOpacity(
+                highlightedGroup["value"],
+                d["values"],
+                colorScale
+              )
+            : 1
+        };
+      }
+    }}
+  />
+);
+
+const getHighlightedOpacity = (celltype, values, colorScale) => {
+  const filteredValues = values.filter(
+    record => record["celltype"] === celltype
+  );
+
+  if (filteredValues.length === 0) {
+    return 0;
+  } else {
+    return filteredValues[0]["proportion"];
+  }
+};
+
+const getHighlightedColor = (celltype, values, colorScale) => {
+  const filteredValues = values.filter(
+    record => record["celltype"] === celltype
+  );
+
+  if (filteredValues.length === 0) {
+    return "#ccc";
+  } else {
+    return colorScale(filteredValues[0]["celltype"]);
+  }
+};
 
 const getMaxLabel = (data, label) => {
   if (label["label"] === "celltype" || label["type"] === "SAMPLE") {
@@ -176,12 +248,15 @@ const framePropsBase = {
 
   xAccessor: "x",
   yAccessor: "y",
-  canvasAreas: true,
   canvasPoints: true,
 
   axes: [
-    { orient: "left", label: " " },
-    { orient: "bottom", label: { name: " ", locationDistance: 55 } }
+    { orient: "left", label: " ", tickFormat: d => "" },
+    {
+      orient: "bottom",
+      label: { name: " ", locationDistance: 55 },
+      tickFormat: d => ""
+    }
   ]
 };
 
