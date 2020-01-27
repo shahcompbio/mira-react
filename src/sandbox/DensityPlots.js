@@ -14,7 +14,11 @@ const TEST_TYPE = "patient";
 const TEST_LABEL = { label: "celltype", type: "CELL" };
 
 const QUERY_CELLTYPES = gql`
-  query($dashboardType: String!, $dashboardID: String!) {
+  query(
+    $dashboardType: String!
+    $dashboardID: String!
+    $highlightedGroup: String
+  ) {
     celltypes(type: $dashboardType, dashboardID: $dashboardID) {
       name
     }
@@ -27,6 +31,18 @@ const QUERY_CELLTYPES = gql`
         proportion
       }
     }
+    density3(
+      type: $dashboardType
+      dashboardID: $dashboardID
+      highlightedGroup: $highlightedGroup
+    ) {
+      x
+      y
+      values {
+        label
+        value
+      }
+    }
   }
 `;
 
@@ -36,15 +52,17 @@ const DensityPlots = () => {
     variables: {
       dashboardType: TEST_TYPE,
       dashboardID: TEST_ID,
-      label: TEST_LABEL
+      highlightedGroup: !highlightedLabel
+        ? highlightedLabel
+        : highlightedLabel["value"]
     }
   });
 
-  if (loading) {
+  if (loading && !data) {
     return null;
   }
 
-  const { celltypes, density2 } = data;
+  const { celltypes, density2, density3 } = data;
 
   const colorData = celltypes.map(celltype => celltype["name"]);
 
@@ -92,6 +110,15 @@ const DensityPlots = () => {
         <Grid item>
           <Bleck
             data={density2}
+            size={80}
+            label={TEST_LABEL}
+            highlightedGroup={highlightedLabel}
+            colorScale={colorScale}
+          />
+        </Grid>
+        <Grid item>
+          <Bleck2
+            data={density3}
             size={80}
             label={TEST_LABEL}
             highlightedGroup={highlightedLabel}
@@ -187,6 +214,59 @@ const Bleck = ({ data, highlightedGroup, colorScale, size }) => (
   />
 );
 
+const Bleck2 = ({ data, highlightedGroup, colorScale, size }) => {
+  const getHighlightedOpacity = (celltype, values, colorScale) => {
+    const filteredValues = values.filter(
+      record => record["label"] === celltype
+    );
+    console.log(filteredValues);
+    if (filteredValues.length === 0) {
+      return 0;
+    } else {
+      return filteredValues[0]["value"];
+    }
+  };
+
+  const getHighlightedColor = (celltype, values, colorScale) => {
+    const filteredValues = values.filter(
+      record => record["label"] === celltype
+    );
+
+    if (filteredValues.length === 0) {
+      return "#ccc";
+    } else {
+      return colorScale(filteredValues[0]["label"]);
+    }
+  };
+  return (
+    <XYFrame
+      {...{
+        ...framePropsBase,
+        points: data,
+        pointStyle: d => {
+          return {
+            r: { 50: 4, 60: 3, 70: 2.5, 80: 2, 90: 2, 100: 1.5 }[size],
+            fill: highlightedGroup
+              ? getHighlightedColor(
+                  highlightedGroup["value"],
+                  d["values"],
+                  colorScale
+                )
+              : colorScale(d["values"][0]["label"]),
+            fillOpacity: highlightedGroup
+              ? getHighlightedOpacity(
+                  highlightedGroup["value"],
+                  d["values"],
+                  colorScale
+                )
+              : 1
+          };
+        }
+      }}
+    />
+  );
+};
+
 const getHighlightedOpacity = (celltype, values, colorScale) => {
   const filteredValues = values.filter(
     record => record["celltype"] === celltype
@@ -248,7 +328,7 @@ const framePropsBase = {
 
   xAccessor: "x",
   yAccessor: "y",
-  canvasPoints: true,
+  canvasPoints: true, // TODO wanted to turn this off to see transitions; but they're weird...
 
   axes: [
     { orient: "left", label: " ", tickFormat: d => "" },
