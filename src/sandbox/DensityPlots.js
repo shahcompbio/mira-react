@@ -14,34 +14,9 @@ const TEST_TYPE = "patient";
 const TEST_LABEL = { label: "celltype", type: "CELL" };
 
 const QUERY_CELLTYPES = gql`
-  query(
-    $dashboardType: String!
-    $dashboardID: String!
-    $highlightedGroup: String
-  ) {
+  query($dashboardType: String!, $dashboardID: String!) {
     celltypes(type: $dashboardType, dashboardID: $dashboardID) {
       name
-    }
-    density2(type: $dashboardType, dashboardID: $dashboardID) {
-      x
-      y
-      values {
-        celltype
-        count
-        proportion
-      }
-    }
-    density3(
-      type: $dashboardType
-      dashboardID: $dashboardID
-      highlightedGroup: $highlightedGroup
-    ) {
-      x
-      y
-      values {
-        label
-        value
-      }
     }
   }
 `;
@@ -62,7 +37,7 @@ const DensityPlots = () => {
     return null;
   }
 
-  const { celltypes, density2, density3 } = data;
+  const { celltypes } = data;
 
   const colorData = celltypes.map(celltype => celltype["name"]);
 
@@ -80,49 +55,18 @@ const DensityPlots = () => {
         />
       </Grid>
       <Grid container direction="row" alignItems="center" justify="center">
-        {/* <Grid item>
-          <PureScatterplot
-            data={cells}
-            label={TEST_LABEL}
+        <Grid item>
+          <DensityPlot
             highlightedGroup={highlightedLabel}
-            colorScale={colorScale}
+            label={{ label: "celltype", type: "CELL" }}
+            celltypeColorScale={colorScale}
           />
         </Grid>
         <Grid item>
-          <DensityScatterplot
-            data={cells}
-            label={TEST_LABEL}
+          <DensityPlot
             highlightedGroup={highlightedLabel}
-            colorScale={colorScale}
-          />
-        </Grid> */}
-        {/* {density.map(bin => (
-          <Grid item>
-            <Bleck
-              data={bin["bin"]}
-              size={bin["size"]}
-              label={TEST_LABEL}
-              highlightedGroup={highlightedLabel}
-              colorScale={colorScale}
-            />
-          </Grid>
-        ))} */}
-        <Grid item>
-          <Bleck
-            data={density2}
-            size={80}
-            label={TEST_LABEL}
-            highlightedGroup={highlightedLabel}
-            colorScale={colorScale}
-          />
-        </Grid>
-        <Grid item>
-          <Bleck2
-            data={density3}
-            size={80}
-            label={TEST_LABEL}
-            highlightedGroup={highlightedLabel}
-            colorScale={colorScale}
+            label={{ label: "Cytotoxic T cell probability", type: "CELL" }}
+            celltypeColorScale={colorScale}
           />
         </Grid>
       </Grid>
@@ -130,196 +74,57 @@ const DensityPlots = () => {
   );
 };
 
-const PureScatterplot = ({ data, highlightedGroup, colorScale, label }) => (
-  <XYFrame
-    {...{
-      ...framePropsBase,
-      points: data,
-
-      canvasPoints: true,
-      pointStyle: d => {
-        return {
-          r: 4,
-          fill:
-            !highlightedGroup || d[label["label"]] === highlightedGroup["value"]
-              ? colorScale(d[label["label"]])
-              : "#333333",
-          stroke: "#eee",
-          strokeWidth: 1
-        };
-      }
-    }}
-  />
-);
-
-const DensityScatterplot = ({ data, label, highlightedGroup, colorScale }) => (
-  <XYFrame
-    {...{
-      ...framePropsBase,
-      summaries: data,
-      points: highlightedGroup
-        ? data.filter(
-            datum =>
-              datum[highlightedGroup["label"]] === highlightedGroup["value"]
-          )
-        : [],
-
-      canvasPoints: true,
-      summaryType: {
-        type: "hexbin",
-        bins: 0.03,
-        binValue: d => getMaxLabel(d, label)
-      },
-      summaryStyle: d => ({
-        fill: d["value"] === "" ? "#FFFFFF" : colorScale(d["value"]),
-        fillOpacity: 0.3
-      }),
-      pointStyle: d => {
-        return {
-          r: 4,
-          fill: colorScale(d[label["label"]]),
-          stroke: "#eee",
-          strokeWidth: 1
-        };
-      }
-    }}
-  />
-);
-
-const Bleck = ({ data, highlightedGroup, colorScale, size }) => (
-  <XYFrame
-    {...{
-      ...framePropsBase,
-      points: data,
-      pointStyle: d => {
-        return {
-          r: { 50: 4, 60: 3, 70: 2.5, 80: 2, 90: 2, 100: 1.5 }[size],
-          fill: highlightedGroup
-            ? getHighlightedColor(
-                highlightedGroup["value"],
-                d["values"],
-                colorScale
-              )
-            : colorScale(d["values"][0]["celltype"]),
-          fillOpacity: highlightedGroup
-            ? getHighlightedOpacity(
-                highlightedGroup["value"],
-                d["values"],
-                colorScale
-              )
-            : 1
-        };
-      }
-    }}
-  />
-);
-
-const Bleck2 = ({ data, highlightedGroup, colorScale, size }) => {
-  const getHighlightedOpacity = (celltype, values, colorScale) => {
-    const filteredValues = values.filter(
-      record => record["label"] === celltype
-    );
-    console.log(filteredValues);
-    if (filteredValues.length === 0) {
-      return 0;
-    } else {
-      return filteredValues[0]["value"];
+const QUERY = gql`
+  query(
+    $dashboardID: String!
+    $highlightedGroup: String
+    $label: DashboardAttributeInput!
+  ) {
+    density(
+      dashboardID: $dashboardID
+      label: $label
+      highlightedGroup: $highlightedGroup
+    ) {
+      x
+      y
+      label
+      value
     }
-  };
+  }
+`;
 
-  const getHighlightedColor = (celltype, values, colorScale) => {
-    const filteredValues = values.filter(
-      record => record["label"] === celltype
-    );
-
-    if (filteredValues.length === 0) {
-      return "#ccc";
-    } else {
-      return colorScale(filteredValues[0]["label"]);
+const DensityPlot = ({ highlightedGroup, label, celltypeColorScale }) => {
+  const { data, loading } = useQuery(QUERY, {
+    variables: {
+      dashboardID: TEST_ID,
+      highlightedGroup: highlightedGroup ? highlightedGroup["value"] : null,
+      label: label
     }
-  };
+  });
+
+  if (loading && !data) {
+    return null;
+  }
+
+  const { density } = data;
+
+  const colorScale =
+    label["label"] === "celltype"
+      ? celltypeColorScale
+      : getColorScale(label, density);
   return (
     <XYFrame
       {...{
         ...framePropsBase,
-        points: data,
-        pointStyle: d => {
-          return {
-            r: { 50: 4, 60: 3, 70: 2.5, 80: 2, 90: 2, 100: 1.5 }[size],
-            fill: highlightedGroup
-              ? getHighlightedColor(
-                  highlightedGroup["value"],
-                  d["values"],
-                  colorScale
-                )
-              : colorScale(d["values"][0]["label"]),
-            fillOpacity: highlightedGroup
-              ? getHighlightedOpacity(
-                  highlightedGroup["value"],
-                  d["values"],
-                  colorScale
-                )
-              : 1
-          };
-        }
+        points: density,
+        pointStyle: d => ({
+          r: 2,
+          fill: getColor(d, label, highlightedGroup, colorScale),
+          fillOpacity: highlightedGroup ? d["value"] : 1
+        })
       }}
     />
   );
-};
-
-const getHighlightedOpacity = (celltype, values, colorScale) => {
-  const filteredValues = values.filter(
-    record => record["celltype"] === celltype
-  );
-
-  if (filteredValues.length === 0) {
-    return 0;
-  } else {
-    return filteredValues[0]["proportion"];
-  }
-};
-
-const getHighlightedColor = (celltype, values, colorScale) => {
-  const filteredValues = values.filter(
-    record => record["celltype"] === celltype
-  );
-
-  if (filteredValues.length === 0) {
-    return "#ccc";
-  } else {
-    return colorScale(filteredValues[0]["celltype"]);
-  }
-};
-
-const getMaxLabel = (data, label) => {
-  if (label["label"] === "celltype" || label["type"] === "SAMPLE") {
-    const counts = data
-      .map(point => point[label["label"]])
-      .reduce(
-        (countMap, point) =>
-          countMap.hasOwnProperty(point)
-            ? { ...countMap, [point]: countMap[point] + 1 }
-            : { ...countMap, [point]: 1 },
-        {}
-      );
-
-    const celltypes = Object.keys(counts);
-
-    return celltypes.length === 0
-      ? ""
-      : celltypes.reduce(
-          (currMax, key) => (counts[key] > counts[currMax] ? key : currMax),
-          Object.keys(counts)[0]
-        );
-  } else {
-    const total = data
-      .map(point => point[label["label"]])
-      .reduce((currSum, point) => currSum + point, 0);
-
-    const count = data.length;
-
-    return total / count;
-  }
 };
 
 const framePropsBase = {
@@ -338,6 +143,21 @@ const framePropsBase = {
       tickFormat: d => ""
     }
   ]
+};
+
+const getColor = (d, label, highlightedGroup, colorScale) => {
+  if (!highlightedGroup) {
+    // nothing is highlighted, return original color
+    return colorScale(d["value"]);
+  } else if (d["value"] === 0) {
+    // 0 if highlighted group doesn't overlap; so grey out
+
+    return "#ccc";
+  } else if (highlightedGroup["label"] === label["label"]) {
+    return colorScale(d["label"]);
+  } else {
+    return colorScale(d["value"]);
+  }
 };
 
 export default DensityPlots;
