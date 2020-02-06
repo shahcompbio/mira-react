@@ -23,13 +23,12 @@ function useWindowWidth() {
 const Dashboard = () => {
   const [highlightedLabel, setHighlightedLabel] = useState(null);
   const [labels, setLabels] = useState([
-    { label: "celltype", type: "CELL" },
-    { label: "celltype", type: "CELL" },
-    { label: "celltype", type: "CELL" }
+    { isNum: false, type: "CELL", label: "celltype" },
+    { isNum: false, type: "CELL", label: "celltype" }
   ]);
 
   const windowWidth = useWindowWidth();
-  const chartWidth = Math.floor((windowWidth - 150) / labels.length);
+  const chartWidth = Math.floor((windowWidth - 150) / labels.length + 1);
 
   return (
     <Grid container direction="column">
@@ -65,10 +64,15 @@ const Dashboard = () => {
           setSelectedGene={label => {
             // eslint-disable-next-line
             const [_, ...restLabels] = labels;
-            setLabels([{ label, type: "GENE" }, ...restLabels]);
+            setLabels([{ isNum: true, label, type: "GENE" }, ...restLabels]);
           }}
           setSelectedCelltype={celltype =>
-            setHighlightedLabel({ label: "celltype", value: celltype })
+            setHighlightedLabel({
+              isNum: false,
+              type: "CELL",
+              label: "celltype",
+              value: celltype
+            })
           }
         />
       </Grid>

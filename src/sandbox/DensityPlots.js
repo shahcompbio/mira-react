@@ -147,15 +147,19 @@ const framePropsBase = {
 
 const getColor = (d, label, highlightedGroup, colorScale) => {
   if (!highlightedGroup) {
+    console.log("1", colorScale(d["value"]));
     // nothing is highlighted, return original color
     return colorScale(d["value"]);
   } else if (d["value"] === 0) {
+    console.log("2");
     // 0 if highlighted group doesn't overlap; so grey out
 
     return "#ccc";
   } else if (highlightedGroup["label"] === label["label"]) {
+    console.log("3", d["label"]);
     return colorScale(d["label"]);
   } else {
+    console.log("4", d["value"]);
     return colorScale(d["value"]);
   }
 };

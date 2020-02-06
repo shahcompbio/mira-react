@@ -18,23 +18,27 @@ const getOrdinalScale = data =>
     .range([0, 0.9]);
 
 export default (label, data) => {
-  if (label["label"] === "celltype") {
-    return getCelltypeColors(data);
-  } else if (label["type"] === "CELL") {
-    const toColorScale = scaleSequential(interpolateOrRd).domain([-0.2, 1]);
-    return datum => toColorScale(datum);
-  } else if (label["type"] === "SAMPLE") {
-    const toColorScale = scaleOrdinal(schemeCategory10).domain(
-      data.map(datum => datum["label"])
-    );
-    return datum => toColorScale(datum);
-  } else {
-    const maxDataBucket = data[data.length - 1];
-    const toColorScale = scaleSequential(interpolateYlGnBu).domain([
-      maxDataBucket["label"],
-      0
-    ]);
+  if (label["isNum"]) {
+    if (label["type"] === "CELL") {
+      const toColorScale = scaleSequential(interpolateOrRd).domain([-0.2, 1]);
+      return datum => toColorScale(datum);
+    } else {
+      // IS GENE
+      const maxDataBucket = data[data.length - 1];
+      const toColorScale = scaleSequential(interpolateYlGnBu).domain([
+        maxDataBucket,
+        0
+      ]);
 
-    return datum => toColorScale(datum);
+      return datum => toColorScale(datum);
+    }
+  } else {
+    if (label["type"] === "CELL") {
+      return getCelltypeColors(data);
+    } else {
+      // IS SAMPLE
+      const toColorScale = scaleOrdinal(schemeCategory10).domain(data);
+      return datum => toColorScale(datum);
+    }
   }
 };

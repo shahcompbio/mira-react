@@ -3,11 +3,14 @@ import React from "react";
 import OrdinalFrame from "semiotic/lib/OrdinalFrame";
 
 const Legend = ({ label, data, colorScale, width, onHover }) => {
-  const dataNames =
-    label["label"] === "celltype" ? data : data.map(datum => datum["label"]);
-
+  const dataNames = getDataNames(data, label);
   const frameProps = {
-    data: dataNames.map(name => ({ type: "legend", name, value: 5 })),
+    data: dataNames.map((name, index) => ({
+      type: "legend",
+      name,
+      colorName: data[index],
+      value: 5
+    })),
     size: [width * 0.9, 15],
     type: "bar",
     projection: "horizontal",
@@ -15,7 +18,7 @@ const Legend = ({ label, data, colorScale, width, onHover }) => {
     oAccessor: "type",
     rAccessor: "value",
 
-    style: d => ({ fill: colorScale(d["data"].name), stroke: "white" }),
+    style: d => ({ fill: colorScale(d["data"].colorName), stroke: "white" }),
 
     pieceHoverAnnotation: true,
     tooltipContent: d => (
@@ -24,11 +27,21 @@ const Legend = ({ label, data, colorScale, width, onHover }) => {
       </div>
     ),
     customHoverBehavior: d => {
-      onHover(d ? { label: label["label"], value: d["name"] } : null);
+      onHover(d ? { ...label, value: d["name"] } : null);
     }
   };
 
   return <OrdinalFrame {...frameProps} />;
+};
+
+const getDataNames = (data, label) => {
+  if (label["isNum"]) {
+    const binSize = data[1] - data[0];
+    return data.map(
+      datum => `${datum.toString()} - ${(datum + binSize).toString()}`
+    );
+  }
+  return data;
 };
 
 export default Legend;
