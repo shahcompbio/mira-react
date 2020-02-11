@@ -97,13 +97,15 @@ const ReDimChart = ({
   onSelect,
   onLegendHover,
   highlightedGroup,
-  width
+  width,
+  dashboardID,
+  dashboardType
 }) => {
-  const location = useLocation();
-  const [dashboardType, dashboardID] = [
-    useDashboardType(location),
-    useDashboardID(location)
-  ];
+  // const location = useLocation();
+  // const [dashboardType, dashboardID] = [
+  //   useDashboardType(location),
+  //   useDashboardID(location)
+  // ];
   const { data, loading } = useQuery(QUERY, {
     variables: {
       dashboardID,
@@ -133,7 +135,12 @@ const ReDimChart = ({
     (loading && prevLabel !== labels[index]["label"])
   ) {
     return (
-      <BaseChart onSelect={onSelect} label={labels[index]}>
+      <BaseChart
+        onSelect={onSelect}
+        label={labels[index]}
+        dashboardID={dashboardID}
+        dashboardType={dashboardType}
+      >
         <CircularProgress />
       </BaseChart>
     );
@@ -145,7 +152,12 @@ const ReDimChart = ({
   const colorScale = getColorScale(labels[index], colorData);
 
   return (
-    <BaseChart onSelect={onSelect} label={labels[index]}>
+    <BaseChart
+      onSelect={onSelect}
+      label={labels[index]}
+      dashboardID={dashboardID}
+      dashboardType={dashboardType}
+    >
       <Grid item>
         <XYFrame
           {...getFrameProps({
@@ -170,11 +182,22 @@ const ReDimChart = ({
   );
 };
 
-const BaseChart = ({ children, onSelect, label }) => {
+const BaseChart = ({
+  children,
+  onSelect,
+  label,
+  dashboardID,
+  dashboardType
+}) => {
   return (
     <Grid container direction="column" alignItems="center" justify="center">
       <Grid item>
-        <LabelSelect onSelect={onSelect} label={label} />
+        <LabelSelect
+          onSelect={onSelect}
+          label={label}
+          dashboardID={dashboardID}
+          dashboardType={dashboardType}
+        />
       </Grid>
       {children}
     </Grid>

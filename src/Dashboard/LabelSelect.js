@@ -86,13 +86,18 @@ const useStyles = makeStyles({
   }
 });
 
-export default function Virtualize({ onSelect, label }) {
+export default function Virtualize({
+  onSelect,
+  label,
+  dashboardID,
+  dashboardType
+}) {
   const classes = useStyles();
-  const location = useLocation();
-  const [dashboardType, dashboardID] = [
-    useDashboardType(location),
-    useDashboardID(location)
-  ];
+  // const location = useLocation();
+  // const [dashboardType, dashboardID] = [
+  //   useDashboardType(location),
+  //   useDashboardID(location)
+  // ];
   const { data, loading, error } = useQuery(QUERY, {
     variables: { dashboardType, dashboardID, props: [] }
   });

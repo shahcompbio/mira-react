@@ -6,6 +6,8 @@ import Grid from "@material-ui/core/Grid";
 
 import CellAssignTable from "./CellAssignTable";
 
+import { useLocation } from "react-router";
+import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
 function useWindowWidth() {
   const [width, setWidth] = useState(window.innerWidth);
 
@@ -27,6 +29,11 @@ const Dashboard = () => {
     { isNum: false, type: "CELL", label: "celltype" }
   ]);
 
+  const location = useLocation();
+  const [dashboardType, dashboardID] = [
+    useDashboardType(location),
+    useDashboardID(location)
+  ];
   const windowWidth = useWindowWidth();
   const chartWidth = Math.floor((windowWidth - 150) / labels.length + 1);
 
@@ -54,6 +61,8 @@ const Dashboard = () => {
                   )
                 )
               }
+              dashboardID={dashboardID}
+              dashboardType={dashboardType}
             />
           </Grid>
         ))}
