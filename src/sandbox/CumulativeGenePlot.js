@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import XYFrame from "semiotic/lib/XYFrame";
 
 import Grid from "@material-ui/core/Grid";
+import { useQuery } from "@apollo/react-hooks";
 
 import Correlation from "./Correlation";
+import gql from "graphql-tag";
 
 const TEST_DASHBOARDID = "SPECTRUM-OV-014_CD45P";
 const TEST_DASHBOARDTYPE = "patient";
@@ -12,12 +14,11 @@ const TEST_ID = "SPECTRUM-OV-014_CD45P";
 const TEST_LABEL = { label: "celltype", type: "CELL" };
 const GENES = ["CD2", "CD4", "VIM", "CAV1", "PTPRC"]
 
-import gql from "graphql-tag";
 
 
 const QUERY_CUMULATIVE_GENES = gql`
-  query($dashboardID: String!, $genes: []!) {
-    cumulativeGenes(dashboardID: genes) {
+  query($dashboardID: String!, $genes: [String!]!) {
+    cumulativeGenes(dashboardID: $dashboardID, genes: $genes) {
       x
       y
       value
@@ -36,8 +37,8 @@ const getCumulativeGenes = (ID, GENES) => {
   if (loading && !data) {
     return null;
   }
-
-  return data
+  console.log(data)
+  return data.cumulativeGenes
 }
 
 const SamplePatientDropdown = () => {
@@ -45,17 +46,16 @@ const SamplePatientDropdown = () => {
 }
 
 const geneSearch = () => {
-  genes = []
-  return genes
+  return []
 }
 
 const CumulativeGenePlot = () => {
   // TODO: add drop down to select sample/patient
   // TODO: add text box that parses and stores labels, then pass to query that will give you density plot, then parse results into plot
   
-  data = getCumulativeGenes(TEST_ID, GENES)
-  console.log(DATA)
-  const density = testData;
+  const data = getCumulativeGenes(TEST_ID, GENES)
+  console.log(data)
+  const density = data;
   const colorScale = datum => "#FFFFFF";
 
   return (
