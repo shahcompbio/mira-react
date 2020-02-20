@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import ReDimChart from "./ReDimChart";
+import AttributeCountPlot from "./AttributeCountPlot";
 
 import Grid from "@material-ui/core/Grid";
 
@@ -32,7 +33,7 @@ const Dashboard = () => {
 
   return (
     <Grid container direction="column">
-      <Grid container direction="row">
+      <Grid container direction="row" alignItems="center">
         {labels.map((label, index) => (
           <Grid
             key={`grid_redim_${index}`}
@@ -57,6 +58,21 @@ const Dashboard = () => {
             />
           </Grid>
         ))}
+        <Grid item>
+          <Grid container direction="column">
+            {labels.map((label, index) => (
+              <Grid key={`grid_histo_${index}`} item xs={4}>
+                <AttributeCountPlot
+                  key={`histo_${index}`}
+                  width={chartWidth}
+                  labels={labels}
+                  index={index}
+                  highlightedGroup={highlightedLabel}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </Grid>
       </Grid>
       <Grid item>
         <CellAssignTable
