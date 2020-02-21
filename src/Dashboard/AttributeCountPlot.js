@@ -85,7 +85,7 @@ const AttributeCountPlot = ({ labels, index, highlightedGroup, width }) => {
 
 const getFrameProps = ({ data, label, colorScale }) => ({
   data: data.map(datum => ({ ...datum, name: datum.value })),
-  size: [500, 250],
+  size: [400, 250],
   margin: { left: 25, bottom: 45, right: 85, top: 40 },
 
   type: "bar",

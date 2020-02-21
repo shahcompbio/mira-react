@@ -194,7 +194,7 @@ const getFrameProps = ({
     fill: getColor(d, label, highlightedGroup, colorScale),
     fillOpacity:
       highlightedGroup && highlightedGroup["label"] === label["label"]
-        ? Math.max(d["value"], 0.05)
+        ? Math.max(d["value"], 0.02)
         : 1
   }),
 
