@@ -9,10 +9,10 @@ import { useQuery } from "@apollo/react-hooks";
 import Correlation from "./Correlation";
 import gql from "graphql-tag";
 
-const TEST_DASHBOARDID = "SPECTRUM-OV-014_CD45P";
+const TEST_DASHBOARDID = "SPECTRUM-OV-002";
 const TEST_DASHBOARDTYPE = "patient";
 
-const TEST_ID = "SPECTRUM-OV-014_CD45P";
+const TEST_ID = "SPECTRUM-OV-002";
 const TEST_LABEL = { label: "celltype", type: "CELL" };
 const GENES = ["CD2", "CD4", "VIM", "CAV1", "PTPRC"];
 
