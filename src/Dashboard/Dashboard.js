@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import ReDimChart from "./ReDimChart";
+import AttributeCountPlot from "./AttributeCountPlot";
 
 import Grid from "@material-ui/core/Grid";
 
@@ -23,17 +24,16 @@ function useWindowWidth() {
 const Dashboard = () => {
   const [highlightedLabel, setHighlightedLabel] = useState(null);
   const [labels, setLabels] = useState([
-    { label: "celltype", type: "CELL" },
-    { label: "celltype", type: "CELL" },
-    { label: "celltype", type: "CELL" }
+    { isNum: false, type: "CELL", label: "celltype" },
+    { isNum: false, type: "CELL", label: "celltype" }
   ]);
 
   const windowWidth = useWindowWidth();
-  const chartWidth = Math.floor((windowWidth - 150) / labels.length);
+  const chartWidth = Math.floor((windowWidth - 150) / labels.length + 1);
 
   return (
     <Grid container direction="column">
-      <Grid container direction="row">
+      <Grid container direction="row" alignItems="center">
         {labels.map((label, index) => (
           <Grid
             key={`grid_redim_${index}`}
@@ -58,6 +58,21 @@ const Dashboard = () => {
             />
           </Grid>
         ))}
+        <Grid item>
+          <Grid container direction="column">
+            {labels.map((label, index) => (
+              <Grid key={`grid_histo_${index}`} item xs={4}>
+                <AttributeCountPlot
+                  key={`histo_${index}`}
+                  width={chartWidth}
+                  labels={labels}
+                  index={index}
+                  highlightedGroup={highlightedLabel}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </Grid>
       </Grid>
       <Grid item>
         <CellAssignTable
@@ -65,10 +80,15 @@ const Dashboard = () => {
           setSelectedGene={label => {
             // eslint-disable-next-line
             const [_, ...restLabels] = labels;
-            setLabels([{ label, type: "GENE" }, ...restLabels]);
+            setLabels([{ isNum: true, label, type: "GENE" }, ...restLabels]);
           }}
           setSelectedCelltype={celltype =>
-            setHighlightedLabel({ label: "celltype", value: celltype })
+            setHighlightedLabel({
+              isNum: false,
+              type: "CELL",
+              label: "celltype",
+              value: celltype
+            })
           }
         />
       </Grid>

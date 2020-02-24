@@ -158,8 +158,6 @@ const CellTypeAndMarkerGenesRow = ({
                   textTransform: "none",
                   background: "#e2e2e2" //TODO: Add highlighting here
                 }}
-                onMouseEnter={_ => setSelectedCelltype(celltype["name"])}
-                onMouseLeave={_ => setSelectedCelltype(null)}
                 //   onClick={e => handleCellClick(e, row.cellType)}
               >
                 {celltype["name"]}

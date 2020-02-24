@@ -16,7 +16,8 @@ import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
 
 const QUERY = gql`
   query($dashboardType: String!, $dashboardID: String!) {
-    dashboardCellAttributes(type: $dashboardType, dashboardID: $dashboardID) {
+    attributes(dashboardType: $dashboardType, dashboardID: $dashboardID) {
+      isNum
       type
       label
     }
@@ -100,7 +101,7 @@ export default function Virtualize({ onSelect, label }) {
     return <CircularProgress />;
   }
 
-  const labels = data["dashboardCellAttributes"];
+  const labels = data["attributes"];
 
   return (
     <Autocomplete
@@ -113,7 +114,11 @@ export default function Virtualize({ onSelect, label }) {
       getOptionLabel={option => option["label"]}
       disableClearable={true}
       onChange={(event, value) => {
-        onSelect({ label: value["label"], type: value["type"] });
+        onSelect({
+          isNum: value["isNum"],
+          type: value["type"],
+          label: value["label"]
+        });
       }}
       renderInput={params => (
         <TextField
