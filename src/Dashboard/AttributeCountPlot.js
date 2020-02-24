@@ -9,7 +9,7 @@ import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
 import { useLocation } from "react-router";
-import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
+import { useDashboardID } from "../utils/useDashboardInfo";
 
 const QUERY = gql`
   query(
@@ -31,10 +31,7 @@ const QUERY = gql`
 
 const AttributeCountPlot = ({ labels, index, highlightedGroup, width }) => {
   const location = useLocation();
-  const [dashboardType, dashboardID] = [
-    useDashboardType(location),
-    useDashboardID(location)
-  ];
+  const dashboardID = useDashboardID(location);
   const { data, loading } = useQuery(QUERY, {
     variables: {
       dashboardID,
@@ -84,7 +81,7 @@ const AttributeCountPlot = ({ labels, index, highlightedGroup, width }) => {
 };
 
 const getFrameProps = ({ data, label, colorScale }) => ({
-  data: data.map(datum => ({ ...datum, name: datum.value })),
+  data: getDataNames(data, label),
   size: [400, 250],
   margin: { left: 25, bottom: 45, right: 85, top: 40 },
 
@@ -108,5 +105,18 @@ const getFrameProps = ({ data, label, colorScale }) => ({
     </div>
   )
 });
+
+const getDataNames = (data, label) => {
+  if (label["isNum"]) {
+    const binSize = data[1]["value"] - data[0]["value"];
+    return data.map(datum => ({
+      ...datum,
+      name: `${datum["value"].toString()} - ${(
+        datum["value"] + binSize
+      ).toString()}`
+    }));
+  }
+  return data.map(datum => ({ ...datum, name: datum.value }));
+};
 
 export default AttributeCountPlot;

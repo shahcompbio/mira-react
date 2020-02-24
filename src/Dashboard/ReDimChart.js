@@ -12,57 +12,8 @@ import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
 import { useLocation } from "react-router";
-import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
+import { useDashboardID } from "../utils/useDashboardInfo";
 import Legend from "./Legend";
-
-const QUERY_CELLTYPES = gql`
-  query(
-    $dashboardType: String!
-    $dashboardID: String!
-    $props: [DashboardAttributeInput!]!
-  ) {
-    cells(type: $dashboardType, dashboardID: $dashboardID, props: $props) {
-      name
-      x
-      y
-      celltype
-      values {
-        label
-        value
-      }
-    }
-    celltypes(type: $dashboardType, dashboardID: $dashboardID) {
-      name
-    }
-  }
-`;
-
-const QUERY_OTHER = gql`
-  query(
-    $dashboardType: String!
-    $dashboardID: String!
-    $props: [DashboardAttributeInput!]!
-    $label: DashboardAttributeInput!
-  ) {
-    cells(type: $dashboardType, dashboardID: $dashboardID, props: $props) {
-      name
-      x
-      y
-      celltype
-      values {
-        label
-        value
-      }
-    }
-    dashboardAttributeValues(
-      type: $dashboardType
-      dashboardID: $dashboardID
-      prop: $label
-    ) {
-      label
-    }
-  }
-`;
 
 const QUERY = gql`
   query(
@@ -100,10 +51,8 @@ const ReDimChart = ({
   width
 }) => {
   const location = useLocation();
-  const [dashboardType, dashboardID] = [
-    useDashboardType(location),
-    useDashboardID(location)
-  ];
+  const dashboardID = useDashboardID(location);
+
   const { data, loading } = useQuery(QUERY, {
     variables: {
       dashboardID,
