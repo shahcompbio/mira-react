@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/react-hooks": "^3.1.2",
-    "@bit/viz.spectrum.spectrumheader": "^1.0.3",
+    "@bit/viz.spectrum.header": "^1.1.10",
     "@material-ui/core": "^4.1.1",
     "@material-ui/icons": "^4.2.0",
     "@material-ui/lab": "^4.0.0-alpha.30",
