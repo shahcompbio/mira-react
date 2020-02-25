@@ -1029,10 +1029,10 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@bit/viz.spectrum.header@^1.1.10":
-  version "1.1.10"
-  resolved "https://node.bit.dev/viz.spectrum.header/-/viz.spectrum.header-1.1.10.tgz#7421dd43d44abf13ea341172da07f6d6ff316174"
-  integrity sha1-dCHdQ9RKvxPqNBFy2gf21v8xYXQ=
+"@bit/viz.spectrum.header@^1.1.11":
+  version "1.1.11"
+  resolved "https://node.bit.dev/viz.spectrum.header/-/viz.spectrum.header-1.1.11.tgz#8dbf349abe0bc6c4acaffe4a8001fc3c9271dd76"
+  integrity sha1-jb80mr4LxsSsr/5KgAH8PJJx3XY=
   dependencies:
     "@material-ui/core" "^4.9.1"
     "@material-ui/icons" "^4.9.1"
