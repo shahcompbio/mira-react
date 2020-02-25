@@ -2,19 +2,16 @@ import React, { useState } from "react";
 import XYFrame from "semiotic/lib/XYFrame";
 
 import Grid from "@material-ui/core/Grid";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { useQuery } from "@apollo/react-hooks";
 
-import Correlation from "./Correlation";
+import { getGeneColorScale } from "../Dashboard/getColors";
+
 import gql from "graphql-tag";
 
-const TEST_DASHBOARDID = "SPECTRUM-OV-002";
-const TEST_DASHBOARDTYPE = "patient";
-
 const TEST_ID = "SPECTRUM-OV-002";
-const TEST_LABEL = { label: "celltype", type: "CELL" };
-const GENES = ["CD2", "CD4", "VIM", "CAV1", "PTPRC"];
 
 const QUERY_CUMULATIVE_GENES = gql`
   query($dashboardID: String!, $genes: [String!]!) {
@@ -25,23 +22,6 @@ const QUERY_CUMULATIVE_GENES = gql`
     }
   }
 `;
-
-const getCumulativeGenes = (ID, GENES) => {
-  const { data, loading } = useQuery(QUERY_CUMULATIVE_GENES, {
-    variables: {
-      dashboardID: ID,
-      genes: GENES
-    }
-  });
-
-  if (loading && !data) {
-    return null;
-  }
-  // console.log(data);
-  return data.cumulativeGenes;
-};
-
-const SamplePatientDropdown = () => {};
 
 const GeneTextBox = ({ setGenes }) => {
   const [text, setText] = useState("");
@@ -72,14 +52,14 @@ const genesToText = genes => {
 const textToGenes = text => text.split(",").map(gene => gene.trim());
 
 const CumulativeGenePlot = () => {
-  // TODO: add drop down to select sample/patient
-  // TODO: add text box that parses and stores labels, then pass to query that will give you density plot, then parse results into plot
   const [genes, setGenes] = useState([]);
 
-  const data = getCumulativeGenes(TEST_ID, GENES);
-
-  const density = data;
-  const colorScale = datum => "#FFFFFF";
+  const { data, loading } = useQuery(QUERY_CUMULATIVE_GENES, {
+    variables: {
+      dashboardID: TEST_ID,
+      genes: genes
+    }
+  });
 
   return (
     <Grid container direction="row">
@@ -87,18 +67,24 @@ const CumulativeGenePlot = () => {
         <GeneTextBox genes={genes} setGenes={setGenes} />
       </Grid>
       <Grid item>
-        <XYFrame
-          {...getFrameProps({
-            data: density,
-            colorScale
-          })}
-        />
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <XYFrame
+            {...getFrameProps({
+              data: data.cumulativeGenes,
+              colorScale: getGeneColorScale(
+                Math.max(...data.cumulativeGenes.map(bin => bin["value"]))
+              )
+            })}
+          />
+        )}
       </Grid>
     </Grid>
   );
 };
 
-const getFrameProps = ({ data, label, highlightedGroup, colorScale }) => ({
+const getFrameProps = ({ data, colorScale }) => ({
   points: data,
   pointStyle: d => ({
     r: 2,
