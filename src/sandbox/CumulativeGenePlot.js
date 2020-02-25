@@ -3,6 +3,8 @@ import XYFrame from "semiotic/lib/XYFrame";
 
 import Grid from "@material-ui/core/Grid";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Paper from "@material-ui/core/Paper";
+
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { useQuery } from "@apollo/react-hooks";
@@ -23,19 +25,64 @@ const QUERY_CUMULATIVE_GENES = gql`
   }
 `;
 
+const CumulativeGenePlot = () => {
+  const [genes, setGenes] = useState([]);
+
+  const { data, loading } = useQuery(QUERY_CUMULATIVE_GENES, {
+    variables: {
+      dashboardID: TEST_ID,
+      genes: genes
+    }
+  });
+
+  return (
+    <Paper
+      style={{
+        margin: "40px 40px",
+        padding: "40px 20px"
+      }}
+    >
+      <Grid container direction="row">
+        <Grid item>
+          <GeneTextBox genes={genes} setGenes={setGenes} />
+        </Grid>
+        <Grid item>
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            <XYFrame
+              {...getFrameProps({
+                data: data.cumulativeGenes,
+                colorScale: getGeneColorScale(
+                  Math.max(...data.cumulativeGenes.map(bin => bin["value"]))
+                )
+              })}
+            />
+          )}
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+};
+
 const GeneTextBox = ({ setGenes }) => {
   const [text, setText] = useState("");
   return (
-    <div>
-      <TextField
-        label="Input genes"
-        multiline
-        rows="4"
-        value={text}
-        onChange={event => setText(event.target.value)}
-      />
-      <Button onClick={() => setGenes(textToGenes(text))}>Submit</Button>
-    </div>
+    <Grid container direction="column">
+      <Grid item>
+        <TextField
+          label="Input genes"
+          multiline
+          variant="outlined"
+          rows="4"
+          value={text}
+          onChange={event => setText(event.target.value)}
+        />
+      </Grid>
+      <Grid item>
+        <Button onClick={() => setGenes(textToGenes(text))}>Submit</Button>
+      </Grid>
+    </Grid>
   );
 };
 
@@ -50,39 +97,6 @@ const genesToText = genes => {
 };
 
 const textToGenes = text => text.split(",").map(gene => gene.trim());
-
-const CumulativeGenePlot = () => {
-  const [genes, setGenes] = useState([]);
-
-  const { data, loading } = useQuery(QUERY_CUMULATIVE_GENES, {
-    variables: {
-      dashboardID: TEST_ID,
-      genes: genes
-    }
-  });
-
-  return (
-    <Grid container direction="row">
-      <Grid item>
-        <GeneTextBox genes={genes} setGenes={setGenes} />
-      </Grid>
-      <Grid item>
-        {loading ? (
-          <CircularProgress />
-        ) : (
-          <XYFrame
-            {...getFrameProps({
-              data: data.cumulativeGenes,
-              colorScale: getGeneColorScale(
-                Math.max(...data.cumulativeGenes.map(bin => bin["value"]))
-              )
-            })}
-          />
-        )}
-      </Grid>
-    </Grid>
-  );
-};
 
 const getFrameProps = ({ data, colorScale }) => ({
   points: data,
