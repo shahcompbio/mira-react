@@ -9,6 +9,11 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { useQuery } from "@apollo/react-hooks";
 
+import List from "@material-ui/core/List";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+
 import { getGeneColorScale } from "../Dashboard/getColors";
 
 import gql from "graphql-tag";
@@ -16,54 +21,98 @@ import gql from "graphql-tag";
 const TEST_ID = "SPECTRUM-OV-002";
 
 const QUERY_CUMULATIVE_GENES = gql`
-  query($dashboardID: String!, $genes: [String!]!) {
+  query($dashboardID: String!, $genes: [String!]!, $genes2: [String!]!) {
     cumulativeGenes(dashboardID: $dashboardID, genes: $genes) {
       x
       y
       value
+    }
+    geneStats(dashboardID: $dashboardID, genes: $genes2) {
+      name
+      stat
     }
   }
 `;
 
 const CumulativeGenePlot = () => {
   const [genes, setGenes] = useState([]);
-
+  const [highlightGene, setHighlightGene] = useState(null);
   const { data, loading } = useQuery(QUERY_CUMULATIVE_GENES, {
     variables: {
       dashboardID: TEST_ID,
-      genes: genes
+      genes: highlightGene ? [highlightGene] : genes,
+      genes2: genes
     }
   });
 
+  if (loading && !data) {
+    return (
+      <BaseChart genes={genes} setGenes={setGenes}>
+        <Grid item>
+          <CircularProgress />
+        </Grid>
+      </BaseChart>
+    );
+  }
+
+  const density = data.cumulativeGenes;
+  const colorScale = getGeneColorScale(
+    Math.max(...density.map(bin => bin["value"]))
+  );
+
   return (
-    <Paper
-      style={{
-        margin: "40px 40px",
-        padding: "40px 20px"
-      }}
-    >
-      <Grid container direction="row">
-        <Grid item>
-          <GeneTextBox genes={genes} setGenes={setGenes} />
-        </Grid>
-        <Grid item>
-          {loading ? (
-            <CircularProgress />
-          ) : (
-            <XYFrame
-              {...getFrameProps({
-                data: data.cumulativeGenes,
-                colorScale: getGeneColorScale(
-                  Math.max(...data.cumulativeGenes.map(bin => bin["value"]))
-                )
-              })}
-            />
-          )}
-        </Grid>
+    <BaseChart genes={genes} setGenes={setGenes}>
+      <Grid item>
+        <XYFrame
+          {...getFrameProps({
+            data: density,
+            colorScale
+          })}
+        />
       </Grid>
-    </Paper>
+      <Grid item>
+        <GeneTable genes={data.geneStats} setHighlightGene={setHighlightGene} />
+      </Grid>
+    </BaseChart>
   );
 };
+
+const GeneTable = ({ genes, setHighlightGene }) => (
+  <List
+    dense={true}
+    subheader={<ListSubheader component="div">Valid Genes</ListSubheader>}
+  >
+    {genes.map(gene => (
+      <ListItem
+        key={gene["name"]}
+        onMouseEnter={() => {
+          setHighlightGene(gene["name"]);
+        }}
+        onMouseLeave={() => {
+          setHighlightGene(null);
+        }}
+      >
+        <ListItemText primary={gene["name"]} />
+      </ListItem>
+    ))}
+  </List>
+);
+
+const BaseChart = ({ genes, setGenes, children }) => (
+  <Paper
+    style={{
+      margin: "40px 40px",
+      padding: "40px 20px"
+    }}
+  >
+    <Grid container direction="row">
+      <Grid item>
+        <GeneTextBox genes={genes} setGenes={setGenes} />
+      </Grid>
+      {children}
+    </Grid>
+  </Paper>
+);
 
 const GeneTextBox = ({ setGenes }) => {
   const [text, setText] = useState("");
