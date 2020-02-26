@@ -26,6 +26,11 @@ const TEST_TYPE = "patient";
 const CumulativeGenePlot = () => {
   const [genes, setGenes] = useState([]);
   const [highlightGene, setHighlightGene] = useState(null);
+  const [label, setLabel] = useState({
+    isNum: false,
+    type: "CELL",
+    label: "celltype"
+  });
 
   return (
     <Paper
@@ -50,9 +55,9 @@ const CumulativeGenePlot = () => {
         </Grid>
         <Grid item>
           <ReDimChart
-            labels={[{ isNum: false, type: "CELL", label: "celltype" }]}
+            labels={[label]}
             index={0}
-            onSelect={() => null}
+            onSelect={label => setLabel(label)}
             onLegendHover={() => null}
             highlightedGroup={null}
             width={500}
@@ -128,7 +133,7 @@ const GeneTable = ({ genes, setHighlightGene }) => {
   return (
     <List
       dense={true}
-      subheader={<ListSubheader component="div">Valid Genes</ListSubheader>}
+      subheader={<ListSubheader component="div">Genes</ListSubheader>}
     >
       {valid.map(gene => (
         <ListItem
@@ -145,7 +150,7 @@ const GeneTable = ({ genes, setHighlightGene }) => {
       ))}
       {invalid.map(gene => (
         <ListItem key={gene}>
-          <ListItemText primary={gene} />
+          <ListItemText primary={gene} style={{ color: "red" }} />
         </ListItem>
       ))}
     </List>
@@ -196,8 +201,8 @@ const getFrameProps = ({ data, colorScale }) => ({
     fill: colorScale(d["value"])
   }),
 
-  size: [500, 500],
-  margin: { left: 25, bottom: 45, right: 25, top: 0 },
+  size: [500, 570],
+  margin: { left: 25, bottom: 45, right: 25, top: 70 },
 
   xAccessor: "x",
   yAccessor: "y",
