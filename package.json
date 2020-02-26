@@ -40,7 +40,7 @@
     "build:staging": "npm run headerlink && env-cmd -f .spectrum.staging.env react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "headerlink": "cd ./node_modules/@bit/viz.spectrum.spectrumheader && npm link ../../react"
+    "headerlink": "cd ./node_modules/@bit/viz.spectrum.header && npm link ../../react"
   },
   "eslintConfig": {
     "extends": "react-app"
