@@ -16,43 +16,75 @@ import ListItemText from "@material-ui/core/ListItemText";
 
 import { getGeneColorScale } from "../Dashboard/getColors";
 
+import ReDimChart from "../Dashboard/ReDimChart";
+
 import gql from "graphql-tag";
 
 const TEST_ID = "SPECTRUM-OV-002";
+const TEST_TYPE = "patient";
 
-const QUERY_CUMULATIVE_GENES = gql`
-  query($dashboardID: String!, $genes: [String!]!, $genes2: [String!]!) {
+const CumulativeGenePlot = () => {
+  const [genes, setGenes] = useState([]);
+  const [highlightGene, setHighlightGene] = useState(null);
+
+  return (
+    <Paper
+      style={{
+        margin: "40px 40px",
+        padding: "40px 20px"
+      }}
+    >
+      <Grid container direction="row">
+        <Grid item>
+          <GeneTextBox
+            genes={genes}
+            setGenes={setGenes}
+            setHighlightGene={setHighlightGene}
+          />
+        </Grid>
+        <Grid item>
+          <GenePlot
+            dashboardID={TEST_ID}
+            genes={highlightGene ? [highlightGene] : genes}
+          />
+        </Grid>
+        <Grid item>
+          <ReDimChart
+            labels={[{ isNum: false, type: "CELL", label: "celltype" }]}
+            index={0}
+            onSelect={() => null}
+            onLegendHover={() => null}
+            highlightedGroup={null}
+            width={500}
+            dashboardID={TEST_ID}
+            dashboardType={TEST_TYPE}
+          />
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+};
+
+const GenePlot = ({ dashboardID, genes }) => {
+  const QUERY = gql`
+  query($dashboardID: String!, $genes: [String!]!) {
     cumulativeGenes(dashboardID: $dashboardID, genes: $genes) {
       x
       y
       value
     }
-    geneStats(dashboardID: $dashboardID, genes: $genes2) {
-      name
-      stat
-    }
   }
-`;
+  `;
 
-const CumulativeGenePlot = () => {
-  const [genes, setGenes] = useState([]);
-  const [highlightGene, setHighlightGene] = useState(null);
-  const { data, loading } = useQuery(QUERY_CUMULATIVE_GENES, {
+  const { data, loading } = useQuery(QUERY, {
     variables: {
-      dashboardID: TEST_ID,
-      genes: highlightGene ? [highlightGene] : genes,
-      genes2: genes
+      dashboardID: dashboardID,
+      genes: genes
     }
   });
 
   if (loading && !data) {
-    return (
-      <BaseChart genes={genes} setGenes={setGenes}>
-        <Grid item>
-          <CircularProgress />
-        </Grid>
-      </BaseChart>
-    );
+    return <CircularProgress />;
   }
 
   const density = data.cumulativeGenes;
@@ -61,61 +93,68 @@ const CumulativeGenePlot = () => {
   );
 
   return (
-    <BaseChart genes={genes} setGenes={setGenes}>
-      <Grid item>
-        <XYFrame
-          {...getFrameProps({
-            data: density,
-            colorScale
-          })}
-        />
-      </Grid>
-      <Grid item>
-        <GeneTable genes={data.geneStats} setHighlightGene={setHighlightGene} />
-      </Grid>
-    </BaseChart>
+    <XYFrame
+      {...getFrameProps({
+        data: density,
+        colorScale
+      })}
+    />
   );
 };
 
-const GeneTable = ({ genes, setHighlightGene }) => (
-  <List
-    dense={true}
-    subheader={<ListSubheader component="div">Valid Genes</ListSubheader>}
-  >
-    {genes.map(gene => (
-      <ListItem
-        key={gene["name"]}
-        onMouseEnter={() => {
-          setHighlightGene(gene["name"]);
-        }}
-        onMouseLeave={() => {
-          setHighlightGene(null);
-        }}
-      >
-        <ListItemText primary={gene["name"]} />
-      </ListItem>
-    ))}
-  </List>
-);
+const GeneTable = ({ genes, setHighlightGene }) => {
+  const QUERY = gql`
+  query($dashboardID: String!, $genes: [String!]!) {
+    verifyGenes(dashboardID: $dashboardID, genes: $genes) {
+      valid
+      invalid
+    }
+  }
+`;
 
-const BaseChart = ({ genes, setGenes, children }) => (
-  <Paper
-    style={{
-      margin: "40px 40px",
-      padding: "40px 20px"
-    }}
-  >
-    <Grid container direction="row">
-      <Grid item>
-        <GeneTextBox genes={genes} setGenes={setGenes} />
-      </Grid>
-      {children}
-    </Grid>
-  </Paper>
-);
+  const { data, loading } = useQuery(QUERY, {
+    variables: {
+      dashboardID: TEST_ID,
+      genes: genes
+    }
+  });
 
-const GeneTextBox = ({ setGenes }) => {
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  const { valid, invalid } = data.verifyGenes;
+
+  return (
+    <List
+      dense={true}
+      subheader={<ListSubheader component="div">Valid Genes</ListSubheader>}
+    >
+      {valid.map(gene => (
+        <ListItem
+          key={gene}
+          onMouseEnter={() => {
+            setHighlightGene(gene);
+          }}
+          onMouseLeave={() => {
+            setHighlightGene(null);
+          }}
+        >
+          <ListItemText primary={gene} />
+        </ListItem>
+      ))}
+      {invalid.map(gene => (
+        <ListItem key={gene}>
+          <ListItemText primary={gene} />
+        </ListItem>
+      ))}
+    </List>
+  );
+};
+
+const GeneTextBox = ({ genes, setGenes, setHighlightGene }) => {
   const [text, setText] = useState("");
+
   return (
     <Grid container direction="column">
       <Grid item>
@@ -130,6 +169,9 @@ const GeneTextBox = ({ setGenes }) => {
       </Grid>
       <Grid item>
         <Button onClick={() => setGenes(textToGenes(text))}>Submit</Button>
+      </Grid>
+      <Grid item>
+        <GeneTable genes={genes} setHighlightGene={setHighlightGene} />
       </Grid>
     </Grid>
   );
