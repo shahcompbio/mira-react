@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import XYFrame from "semiotic/lib/XYFrame";
+import OrdinalFrame from "semiotic/lib/OrdinalFrame";
 
 import Grid from "@material-ui/core/Grid";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -18,14 +19,16 @@ import { getGeneColorScale } from "../Dashboard/getColors";
 
 import ReDimChart from "../Dashboard/ReDimChart";
 
-import gql from "graphql-tag";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { makeStyles } from "@material-ui/core/styles";
 
-const TEST_ID = "SPECTRUM-OV-002";
-const TEST_TYPE = "patient";
+import gql from "graphql-tag";
 
 const CumulativeGenePlot = () => {
   const [genes, setGenes] = useState([]);
   const [highlightGene, setHighlightGene] = useState(null);
+  const [highlightedGroup, setHighlightedGroup] = useState(null);
+  const [dashboard, setDashboard] = useState(null);
   const [label, setLabel] = useState({
     isNum: false,
     type: "CELL",
@@ -39,52 +42,121 @@ const CumulativeGenePlot = () => {
         padding: "40px 20px"
       }}
     >
-      <Grid container direction="row">
+      <Grid container direction="column">
         <Grid item>
-          <GeneTextBox
-            genes={genes}
-            setGenes={setGenes}
-            setHighlightGene={setHighlightGene}
-          />
+          <AnalysisSelect dashboard={dashboard} setDashboard={setDashboard} />
         </Grid>
-        <Grid item>
-          <GenePlot
-            dashboardID={TEST_ID}
-            genes={highlightGene ? [highlightGene] : genes}
-          />
-        </Grid>
-        <Grid item>
-          <ReDimChart
-            labels={[label]}
-            index={0}
-            onSelect={label => setLabel(label)}
-            onLegendHover={() => null}
-            highlightedGroup={null}
-            width={500}
-            dashboardID={TEST_ID}
-            dashboardType={TEST_TYPE}
-          />
-        </Grid>
+        {dashboard ? (
+          <Grid container direction="row">
+            <Grid item>
+              <GeneTextBox
+                genes={genes}
+                setGenes={setGenes}
+                highlightGene={highlightGene}
+                setHighlightGene={setHighlightGene}
+                dashboardID={dashboard["id"]}
+              />
+            </Grid>
+            <Grid item>
+              <GenePlot
+                dashboardID={dashboard["id"]}
+                genes={highlightGene ? [highlightGene] : genes}
+                highlightedGroup={highlightedGroup}
+              />
+            </Grid>
+            <Grid item>
+              <ReDimChart
+                labels={[label]}
+                index={0}
+                onSelect={label => setLabel(label)}
+                onLegendHover={setHighlightedGroup}
+                highlightedGroup={highlightedGroup}
+                width={500}
+                dashboardID={dashboard["id"]}
+                dashboardType={dashboard["type"]}
+              />
+            </Grid>
+          </Grid>
+        ) : null}
       </Grid>
     </Paper>
   );
 };
 
-const GenePlot = ({ dashboardID, genes }) => {
+const AnalysisSelect = ({ dashboard, setDashboard }) => {
   const QUERY = gql`
-  query($dashboardID: String!, $genes: [String!]!) {
-    cumulativeGenes(dashboardID: $dashboardID, genes: $genes) {
-      x
-      y
-      value
+    query {
+      dashboards {
+        type
+        id
+      }
     }
+  `;
+
+  const useStyles = makeStyles({
+    root: {
+      paddingBottom: "25px"
+    },
+    inputRoot: {
+      padding: "2px !important"
+    }
+  });
+
+  const { data, loading } = useQuery(QUERY);
+  const classes = useStyles();
+
+  if (loading) {
+    return <CircularProgress />;
   }
+
+  const { dashboards } = data;
+
+  return (
+    <Autocomplete
+      classes={classes}
+      value={dashboard}
+      options={dashboards}
+      getOptionLabel={option => option["id"]}
+      onChange={(_, value) => setDashboard(value)}
+      renderInput={params => (
+        <TextField
+          {...params}
+          InputLabelProps={{
+            shrink: true
+          }}
+          variant="outlined"
+          label={"Analyses"}
+          fullWidth
+        />
+      )}
+    />
+  );
+};
+
+const GenePlot = ({ dashboardID, genes, highlightedGroup }) => {
+  const QUERY = gql`
+    query(
+      $dashboardID: String!
+      $genes: [String!]!
+      $highlightedGroup: AttributeInput
+    ) {
+      cumulativeGenes(
+        dashboardID: $dashboardID
+        genes: $genes
+        highlightedGroup: $highlightedGroup
+      ) {
+        x
+        y
+        value
+      }
+    }
   `;
 
   const { data, loading } = useQuery(QUERY, {
     variables: {
       dashboardID: dashboardID,
-      genes: genes
+      genes: genes,
+      highlightedGroup
     }
   });
 
@@ -93,33 +165,72 @@ const GenePlot = ({ dashboardID, genes }) => {
   }
 
   const density = data.cumulativeGenes;
-  const colorScale = getGeneColorScale(
-    Math.max(...density.map(bin => bin["value"]))
-  );
+  const maxValue = Math.max(...density.map(bin => bin["value"]));
+  const colorScale = getGeneColorScale(maxValue);
 
   return (
-    <XYFrame
-      {...getFrameProps({
-        data: density,
-        colorScale
-      })}
-    />
+    <Grid container direction="column">
+      <Grid item>
+        <XYFrame
+          {...getFrameProps({
+            data: density,
+            colorScale
+          })}
+        />
+      </Grid>
+      <Grid item>
+        <GeneLegend maxValue={maxValue} colorScale={colorScale} />
+      </Grid>
+    </Grid>
   );
 };
 
-const GeneTable = ({ genes, setHighlightGene }) => {
+const GeneLegend = ({ maxValue, colorScale }) => {
+  const frameProps = {
+    data: [maxValue],
+    size: [500, 40],
+    margin: { left: 25, bottom: 25, right: 25 },
+    type: "bar",
+    projection: "horizontal",
+
+    style: () => ({
+      fill: "url(#gradient)"
+    }),
+    additionalDefs: [
+      <linearGradient key="gradient" x1="0" x2="1" y1="0" y2="0" id="gradient">
+        {[0, 0.2, 0.4, 0.6, 0.8, 1].map(percent => (
+          <stop
+            stopColor={colorScale(percent * maxValue)}
+            offset={`${percent * 100}%`}
+          />
+        ))}
+      </linearGradient>
+    ],
+    axes: [
+      {
+        orient: "bottom",
+        ticks: 2,
+        tickValues: [0, Math.round(maxValue * 100) / 100]
+      }
+    ]
+  };
+
+  return <OrdinalFrame {...frameProps} />;
+};
+
+const GeneTable = ({ genes, highlightGene, setHighlightGene, dashboardID }) => {
   const QUERY = gql`
-  query($dashboardID: String!, $genes: [String!]!) {
-    verifyGenes(dashboardID: $dashboardID, genes: $genes) {
-      valid
-      invalid
+    query($dashboardID: String!, $genes: [String!]!) {
+      verifyGenes(dashboardID: $dashboardID, genes: $genes) {
+        valid
+        invalid
+      }
     }
-  }
-`;
+  `;
 
   const { data, loading } = useQuery(QUERY, {
     variables: {
-      dashboardID: TEST_ID,
+      dashboardID: dashboardID,
       genes: genes
     }
   });
@@ -144,6 +255,7 @@ const GeneTable = ({ genes, setHighlightGene }) => {
           onMouseLeave={() => {
             setHighlightGene(null);
           }}
+          selected={gene === highlightGene}
         >
           <ListItemText primary={gene} />
         </ListItem>
@@ -157,11 +269,17 @@ const GeneTable = ({ genes, setHighlightGene }) => {
   );
 };
 
-const GeneTextBox = ({ genes, setGenes, setHighlightGene }) => {
+const GeneTextBox = ({
+  genes,
+  setGenes,
+  highlightGene,
+  setHighlightGene,
+  dashboardID
+}) => {
   const [text, setText] = useState("");
 
   return (
-    <Grid container direction="column">
+    <Grid container direction="column" alignItems="center">
       <Grid item>
         <TextField
           label="Input genes"
@@ -173,10 +291,21 @@ const GeneTextBox = ({ genes, setGenes, setHighlightGene }) => {
         />
       </Grid>
       <Grid item>
-        <Button onClick={() => setGenes(textToGenes(text))}>Submit</Button>
+        <Button
+          style={{ marginTop: "10px" }}
+          variant="outlined"
+          onClick={() => setGenes(textToGenes(text))}
+        >
+          Submit
+        </Button>
       </Grid>
       <Grid item>
-        <GeneTable genes={genes} setHighlightGene={setHighlightGene} />
+        <GeneTable
+          highlightGene={highlightGene}
+          dashboardID={dashboardID}
+          genes={genes}
+          setHighlightGene={setHighlightGene}
+        />
       </Grid>
     </Grid>
   );
@@ -198,7 +327,7 @@ const getFrameProps = ({ data, colorScale }) => ({
   points: data,
   pointStyle: d => ({
     r: 2,
-    fill: colorScale(d["value"])
+    fill: d["value"] === "" ? "#eee" : colorScale(d["value"])
   }),
 
   size: [500, 570],
