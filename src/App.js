@@ -10,10 +10,47 @@ import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import Grid from "@material-ui/core/Grid";
 import { theme } from "./config/config.js";
 
-import { useLocation } from "react-router";
+import { useLocation, Switch, Route } from "react-router";
 import { useDashboardType, useDashboardID } from "./utils/useDashboardInfo";
 
+import CumulativeGenePlot from "./sandbox/CumulativeGenePlot";
+import CorrelationPlot from "./sandbox/CorrelationPlot";
+
+// const ContentStyles = {
+//     width: "70%",
+//     display: "flex",
+//     flexDirection: "row"
+//   };
+
+//   const useStyles = makeStyles({
+//     summary: {
+//       backgroundColor: "#ffffff"
+//     },
+//     title: {
+//       color: "#8a939a",
+//       fontSize: "25px",
+//       fontWeight: "500"
+//     }
+//   });
+
 const NAME = "Mira";
+const testApp = () => (
+  <Switch>
+    <Route exact path="/cumulative-gene">
+      <MuiThemeProvider theme={theme}>
+        <CumulativeGenePlot />
+      </MuiThemeProvider>
+    </Route>
+    <Route exact path="/correlation">
+      <MuiThemeProvider theme={theme}>
+        <CorrelationPlot />
+      </MuiThemeProvider>
+    </Route>
+    <Route path={"/"}>
+      <App />
+    </Route>
+  </Switch>
+);
 
 const HEADERS = ["Wiki", "Mira", "Sylph", "Hydra"].map(label => ({
   label,
@@ -60,4 +97,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default testApp;

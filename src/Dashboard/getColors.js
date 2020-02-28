@@ -12,6 +12,15 @@ export const getCelltypeColors = data => {
   return datum => toColorScale(ordinalScale(datum));
 };
 
+export const getGeneColorScale = maxExpression => {
+  const toColorScale = scaleSequential(interpolateYlGnBu).domain([
+    maxExpression,
+    0
+  ]);
+
+  return datum => toColorScale(datum);
+};
+
 const getOrdinalScale = data =>
   scalePoint()
     .domain(data)
@@ -25,12 +34,8 @@ export default (label, data) => {
     } else {
       // IS GENE
       const maxDataBucket = data[data.length - 1];
-      const toColorScale = scaleSequential(interpolateYlGnBu).domain([
-        maxDataBucket,
-        0
-      ]);
 
-      return datum => toColorScale(datum);
+      return getGeneColorScale(maxDataBucket);
     }
   } else {
     if (label["type"] === "CELL") {
