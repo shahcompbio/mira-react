@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 // TODO: complete
 const Correlation = ({ dashboardID, dashboardType, labels }) => null;
 

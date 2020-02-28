@@ -311,15 +311,15 @@ const GeneTextBox = ({
   );
 };
 
-const genesToText = genes => {
-  if (genes.length === 0) {
-    return "";
-  }
+// const genesToText = genes => {
+//   if (genes.length === 0) {
+//     return "";
+//   }
 
-  const [firstGene, ...restGenes] = genes;
+//   const [firstGene, ...restGenes] = genes;
 
-  return restGenes.reduce((str, gene) => `${str},${gene}`, firstGene);
-};
+//   return restGenes.reduce((str, gene) => `${str},${gene}`, firstGene);
+// };
 
 const textToGenes = text => text.split(",").map(gene => gene.trim());
 

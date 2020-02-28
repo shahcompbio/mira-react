@@ -11,8 +11,6 @@ import getColorScale from "./getColors";
 import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 
-import { useLocation } from "react-router";
-import { useDashboardID } from "../utils/useDashboardInfo";
 import Legend from "./Legend";
 
 const QUERY = gql`
@@ -52,11 +50,6 @@ const ReDimChart = ({
   dashboardID,
   dashboardType
 }) => {
-  // const location = useLocation();
-  // const [dashboardType, dashboardID] = [
-  //   useDashboardType(location),
-  //   useDashboardID(location)
-  // ];
   const { data, loading } = useQuery(QUERY, {
     variables: {
       dashboardID,

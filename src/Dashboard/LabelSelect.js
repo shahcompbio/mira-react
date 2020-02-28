@@ -6,13 +6,8 @@ import { FixedSizeList } from "react-window";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-// import React from "react";
-
 import { useQuery } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-
-import { useLocation } from "react-router";
-import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
 
 const QUERY = gql`
   query($dashboardType: String!, $dashboardID: String!) {
@@ -93,11 +88,6 @@ export default function Virtualize({
   dashboardType
 }) {
   const classes = useStyles();
-  // const location = useLocation();
-  // const [dashboardType, dashboardID] = [
-  //   useDashboardType(location),
-  //   useDashboardID(location)
-  // ];
   const { data, loading, error } = useQuery(QUERY, {
     variables: { dashboardType, dashboardID, props: [] }
   });
