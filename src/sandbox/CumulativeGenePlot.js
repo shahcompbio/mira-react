@@ -188,7 +188,7 @@ const GenePlot = ({ dashboardID, genes, highlightedGroup }) => {
 const GeneLegend = ({ maxValue, colorScale }) => {
   const frameProps = {
     data: [maxValue],
-    size: [500, 40],
+    size: [500, 45],
     margin: { left: 25, bottom: 25, right: 25 },
     type: "bar",
     projection: "horizontal",

@@ -11,7 +11,7 @@ const Legend = ({ label, data, colorScale, width, onHover }) => {
       colorName: data[index],
       value: 5
     })),
-    size: [width * 0.9, 15],
+    size: [width * 0.9, 20],
     type: "bar",
     projection: "horizontal",
 
