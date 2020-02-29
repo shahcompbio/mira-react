@@ -287,7 +287,7 @@ const GeneTextBox = ({
           variant="outlined"
           rows="4"
           value={text}
-          onChange={event => setText(event.target.value)}
+          onChange={event => setText(event.target.value.toUpperCase())}
         />
       </Grid>
       <Grid item>
