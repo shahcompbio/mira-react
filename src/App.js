@@ -15,6 +15,7 @@ import { useDashboardType, useDashboardID } from "./utils/useDashboardInfo";
 
 import CumulativeGenePlot from "./sandbox/CumulativeGenePlot";
 import CorrelationPlot from "./sandbox/CorrelationPlot";
+import GeneExpressionColors from "./sandbox/GeneExpressionColors";
 
 // const ContentStyles = {
 //     width: "70%",
@@ -44,6 +45,11 @@ const testApp = () => (
     <Route exact path="/correlation">
       <MuiThemeProvider theme={theme}>
         <CorrelationPlot />
+      </MuiThemeProvider>
+    </Route>
+    <Route exact path="/gene-plot-colors">
+      <MuiThemeProvider theme={theme}>
+        <GeneExpressionColors />
       </MuiThemeProvider>
     </Route>
     <Route path={"/"}>

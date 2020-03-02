@@ -83,7 +83,7 @@ const CumulativeGenePlot = () => {
   );
 };
 
-const AnalysisSelect = ({ dashboard, setDashboard }) => {
+export const AnalysisSelect = ({ dashboard, setDashboard }) => {
   const QUERY = gql`
     query {
       dashboards {
@@ -218,7 +218,12 @@ const GeneLegend = ({ maxValue, colorScale }) => {
   return <OrdinalFrame {...frameProps} />;
 };
 
-const GeneTable = ({ genes, highlightGene, setHighlightGene, dashboardID }) => {
+export const GeneTable = ({
+  genes,
+  highlightGene,
+  setHighlightGene,
+  dashboardID
+}) => {
   const QUERY = gql`
     query($dashboardID: String!, $genes: [String!]!) {
       verifyGenes(dashboardID: $dashboardID, genes: $genes) {
@@ -269,7 +274,7 @@ const GeneTable = ({ genes, highlightGene, setHighlightGene, dashboardID }) => {
   );
 };
 
-const GeneTextBox = ({
+export const GeneTextBox = ({
   genes,
   setGenes,
   highlightGene,
