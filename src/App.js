@@ -52,7 +52,7 @@ const testApp = () => (
   </Switch>
 );
 
-const HEADERS = ["Wiki", "Mira", "Sylph", "Hydra"].map(label => ({
+const HEADERS = ["Home", "Wiki", "Sylph", "Hydra"].map(label => ({
   label,
   link: process.env[`REACT_APP_${label.toUpperCase()}_URL`] || ""
 }));
