@@ -27,7 +27,16 @@ const Legend = ({ label, data, colorScale, width, onHover }) => {
       </div>
     ),
     customHoverBehavior: d => {
-      onHover(d ? { ...label, value: d["name"] } : null);
+      onHover(
+        d
+          ? {
+              ...label,
+              value: label.isNum
+                ? d["name"].split("-").map(item => item.trim())
+                : [d["name"]]
+            }
+          : null
+      );
     }
   };
 
