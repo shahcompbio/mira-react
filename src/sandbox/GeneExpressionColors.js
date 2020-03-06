@@ -13,8 +13,9 @@ import XYFrame from "semiotic/lib/XYFrame";
 import OrdinalFrame from "semiotic/lib/OrdinalFrame";
 
 import { getGeneColorScale } from "../Dashboard/getColors";
-import { scaleSequential } from "d3-scale";
-import { interpolateMagma } from "d3-scale-chromatic";
+import { scaleSequential, scaleLinear } from "d3-scale";
+import { interpolateInferno, interpolateViridis } from "d3-scale-chromatic";
+import { interpolateHcl, rgb } from "d3";
 
 const GeneExpressionColors = () => {
   const [genes, setGenes] = useState([]);
@@ -87,16 +88,24 @@ const GenePlot = ({ dashboardID, genes, highlightedGroup }) => {
 
   const density = data.cumulativeGenes;
   const maxValue = Math.max(...density.map(bin => bin["value"]));
-  const colorScale1 = getGeneColorScale(maxValue);
+  const colorScale1 = datum =>
+    scaleSequential(interpolateViridis).domain([0, maxValue])(datum);
   const colorScale1Grey = datum => (datum === 0 ? "#ccc" : colorScale1(datum));
 
   const colorScale2 = datum =>
-    scaleSequential(interpolateMagma).domain([0, maxValue])(datum);
+    scaleSequential(interpolateInferno).domain([
+      maxValue * -0.2,
+      maxValue * 1.1
+    ])(datum);
+
+  const colorScale2Grey = datum => (datum === 0 ? "#ccc" : colorScale2(datum));
 
   const colorScale3 = datum =>
-    datum === 0
-      ? "#ccc"
-      : scaleSequential(interpolateMagma).domain([0, maxValue])(datum);
+    scaleSequential(interpolateHcl)
+      .domain([0, maxValue])
+      .range([rgb("#153ed4"), rgb("#ff661f")])(datum);
+
+  const colorScale3Grey = datum => (datum === 0 ? "#ccc" : colorScale3(datum));
 
   return (
     <Grid container direction="column">
@@ -136,9 +145,9 @@ const GenePlot = ({ dashboardID, genes, highlightedGroup }) => {
           </Grid>
           <Grid item>
             <OnePlot
-              index={2}
+              index={1}
               data={density}
-              colorScale={colorScale3}
+              colorScale={colorScale2Grey}
               maxValue={maxValue}
             />
           </Grid>
@@ -147,6 +156,32 @@ const GenePlot = ({ dashboardID, genes, highlightedGroup }) => {
               index={1}
               data={density}
               colorScale={colorScale2}
+              maxValue={maxValue}
+            />
+          </Grid>
+        </Grid>
+        <Grid container direction="row">
+          <Grid item>
+            <OnePlot
+              index={2}
+              data={density}
+              colorScale={colorScale3}
+              maxValue={maxValue}
+            />
+          </Grid>
+          <Grid item>
+            <OnePlot
+              index={2}
+              data={density}
+              colorScale={colorScale3Grey}
+              maxValue={maxValue}
+            />
+          </Grid>
+          <Grid item style={{ backgroundColor: "#555" }}>
+            <OnePlot
+              index={2}
+              data={density}
+              colorScale={colorScale3}
               maxValue={maxValue}
             />
           </Grid>
