@@ -249,10 +249,17 @@ const GeneLegend = ({ index, maxValue, colorScale }) => {
 
 const getFrameProps = ({ data, colorScale }) => ({
   points: data,
-  pointStyle: d => ({
-    r: 2,
-    fill: d["value"] === "" ? "#eee" : colorScale(d["value"])
-  }),
+  customPointMark: ({ d }) => (
+    <rect
+      width={5}
+      height={5}
+      fill={d["value"] === "" ? "#eee" : colorScale(d["value"])}
+    />
+  ),
+  // pointStyle: d => ({
+  //   r: 2,
+  //   fill: d["value"] === "" ? "#eee" : colorScale(d["value"])
+  // }),
 
   size: [450, 570],
   margin: { left: 25, bottom: 45, right: 25, top: 70 },
