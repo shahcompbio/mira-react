@@ -5,12 +5,12 @@ import Grid from "@material-ui/core/Grid";
 
 import Correlation from "./Correlation";
 
-const TEST_DASHBOARDID = "SPECTRUM-OV-014_CD45P";
+const TEST_DASHBOARDID = "SPECTRUM-OV-002";
 const TEST_DASHBOARDTYPE = "patient";
 const CorrelationPlot = () => {
   const [highlightedLabel, setHighlightedLabel] = useState(null);
   const [labels, setLabels] = useState([
-    { isNum: false, type: "CELL", label: "celltype" },
+    { isNum: true, type: "CELL", label: "Ovarian cancer cell probability" },
     { isNum: false, type: "CELL", label: "celltype" }
   ]);
 
