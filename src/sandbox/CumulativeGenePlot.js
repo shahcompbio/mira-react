@@ -83,7 +83,7 @@ const CumulativeGenePlot = () => {
   );
 };
 
-const AnalysisSelect = ({ dashboard, setDashboard }) => {
+export const AnalysisSelect = ({ dashboard, setDashboard }) => {
   const QUERY = gql`
     query {
       dashboards {
