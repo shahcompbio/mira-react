@@ -135,7 +135,7 @@ const TableHeader = ({ columns }) => (
           align="center"
           key={column}
           style={{
-            backgroundColor: "#fff",
+            backgroundColor: "#edf0ef",
             position: "sticky",
             top: 0,
             zIndex: 1

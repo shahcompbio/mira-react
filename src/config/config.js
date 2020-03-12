@@ -7,7 +7,7 @@ export const theme = createMuiTheme({
   palette: {
     primary: {
       light: "#c8f7c5",
-      main: "#bfe6dd",
+      main: "#a5d1c7",
       dark: "#8799af",
       contrastText: "#000000"
     }
@@ -23,6 +23,11 @@ export const theme = createMuiTheme({
       },
       sizeLarge: {
         padding: "8px 10px 0px 10px"
+      }
+    },
+    MuiPaper: {
+      root: {
+        backgroundColor: "#edf0ef"
       }
     },
     Paper: {
@@ -41,7 +46,12 @@ export const theme = createMuiTheme({
       }
     },
     MuiTableCell: { root: { padding: "10px 30px 10px 10px" } },
-    MuiExpansionPanel: { rounded: { borderRadius: "5px" } },
+    MuiExpansionPanel: {
+      rounded: {
+        backgroundColor: "#edf0ef",
+        borderRadius: "5px"
+      }
+    },
     MuiOutlinedInput: { input: { padding: "10px" } },
     MuiExpansionPanelSummary: {
       root: { borderRadius: "5px" },
