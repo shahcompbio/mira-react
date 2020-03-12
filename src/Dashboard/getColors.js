@@ -1,7 +1,7 @@
 import { scalePoint, scaleSequential, scaleOrdinal } from "d3-scale";
 import {
   interpolateRainbow,
-  interpolateYlGnBu,
+  interpolateViridis,
   interpolateOrRd,
   schemeCategory10
 } from "d3-scale-chromatic";
@@ -13,9 +13,9 @@ export const getCelltypeColors = data => {
 };
 
 export const getGeneColorScale = maxExpression => {
-  const toColorScale = scaleSequential(interpolateYlGnBu).domain([
-    maxExpression,
-    0
+  const toColorScale = scaleSequential(interpolateViridis).domain([
+    0,
+    maxExpression
   ]);
 
   return datum => toColorScale(datum);
