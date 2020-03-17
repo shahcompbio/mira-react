@@ -1,11 +1,107 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import OrdinalFrame from "semiotic/lib/OrdinalFrame";
 
-const Legend = ({ label, data, colorScale, width, onHover }) => {
-  const dataNames = getDataNames(data, label);
+const Legend = ({
+  label,
+  data,
+  colorScale,
+  width,
+  onHover,
+  highlightedGroup
+}) => {
+  if (label["isNum"]) {
+    const extent =
+      highlightedGroup && label["label"] === highlightedGroup["label"]
+        ? highlightedGroup["value"]
+        : null;
+    return (
+      <NumericalLegend
+        data={data}
+        colorScale={colorScale}
+        setExtent={e => (e ? onHover({ ...label, value: e }) : onHover(null))}
+        extent={extent}
+      />
+    );
+  } else {
+    return (
+      <CategoricalLegend
+        data={data}
+        colorScale={colorScale}
+        onHover={onHover}
+        width={width}
+        label={label}
+      />
+    );
+  }
+};
+
+const getMaxValue = data => {
+  const binSize = data[1] - data[0];
+  return data[data.length - 1] + binSize;
+};
+
+const NumericalLegend = ({ data, colorScale, extent, setExtent }) => {
+  const maxValue = getMaxValue(data);
   const frameProps = {
-    data: dataNames.map((name, index) => ({
+    data: [maxValue],
+    size: [500, 45],
+    margin: { left: 25, bottom: 25, right: 25 },
+    type: "bar",
+    projection: "horizontal",
+    style: () => ({
+      fill: "url(#gradient)"
+    }),
+    additionalDefs: [
+      <linearGradient key="gradient" x1="0" x2="1" y1="0" y2="0" id="gradient">
+        {[0, 0.2, 0.4, 0.6, 0.8, 1].map(percent => (
+          <stop
+            stopColor={colorScale(percent * maxValue)}
+            offset={`${percent * 100}%`}
+          />
+        ))}
+      </linearGradient>
+    ],
+    axes: [
+      {
+        orient: "bottom",
+        ticks: 2,
+        tickValues: [0, Math.round(maxValue * 100) / 100]
+      }
+    ],
+    interaction: {
+      columnsBrush: true,
+      startEmpty: true,
+      extent: { singleColumn: extent },
+      end: e => setExtent(e)
+    }
+  };
+
+  return <OrdinalFrame {...frameProps} />;
+};
+
+const CategoricalLegend = ({ data, colorScale, onHover, width, label }) => {
+  const [dataClick, setDataClick] = useState(
+    data.reduce(
+      (dataClickMap, datum) => ({ ...dataClickMap, [datum]: false }),
+      {}
+    )
+  );
+
+  useEffect(() => {
+    const clicked = data.filter(datum => dataClick[datum]);
+    onHover(
+      clicked.length === 0
+        ? null
+        : {
+            ...label,
+            value: clicked
+          }
+    );
+  }, [dataClick]);
+
+  const frameProps = {
+    data: data.map((name, index) => ({
       type: "legend",
       name,
       colorName: data[index],
@@ -18,7 +114,11 @@ const Legend = ({ label, data, colorScale, width, onHover }) => {
     oAccessor: "type",
     rAccessor: "value",
 
-    style: d => ({ fill: colorScale(d["data"].colorName), stroke: "white" }),
+    style: d => ({
+      fill: colorScale(d["data"].colorName),
+      stroke: dataClick[d["name"]] ? "#33322f" : "white",
+      strokeWidth: "1px"
+    }),
 
     pieceHoverAnnotation: true,
     tooltipContent: d => (
@@ -26,31 +126,12 @@ const Legend = ({ label, data, colorScale, width, onHover }) => {
         <p>{d.name}</p>
       </div>
     ),
-    customHoverBehavior: d => {
-      onHover(
-        d
-          ? {
-              ...label,
-              value: label.isNum
-                ? d["name"].split("-").map(item => item.trim())
-                : [d["name"]]
-            }
-          : null
-      );
+    customClickBehavior: d => {
+      setDataClick({ ...dataClick, [d["name"]]: !dataClick[d["name"]] });
     }
   };
 
   return <OrdinalFrame {...frameProps} />;
-};
-
-const getDataNames = (data, label) => {
-  if (label["isNum"]) {
-    const binSize = data[1] - data[0];
-    return data.map(
-      datum => `${datum.toString()} - ${(datum + binSize).toString()}`
-    );
-  }
-  return data;
 };
 
 export default Legend;

@@ -120,6 +120,7 @@ const ReDimChart = ({
           width={500}
           label={labels[index]}
           onHover={onLegendHover}
+          highlightedGroup={highlightedGroup}
         />
       </Grid>
     </BaseChart>
