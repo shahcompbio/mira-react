@@ -27,12 +27,13 @@ export const theme = createMuiTheme({
     },
     MuiPaper: {
       root: {
-        backgroundColor: "#edf0ef"
+        backgroundColor: "#fff"
       }
     },
     Paper: {
       root: {
-        padding: "15px"
+        padding: "15px",
+        backgroundColor: "#fff"
       }
     },
     MuiInput: { root: { width: "200px" } },
@@ -48,7 +49,7 @@ export const theme = createMuiTheme({
     MuiTableCell: { root: { padding: "10px 30px 10px 10px" } },
     MuiExpansionPanel: {
       rounded: {
-        backgroundColor: "#edf0ef",
+        backgroundColor: "#fff",
         borderRadius: "5px"
       }
     },
