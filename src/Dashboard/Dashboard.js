@@ -39,7 +39,7 @@ const Dashboard = () => {
   const chartWidth = Math.floor((windowWidth - 150) / labels.length + 1);
 
   return (
-    <Grid container direction="column">
+    <Grid container direction="column" style={{ backgroundColor: "#fff"}}>
       <Grid container direction="row" alignItems="center">
         {labels.map((label, index) => (
           <Grid

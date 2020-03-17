@@ -66,32 +66,16 @@ const App = () => {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <Header appName={NAME} headers={HEADERS} />
-      <div style={{ flexGrow: 1 }}>
-        <Grid
-          container
-          direction="column"
-          width="95%"
-          spacing={2}
-          style={{
-            padding: "40px 20px"
-          }}
-        >
-          <Grid item>
+      {/*<Header appName={NAME} headers={HEADERS} />*/}
+      <div>
+          {/*<Grid item>
             <ExpansionPanel title={"Dashboard Selection"}>
               <SelectionPanel />
             </ExpansionPanel>
-          </Grid>
+          </Grid>*/}
           {dashboardType && dashboardID ? (
-            <Grid item>
-              <ExpansionPanel
-                title={`Dashboard : ${dashboardID.replace(/_/g, " ")}`}
-              >
                 <Dashboard />
-              </ExpansionPanel>
-            </Grid>
           ) : null}
-        </Grid>
       </div>
     </MuiThemeProvider>
   );
