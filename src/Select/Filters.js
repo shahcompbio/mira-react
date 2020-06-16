@@ -29,7 +29,7 @@ const QUERY = gql`
 `;
 
 const Filters = ({ chosenFilters, setFilters }) => {
-  const [isShown, setIsShown] = useState(false);
+  const [isShown, setIsShown] = useState(true);
   const location = useLocation();
   const dashboardType = useDashboardType(location);
 

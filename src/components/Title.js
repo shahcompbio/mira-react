@@ -6,14 +6,13 @@ import { withStyles } from "@material-ui/core/styles";
 const styles = {
   title: {
     color: "#8a939a",
-    fontSize: "25px",
     fontWeight: "500",
-    paddingBottom: "20px"
+    fontFamily: "Helvetica Neue"
   }
 };
 
 export default withStyles(styles)(({ classes, title }) => (
-  <Typography variant="h4" className={classes.title}>
+  <Typography variant="h6" className={classes.title}>
     {title}
   </Typography>
 ));

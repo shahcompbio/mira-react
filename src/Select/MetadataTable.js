@@ -20,7 +20,7 @@ import formatInteger from "../utils/formatInteger";
 const useStyles = makeStyles(theme => ({
   tableRowRoot: {
     "&:hover": {
-      backgroundColor: theme.palette.primary.dark + " !important"
+      backgroundColor: "#c4f3e8 !important"
     }
   },
   tableRowSelected: {
@@ -130,13 +130,14 @@ const MetadataTable = ({ filters, onSelect }) => {
 const TableHeader = ({ columns }) => (
   <TableHead>
     <TableRow>
-      {columns.map(column => (
+      {columns.map((column, i) => (
         <TableCell
           align="center"
           key={column}
           style={{
-            backgroundColor: "#edf0ef",
+            backgroundColor: i < 4 ? "white" : "#edf0ef",
             position: "sticky",
+            opacity: "100%",
             top: 0,
             zIndex: 1
           }}

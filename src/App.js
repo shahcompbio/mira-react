@@ -1,10 +1,8 @@
 import React from "react";
 import Header from "@bit/viz.spectrum.header";
 
-import ExpansionPanel from "./components/ExpansionPanel";
-
-import SelectionPanel from "./Select/SelectionPanel";
-import Dashboard from "./Dashboard/Dashboard";
+import DashboardSelection from "./Select/DashboardSelection";
+import DashboardWrapper from "./Dashboard/DashboardWrapper";
 
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import Grid from "@material-ui/core/Grid";
@@ -59,6 +57,7 @@ const HEADERS = ["Home", "Wiki", "Sylph", "Hydra"].map(label => ({
 
 const App = () => {
   const location = useLocation();
+
   const [dashboardType, dashboardID] = [
     useDashboardType(location),
     useDashboardID(location)
@@ -68,27 +67,17 @@ const App = () => {
     <MuiThemeProvider theme={theme}>
       <Header appName={NAME} headers={HEADERS} />
       <div style={{ flexGrow: 1 }}>
-        <Grid
-          container
-          direction="column"
-          width="95%"
-          spacing={2}
-          style={{
-            padding: "40px 20px"
-          }}
-        >
+        <Grid container direction="column" width="95%" spacing={2}>
           <Grid item>
-            <ExpansionPanel title={"Dashboard Selection"}>
-              <SelectionPanel />
-            </ExpansionPanel>
+            <DashboardSelection
+              title={dashboardID ? `${dashboardID.replace(/_/g, " ")}` : ``}
+            />
           </Grid>
           {dashboardType && dashboardID ? (
             <Grid item>
-              <ExpansionPanel
+              <DashboardWrapper
                 title={`Dashboard : ${dashboardID.replace(/_/g, " ")}`}
-              >
-                <Dashboard />
-              </ExpansionPanel>
+              />
             </Grid>
           ) : null}
         </Grid>
