@@ -167,7 +167,7 @@ const getFrameProps = ({
   }),
 
   size: [500, 500],
-  margin: { left: 25, bottom: 45, right: 25, top: 0 },
+  margin: { left: 15, bottom: 45, right: 15, top: 0 },
 
   xAccessor: "x",
   yAccessor: "y",

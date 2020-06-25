@@ -13,8 +13,6 @@ import TableBody from "@material-ui/core/TableBody";
 import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
-import Typography from "@material-ui/core/Typography";
-import { Paper } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -78,28 +76,14 @@ const CellAssignTable = ({
   );
 
   return (
-    <div>
-      <Typography variant={"h6"} style={{ marginLeft: 10, marginTop: 30 }}>
-        CellAssign : Cell Types and Marker Genes
-      </Typography>
-      <Paper
-        style={{
-          overflowX: "auto",
-          overflowY: "auto",
-          margin: "10px",
-          marginRight: "30px"
-        }}
-      >
-        <CellTypeAndMarkerGenesRow
-          colorScale={colorScale}
-          celltypes={celltypes}
-          classes={classes}
-          selectedGene={selectedGene}
-          setSelectedGene={setSelectedGene}
-          setSelectedCelltype={setSelectedCelltype}
-        />
-      </Paper>
-    </div>
+    <CellTypeAndMarkerGenesRow
+      colorScale={colorScale}
+      celltypes={celltypes}
+      classes={classes}
+      selectedGene={selectedGene}
+      setSelectedGene={setSelectedGene}
+      setSelectedCelltype={setSelectedCelltype}
+    />
   );
 };
 

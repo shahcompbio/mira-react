@@ -82,15 +82,7 @@ const App = () => {
               <SelectionPanel />
             </ExpansionPanel>
           </Grid>
-          {dashboardType && dashboardID ? (
-            <Grid item>
-              <ExpansionPanel
-                title={`Dashboard : ${dashboardID.replace(/_/g, " ")}`}
-              >
-                <Dashboard />
-              </ExpansionPanel>
-            </Grid>
-          ) : null}
+          {dashboardType && dashboardID ? <Dashboard /> : null}
         </Grid>
       </div>
     </MuiThemeProvider>
