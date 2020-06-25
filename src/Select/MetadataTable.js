@@ -17,35 +17,35 @@ import { useDashboardType, useDashboardID } from "../utils/useDashboardInfo";
 import { makeStyles } from "@material-ui/core/styles";
 import formatInteger from "../utils/formatInteger";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   tableRowRoot: {
     "&:hover": {
-      backgroundColor: "#c4f3e8 !important"
-    }
+      backgroundColor: "#c4f3e8 !important",
+    },
   },
   tableRowSelected: {
-    backgroundColor: theme.palette.primary.main + " !important"
+    backgroundColor: theme.palette.primary.main + " !important",
   },
   mergedDashboardCell: {
     color: "black",
     backgroundColor: "rgba(0, 0, 0, 0.1)",
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   metadataCell: {
     color: "black",
     backgroundColor: "rgba(0, 0, 0, 0.05)",
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
   },
   dropdown: {
-    transition: "all .5s ease-in-out"
+    transition: "all .5s ease-in-out",
   },
   dropdownOpen: {
-    transform: "rotate(0)"
+    transform: "rotate(0)",
   },
   dropdownClosed: {
-    transform: "rotate(-90deg)"
-  }
+    transform: "rotate(-90deg)",
+  },
 }));
 
 const QUERY = gql`
@@ -60,10 +60,6 @@ const QUERY = gql`
             name
             value
           }
-          stats {
-            name
-            value
-          }
         }
         metadata {
           name
@@ -73,7 +69,6 @@ const QUERY = gql`
       metadata {
         name
       }
-      stats
     }
   }
 `;
@@ -84,39 +79,37 @@ const MetadataTable = ({ filters, onSelect }) => {
   const dashboardID = useDashboardID(location);
 
   const { data, loading, error } = useQuery(QUERY, {
-    variables: { dashboardType, filters }
+    variables: { dashboardType, filters },
   });
 
   if (!data && (loading || error)) {
     return null;
   }
 
-  const { dashboards, metadata, stats } = data["dashboardClusters"];
+  const { dashboards, metadata } = data["dashboardClusters"];
 
-  const metadataHeaders = metadata.map(datum => datum["name"]);
+  const metadataHeaders = metadata.map((datum) => datum["name"]);
 
   return (
     <div style={{ maxHeight: 400, overflow: "auto", marginTop: "20px" }}>
       <Table size="small">
-        <TableHeader columns={[...metadataHeaders, ...stats]} />
+        <TableHeader columns={[...metadataHeaders]} />
         <TableBody>
           {dashboardType === "sample"
-            ? dashboards.map(row => (
+            ? dashboards.map((row) => (
                 <SampleRow
                   key={`sampleRow_${row["id"]}`}
                   metadata={metadataHeaders}
-                  stats={stats}
                   data={collapseMetadataAndStats(row["samples"][0])}
                   onClick={onSelect}
                   selectedID={dashboardID}
                 />
               ))
-            : dashboards.map(dashboard => (
+            : dashboards.map((dashboard) => (
                 <DashboardTable
                   id={`dashboardTable_${dashboard["id"]}`}
                   dashboard={dashboard}
                   metadata={metadataHeaders}
-                  stats={stats}
                   onClick={onSelect}
                   selectedID={dashboardID}
                 />
@@ -139,7 +132,7 @@ const TableHeader = ({ columns }) => (
             position: "sticky",
             opacity: "100%",
             top: 0,
-            zIndex: 1
+            zIndex: 1,
           }}
         >
           {column}
@@ -149,13 +142,7 @@ const TableHeader = ({ columns }) => (
   </TableHead>
 );
 
-const DashboardTable = ({
-  dashboard,
-  metadata,
-  stats,
-  onClick,
-  selectedID
-}) => {
+const DashboardTable = ({ dashboard, metadata, onClick, selectedID }) => {
   const [expanded, setExpanded] = useState(false);
   const classes = useStyles();
   return (
@@ -163,7 +150,6 @@ const DashboardTable = ({
       <MergedRow
         dashboard={dashboard}
         metadata={metadata}
-        stats={stats}
         expanded={expanded}
         setExpanded={setExpanded}
         classes={classes}
@@ -171,12 +157,11 @@ const DashboardTable = ({
         selectedID={selectedID}
       />
       {expanded
-        ? dashboard["samples"].map(sample => (
+        ? dashboard["samples"].map((sample) => (
             <SampleRow
               id={`dashboardTable_${sample["id"]}`}
               data={collapseMetadataAndStats(sample)}
               metadata={metadata}
-              stats={stats}
             />
           ))
         : null}
@@ -186,12 +171,11 @@ const DashboardTable = ({
 
 const MergedRow = ({
   dashboard,
-  stats,
   expanded,
   setExpanded,
   classes,
   onClick,
-  selectedID
+  selectedID,
 }) => {
   // TODO: Want to change to adapt to other merge styles
   const dashboardMetadata = dashboard["metadata"];
@@ -202,28 +186,28 @@ const MergedRow = ({
       hover={onClick}
       classes={{
         root: classes.tableRowRoot,
-        selected: classes.tableRowSelected
+        selected: classes.tableRowSelected,
       }}
-      onClick={_ => onClick(dashboard["id"])}
+      onClick={(_) => onClick(dashboard["id"])}
       selected={selectedID === dashboard["id"]}
     >
       <TableCell className={classes.mergedDashboardCell}>
         <IconButton
           className={[
             classes.dropdown,
-            expanded ? classes.dropdownOpen : classes.dropdownClosed
+            expanded ? classes.dropdownOpen : classes.dropdownClosed,
           ]}
           size="small"
-          onClick={event => {
+          onClick={(event) => {
             setExpanded(!expanded);
             event.stopPropagation();
           }}
         >
           <ExpandMoreIcon />
         </IconButton>{" "}
-        {patientID["values"][0]}
+        {dashboard["id"]}
       </TableCell>
-      {restMetadata.map(datum => (
+      {restMetadata.map((datum) => (
         <TableCell
           style={{ textAlign: "center" }}
           className={classes.mergedDashboardCell}
@@ -233,15 +217,10 @@ const MergedRow = ({
             : datum["values"][0]}
         </TableCell>
       ))}
-      <TableCell
-        style={{ textAlign: "center" }}
-        colSpan={stats.length}
-        className={classes.mergedDashboardCell}
-      />
     </TableRow>
   );
 };
-const SampleRow = ({ metadata, stats, data, onClick, selectedID }) => {
+const SampleRow = ({ metadata, data, onClick, selectedID }) => {
   const classes = useStyles();
   return (
     <TableRow
@@ -249,16 +228,16 @@ const SampleRow = ({ metadata, stats, data, onClick, selectedID }) => {
         onClick
           ? {
               root: classes.tableRowRoot,
-              selected: classes.tableRowSelected
+              selected: classes.tableRowSelected,
             }
           : null
       }
       hover={onClick}
-      onClick={onClick ? _ => onClick(data["id"]) : null}
+      onClick={onClick ? (_) => onClick(data["id"]) : null}
       selected={selectedID === data["id"]}
     >
       {[
-        ...metadata.map(column => (
+        ...metadata.map((column) => (
           <TableCell
             className={classes.metadataCell}
             key={`${data["id"]}_metadata_${column}`}
@@ -266,32 +245,20 @@ const SampleRow = ({ metadata, stats, data, onClick, selectedID }) => {
             {data["metadata"][column]}
           </TableCell>
         )),
-        ...stats.map(column => (
-          <TableCell align="center" key={`${data["id"]}_stats_${column}`}>
-            {formatInteger(data["stats"][column])}
-          </TableCell>
-        ))
       ]}
     </TableRow>
   );
 };
 
-const collapseMetadataAndStats = sample => ({
+const collapseMetadataAndStats = (sample) => ({
   ...sample,
   metadata: sample["metadata"].reduce(
     (mapping, datum) => ({
       ...mapping,
-      [datum["name"]]: datum["value"]
+      [datum["name"]]: datum["value"],
     }),
     {}
   ),
-  stats: sample["stats"].reduce(
-    (mapping, datum) => ({
-      ...mapping,
-      [datum["name"]]: datum["value"]
-    }),
-    {}
-  )
 });
 
 export default MetadataTable;

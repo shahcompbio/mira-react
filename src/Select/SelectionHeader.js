@@ -16,30 +16,30 @@ const useStyles = makeStyles({
   tabPanel: {
     marginTop: -55,
     padding: "25px",
-    background: "none"
+    background: "none",
   },
   dashboardRoot: {
     width: "100%",
     height: 100,
     padding: 15,
-    background: "blue"
+    background: "blue",
   },
   selectionRoot: {
     width: "100%",
     height: 100,
     padding: 15,
-    background: "#94bcb3"
+    background: "#94bcb3",
   },
   expandIcon: {
     marginTop: 10,
     opacity: "80%",
-    marginRight: "10vw"
+    marginRight: "10vw",
   },
   tabs: {
     marginRight: 25,
     background: "white",
-    borderRadius: "5px 5px 0px 0px"
-  }
+    borderRadius: "5px 5px 0px 0px",
+  },
 });
 const QUERY = gql`
   query {
@@ -49,11 +49,14 @@ const QUERY = gql`
 const SelectionHeader = ({ title, id, setIsExpanded, isExpanded }) => {
   const classes = useStyles();
   const location = useLocation();
+  const dashboardType = useDashboardType(location);
   let history = useHistory();
 
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex, setTabIndex] = useState(
+    dashboardType ? ["patient", "cohort"].indexOf(dashboardType) : 0
+  );
 
-  const onDashboardTypeChange = type => {
+  const onDashboardTypeChange = (type) => {
     const typeConvert = type ? type : "";
     history.push(`/${typeConvert}`);
   };
@@ -82,7 +85,7 @@ const SelectionHeader = ({ title, id, setIsExpanded, isExpanded }) => {
         }}
         className={classes.tabPanel}
       >
-        {dashboardTypes.map(tabHeader => {
+        {dashboardTypes.map((tabHeader) => {
           return <Tab label={tabHeader} className={classes.tabs} />;
         })}
       </Tabs>

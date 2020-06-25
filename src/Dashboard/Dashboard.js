@@ -26,14 +26,14 @@ function useWindowWidth() {
 const Dashboard = () => {
   const [highlightedLabel, setHighlightedLabel] = useState(null);
   const [labels, setLabels] = useState([
-    { isNum: false, type: "CELL", label: "celltype" },
-    { isNum: false, type: "CELL", label: "celltype" }
+    { isNum: false, type: "CELL", label: "cell_type" },
+    { isNum: false, type: "CELL", label: "cell_type" },
   ]);
 
   const location = useLocation();
   const [dashboardType, dashboardID] = [
     useDashboardType(location),
-    useDashboardID(location)
+    useDashboardID(location),
   ];
   const windowWidth = useWindowWidth();
   const chartWidth = Math.floor((windowWidth - 150) / labels.length + 1);
@@ -55,7 +55,7 @@ const Dashboard = () => {
               index={index}
               highlightedGroup={highlightedLabel}
               onLegendHover={setHighlightedLabel}
-              onSelect={label =>
+              onSelect={(label) =>
                 setLabels(
                   labels.map((oldLabel, oldLabelIndex) =>
                     oldLabelIndex === index ? label : oldLabel
@@ -86,17 +86,17 @@ const Dashboard = () => {
       <Grid item>
         <CellAssignTable
           selectedGene={labels[1]["label"]}
-          setSelectedGene={label => {
+          setSelectedGene={(label) => {
             // eslint-disable-next-line
             const [_, ...restLabels] = labels;
             setLabels([{ isNum: true, label, type: "GENE" }, ...restLabels]);
           }}
-          setSelectedCelltype={celltype =>
+          setSelectedCelltype={(celltype) =>
             setHighlightedLabel({
               isNum: false,
               type: "CELL",
               label: "celltype",
-              value: celltype
+              value: celltype,
             })
           }
         />

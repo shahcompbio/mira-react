@@ -48,14 +48,14 @@ const ReDimChart = ({
   highlightedGroup,
   width,
   dashboardID,
-  dashboardType
+  dashboardType,
 }) => {
   const { data, loading } = useQuery(QUERY, {
     variables: {
       dashboardID,
       label: labels[index],
-      highlightedGroup
-    }
+      highlightedGroup,
+    },
   });
 
   // This is messy, but this is to store previous label state (and we only want that to update when loading is done)
@@ -92,7 +92,7 @@ const ReDimChart = ({
 
   const { density, attributeCounts } = data;
 
-  const colorData = attributeCounts.map(record => record["value"]);
+  const colorData = attributeCounts.map((record) => record["value"]);
   const colorScale = getColorScale(labels[index], colorData);
 
   return (
@@ -109,7 +109,7 @@ const ReDimChart = ({
             label: labels[index],
             highlightedGroup,
             colorScale,
-            width
+            width,
           })}
         />
       </Grid>
@@ -131,7 +131,7 @@ const BaseChart = ({
   onSelect,
   label,
   dashboardID,
-  dashboardType
+  dashboardType,
 }) => {
   return (
     <Grid container direction="column" alignItems="center" justify="center">
@@ -153,16 +153,16 @@ const getFrameProps = ({
   label,
   highlightedGroup,
   colorScale,
-  width
+  width,
 }) => ({
   points: data,
-  pointStyle: d => ({
+  pointStyle: (d) => ({
     r: 2,
     fill: getColor(d, label, highlightedGroup, colorScale),
     fillOpacity:
       highlightedGroup && highlightedGroup["label"] === label["label"]
         ? Math.max(d["value"], 0.02)
-        : 1
+        : 1,
   }),
 
   size: [500, 500],
@@ -174,13 +174,13 @@ const getFrameProps = ({
   // canvasPoints: true,
 
   axes: [
-    { orient: "left", label: " ", tickFormat: d => "" },
+    { orient: "left", label: " ", tickFormat: (d) => "" },
     {
       orient: "bottom",
       label: { name: " ", locationDistance: 55 },
-      tickFormat: d => ""
-    }
-  ]
+      tickFormat: (d) => "",
+    },
+  ],
 });
 
 const getColor = (d, label, highlightedGroup, colorScale) => {
