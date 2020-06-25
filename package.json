@@ -56,6 +56,5 @@
     "@fortawesome/fontawesome-pro": "^5.10.2",
     "env-cmd": "^9.0.3",
     "prettier": "^1.16.4"
-  },
-  "start_url": "spectrum-staging.mskcc.org/dev"
+  }
 }
