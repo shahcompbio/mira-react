@@ -7,6 +7,7 @@ RUN npm config set '@bit:registry' https://node.bit.dev
 
 COPY .npmrc ./
 COPY package*.json ./
+COPY yarn.lock ./
 RUN yarn install
 
 COPY . .
