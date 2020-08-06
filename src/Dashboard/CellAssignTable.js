@@ -24,48 +24,47 @@ const QUERY = gql`
   query($dashboardType: String!, $dashboardID: String!) {
     celltypes(type: $dashboardType, dashboardID: $dashboardID) {
       name
-      count
       markers
     }
   }
 `;
 
-const styles = theme => ({
+const styles = (theme) => ({
   tableRowHeader: {
     "&:hover": {
-      backgroundColor: "rgb(158, 158, 158) !important"
-    }
+      backgroundColor: "rgb(158, 158, 158) !important",
+    },
   },
   geneLabel: {
     fontWeight: 400,
     color: "#242527",
     "&:hover": {
-      backgroundColor: "#d4d3d4"
-    }
+      backgroundColor: "#d4d3d4",
+    },
   },
   geneLabelSelected: {
     fontWeight: 700,
     background: "#aeb0c3",
     color: "#000000",
     "&:hover": {
-      backgroundColor: "#d4d3d4"
-    }
-  }
+      backgroundColor: "#d4d3d4",
+    },
+  },
 });
 const CellAssignTable = ({
   selectedGene,
   setSelectedGene,
   setSelectedCelltype,
-  classes
+  classes,
 }) => {
   const location = useLocation();
   const [dashboardType, dashboardID] = [
     useDashboardType(location),
-    useDashboardID(location)
+    useDashboardID(location),
   ];
 
   const { data, loading, error } = useQuery(QUERY, {
-    variables: { dashboardType, dashboardID }
+    variables: { dashboardType, dashboardID },
   });
 
   if (loading || error) {
@@ -74,7 +73,7 @@ const CellAssignTable = ({
 
   const { celltypes } = data;
   const colorScale = getCelltypeColors(
-    celltypes.map(celltype => celltype["name"])
+    celltypes.map((celltype) => celltype["name"])
   );
 
   return (
@@ -87,7 +86,7 @@ const CellAssignTable = ({
           overflowX: "auto",
           overflowY: "auto",
           margin: "10px",
-          marginRight: "30px"
+          marginRight: "30px",
         }}
       >
         <CellTypeAndMarkerGenesRow
@@ -109,7 +108,7 @@ const CellTypeAndMarkerGenesRow = ({
   classes,
   selectedGene,
   setSelectedGene,
-  setSelectedCelltype
+  setSelectedCelltype,
 }) => {
   const [highlightedGene, setHighlightedGene] = useState(null);
 
@@ -123,29 +122,11 @@ const CellTypeAndMarkerGenesRow = ({
     return Array.from(Array(longest).keys());
   };
 
-  const getColor = celltype =>
-    celltype["count"] === 0 ? "#D4D4D4" : colorScale(celltype["name"]);
-
   return (
     <Table size="small" padding="none">
       <TableHead>
         <TableRow>
-          {celltypes.map(celltype => {
-            return (
-              <TableCell
-                key={`cellassign_count_${celltype["name"]}`}
-                align="center"
-                style={{
-                  background: getColor(celltype)
-                }}
-              >
-                {celltype["count"]}
-              </TableCell>
-            );
-          })}
-        </TableRow>
-        <TableRow>
-          {celltypes.map(celltype => {
+          {celltypes.map((celltype) => {
             return (
               <TableCell
                 key={`cellassign_name_${celltype["name"]}`}
@@ -156,7 +137,7 @@ const CellTypeAndMarkerGenesRow = ({
                   pointerEvents: "all",
                   whiteSpace: "pre-line",
                   textTransform: "none",
-                  background: "#e2e2e2" //TODO: Add highlighting here
+                  background: "#e2e2e2", //TODO: Add highlighting here
                 }}
                 //   onClick={e => handleCellClick(e, row.cellType)}
               >
@@ -170,7 +151,7 @@ const CellTypeAndMarkerGenesRow = ({
         {longestArray().map((_, index) => {
           return (
             <TableRow key={`cellassign_rho_${index}`}>
-              {celltypes.map(celltype => {
+              {celltypes.map((celltype) => {
                 const gene = celltype["markers"][index];
                 return (
                   <TableCell
@@ -181,11 +162,11 @@ const CellTypeAndMarkerGenesRow = ({
                       <Button
                         value={gene}
                         fullWidth={true}
-                        onClick={e => {
+                        onClick={(e) => {
                           setSelectedGene(e.currentTarget.value);
                           setHighlightedGene(e.currentTarget.value);
                         }}
-                        onMouseEnter={e =>
+                        onMouseEnter={(e) =>
                           setHighlightedGene(e.currentTarget.value)
                         }
                         onMouseLeave={() => setHighlightedGene(selectedGene)}

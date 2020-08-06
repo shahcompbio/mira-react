@@ -25,16 +25,27 @@ function useWindowWidth() {
 
 const Dashboard = () => {
   const [highlightedLabel, setHighlightedLabel] = useState(null);
-  const [labels, setLabels] = useState([
-    { isNum: false, type: "CELL", label: "cell_type" },
-    { isNum: false, type: "CELL", label: "cell_type" },
-  ]);
-
   const location = useLocation();
   const [dashboardType, dashboardID] = [
     useDashboardType(location),
     useDashboardID(location),
   ];
+
+  const initialLabels = [
+    { isNum: false, type: "CELL", label: "cell_type" },
+    {
+      isNum: false,
+      type: "CELL",
+      label:
+        dashboardType === "patient"
+          ? "sample_id"
+          : dashboardID === "cohort_all"
+          ? "site"
+          : "cluster_label",
+    },
+  ];
+  const [labels, setLabels] = useState(initialLabels);
+
   const windowWidth = useWindowWidth();
   const chartWidth = Math.floor((windowWidth - 150) / labels.length + 1);
 
