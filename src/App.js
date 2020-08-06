@@ -50,17 +50,19 @@ const testApp = () => (
   </Switch>
 );
 
-const HEADERS = ["Home", "Wiki", "Sylph", "Hydra"].map(label => ({
-  label,
-  link: process.env[`REACT_APP_${label.toUpperCase()}_URL`] || ""
-}));
+const HEADERS = ["Home", "Wiki", "Sylph", "Hydra", "Mira", "Alhena"].map(
+  (label) => ({
+    label,
+    link: process.env[`REACT_APP_${label.toUpperCase()}_URL`] || "",
+  })
+);
 
 const App = () => {
   const location = useLocation();
 
   const [dashboardType, dashboardID] = [
     useDashboardType(location),
-    useDashboardID(location)
+    useDashboardID(location),
   ];
 
   return (
