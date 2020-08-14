@@ -1,7 +1,7 @@
 FROM node as builder
 
 WORKDIR /usr/src/app
-ARG BUILD_ENV
+ARG BUILD_FILE
 
 RUN npm config set '@bit:registry' https://node.bit.dev
 
@@ -10,13 +10,11 @@ COPY package*.json ./
 COPY yarn.lock ./
 RUN yarn install
 
-COPY . .
-RUN if [ "$BUILD_ENV" = "staging" ]; \
-    then yarn build:staging; \
-    else yarn build; \
-    fi
-
-
+COPY "$BUILD_FILE" ./
+COPY . ./
+RUN ls -a
+RUN yarn headerlink
+RUN ./node_modules/.bin/env-cmd -f "$BUILD_FILE" ./node_modules/.bin/react-scripts build
 
 FROM ubuntu
 RUN apt-get update && apt-get install -y nginx
