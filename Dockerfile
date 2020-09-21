@@ -5,14 +5,9 @@ ARG BUILD_FILE
 
 RUN npm config set '@bit:registry' https://node.bit.dev
 
-COPY .npmrc ./
-COPY package*.json ./
-COPY yarn.lock ./
-RUN yarn install
-
-COPY "$BUILD_FILE" ./
 COPY . ./
-RUN ls -a
+
+RUN yarn install
 RUN yarn headerlink
 RUN ./node_modules/.bin/env-cmd -f "$BUILD_FILE" ./node_modules/.bin/react-scripts build
 
