@@ -78,7 +78,7 @@ const Dashboard = () => {
             />
           </Grid>
         ))}
-        <Grid item>
+        {/* <Grid item>
           <Grid container direction="column">
             {labels.map((label, index) => (
               <Grid key={`grid_histo_${index}`} item xs={4}>
@@ -92,7 +92,7 @@ const Dashboard = () => {
               </Grid>
             ))}
           </Grid>
-        </Grid>
+        </Grid> */}
       </Grid>
       <Grid item>
         <CellAssignTable
